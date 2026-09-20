@@ -1,0 +1,102 @@
+@import '../../public/css/adminlte.css';
+@import '../../public/plugins/select2/css/select2.min.css';
+@import '../../public/plugins/select2-bootstrap4-theme/select2-bootstrap4.min.css';
+@import '../../public/plugins/fontawesome-free/css/all.min.css';
+@import '../../public/plugins/icheck-bootstrap/icheck-bootstrap.min.css';
+@import '../../public/plugins/toastr/toastr.min.css';
+@import '../../public/plugins/datepicker/jquery.ui.datepicker.css';
+@import '../../public/plugins/bs-stepper/css/bs-stepper.min.css';
+@import '../../public/plugins/summernote/summernote-bs4.min.css';
+
+
+
+
+/*VALIDACIONES*/
+input.error {
+    background-color: #e8e6e6 !important;
+    border: 1px solid #f86767 !important;
+    color: #000;
+}
+
+td.field input.error, td.field select.error, tr.errorRow td.field input, tr.errorRow td.field select, td.field textarea.error {
+    background-color: #e8e6e6 !important;
+    border: 1px solid #f86767 !important;
+    color: #000;
+    margin: 0;
+}
+
+.inputform.error {
+    background-color: #e8e6e6 !important;
+    border: 1px solid #f86767 !important;
+    color: #000;
+    margin: 0;
+}
+
+.card-body {
+    -ms-flex: 1 1 auto;
+    flex: 1 1 auto;
+    min-height: 1px;
+    padding: 1.25rem;
+    border-top: 1px solid #ccc;
+}
+
+.error {
+    display: inline !important;
+}
+
+.select2-selection {
+    height: auto !important;
+}
+
+.pagination-div {
+    margin-right: 15px !important;
+}
+
+a {
+    cursor: pointer !important;
+}
+
+.dropdown-above-table {
+    position: absolute;
+    z-index: 1000; /* Asegura que esté por encima de otros elementos */
+    /* Otros estilos según tus necesidades */
+}
+
+body.text-sm {
+    font-size: 1.01rem !important;
+}
+
+a.disabled {
+    pointer-events: none;
+    cursor: default;
+}
+
+
+/* Estilos responsive adicionales */
+@media (max-width: 768px) {
+    .card-body .form-group {
+        margin-bottom: 1rem;
+    }
+
+    .btn-block {
+        width: 100%;
+    }
+
+    .breadcrumb {
+        font-size: 0.875rem;
+    }
+}
+
+@media (max-width: 576px) {
+    h1.m-0 {
+        font-size: 1.5rem;
+    }
+
+    h3.box-title {
+        font-size: 1.25rem;
+    }
+
+    .form-control, .custom-file-label {
+        font-size: 0.9rem;
+    }
+}

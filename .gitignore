@@ -1,0 +1,105 @@
+# Laravel IDE Helper generated files
+_ide_helper.php
+_ide_helper_models.php
+.phpstorm.meta.php
+.idea
+.vscode/intelephense.json
+
+# Intelephense cache files
+intelephense_cache/
+.vscode/intelephense_cache/
+
+# Laravel specific
+/storage/*
+/public/storage
+/public/hot
+/public/storage
+/public/js
+/public/css
+/storage/clockwork
+/storage/debugbar
+/storage/logs/*.log
+/storage/framework/sessions/*
+/storage/framework/cache/*
+/storage/framework/views/*
+
+# Composer
+/vendor
+composer.phar
+composer.lock
+
+# Node.js
+/node_modules
+npm-debug.log
+yarn-error.log
+yarn.lock
+package-lock.json
+
+# Environment files
+.env
+.env.backup
+.env.production
+.env.*
+
+# Build files
+/public/build
+/public/vendor
+
+# Backup files
+*.backup
+*.bak
+
+# IDE files
+.idea
+.vscode
+*.swp
+*.swo
+*~
+.DS_Store
+Thumbs.db
+
+# Testing
+/coverage
+.phpunit.result.cache
+
+# Deployment
+deployer.log
+
+# Laravel IDE Helper generated files
+_ide_helper.php
+_ide_helper_models.php
+.phpstorm.meta.php
+.vscode/intelephense.json
+
+# Intelephense cache files
+intelephense_cache/
+.vscode/intelephense_cache/
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Logs
+*.log
+logs
+access.log
+error.log
+
+# Misc
+*.zip
+*.tar.gz
+*.rar
+
+# Local development files
+*.local.*
+*.dev.*
+docker-compose.override.yml
+
+# Ngrok
+.ngrok2/
+ngrok.yml
