@@ -70,10 +70,6 @@ class Notification extends Model
         return $this->hasMany(NotificationEvent::class);
     }
     
-    // -------------------------
-    // Helpers de dominio
-    // -------------------------
-    
     /**
      * Genera un token único seguro de 64 caracteres (hex).
      * 32 bytes aleatorios -> 64 caracteres hex.
