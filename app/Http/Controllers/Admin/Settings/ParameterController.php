@@ -9,8 +9,6 @@ use Illuminate\Http\Request;
 
 class ParameterController extends Controller
 {
-    
-    // Inyecta ParameterServices en el constructor
     public function __construct(protected ParameterServices $parameter){}
     
     public function index()
