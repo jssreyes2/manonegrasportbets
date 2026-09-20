@@ -10,7 +10,6 @@ use Illuminate\Support\Facades\DB;
 
 class PlanServices
 {
-    
     public function getPlans(?array $filter = [])
     {
         return Plan::filter($filter)->select([
