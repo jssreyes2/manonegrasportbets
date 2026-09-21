@@ -2,8 +2,6 @@
 @section('title', 'Notificaciones')
 @section('content')
 
-    <div id="form-modal"></div>
-
     @php
         if(isset($data['msg_error'])){
          session()->flash('error', $data['msg_error']);
