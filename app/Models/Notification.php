@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Closure;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
@@ -47,18 +48,10 @@ class Notification extends Model
         'deleted_at'    => 'datetime',
     ];
     
-    /**
-     * Valores por defecto a nivel de modelo.
-     * Complementa al DEFAULT 'pendiente' que ya tienes en la BD.
-     */
     protected $attributes = [
         'state'    => 'pendiente',
         'intentos' => 0,
     ];
-    
-    // -------------------------
-    // Relaciones
-    // -------------------------
     
     public function user()
     {
@@ -70,61 +63,10 @@ class Notification extends Model
         return $this->hasMany(NotificationEvent::class);
     }
     
-    /**
-     * Genera un token único seguro de 64 caracteres (hex).
-     * 32 bytes aleatorios -> 64 caracteres hex.
-     */
     public static function generateTrackingToken(): string
     {
         return bin2hex(random_bytes(32));
     }
-    
-    /**
-     * ¿Se puede marcar como abierto?
-     */
-    public function canBeOpened(): bool
-    {
-        return $this->opening_date === null
-               && $this->deleted_at === null;
-    }
-    
-    /**
-     * ¿Está en estado enviado?
-     */
-    public function isSent(): bool
-    {
-        return $this->state === 'enviado';
-    }
-    
-    // -------------------------
-    // Scopes útiles
-    // -------------------------
-    
-    public function scopePending($query)
-    {
-        return $query->where('state', 'pendiente');
-    }
-    
-    public function scopeSent($query)
-    {
-        return $query->where('state', 'enviado');
-    }
-    
-    public function scopeFailed($query)
-    {
-        return $query->where('state', 'fallido');
-    }
-    
-    public function scopeOpened($query)
-    {
-        return $query->where('state', 'abierto');
-    }
-    
-    public function scopeForToken($query, string $token)
-    {
-        return $query->where('tracking_token', $token);
-    }
-    
     
     public static function notificationCreate(array $data)
     {
@@ -139,5 +81,45 @@ class Notification extends Model
             'state'          => Notification::STATE_SEND,
             'shipping_date'  => now(),
         ]);
+    }
+    
+    public static function getNotifications(){
+        return self::select(
+            'users.id',
+            'users_profiles.first_name',
+            'users_profiles.last_name',
+            'users_profiles.phone',
+            'notifications.channel',
+            'notifications.type',
+            'notifications.addressee',
+            'notifications.subject',
+            'notifications.state',
+            'notifications.shipping_date',
+            'notifications.opening_date',
+
+        )
+            ->join('users', 'notifications.user_id', '=', 'users.id')
+            ->join('users_profiles', 'users.id', '=', 'users_profiles.user_id');
+    }
+    
+    public function scopeFilter(Builder $query, ?array $filters = []): Builder
+    {
+        $filters = $filters ?? [];
+        
+        if (isset($filters['search'])) {
+            $query->where('addressee', 'like', "%" . $filters['search'] . "%")
+                ->orWhere('notifications.type', 'like', "%" . $filters['search'] . "%")
+                ->orWhere('notifications.state', 'like', "%" . $filters['search'] . "%")
+                ->orWhere('notifications.channel', 'like', "%" . $filters['search'] . "%")
+                ->orWhere('notifications.type', 'like', "%" . $filters['search'] . "%");
+        }
+        
+        if (isset($filters['id'])) {
+            $query->where('notifications.id', $filters['id']);
+        }
+        
+        $query->orderBy('notifications.id', 'DESC');
+        
+        return $query;
     }
 }

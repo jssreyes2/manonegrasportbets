@@ -5,6 +5,7 @@ use App\Http\Controllers\Admin\DashboardController;
 //OPERACIONES
 use App\Http\Controllers\Dashboard\SubscriptionController;
 use App\Http\Controllers\Admin\Operations\PickController;
+use App\Http\Controllers\TrackingController;
 
 //CONETNIDO WEB
 use App\Http\Controllers\Admin\WebContent\FrequentlyAskedQuestionController;
@@ -53,6 +54,10 @@ Route::group(['prefix' => '/admin/', 'middleware' => ['auth']], function () {
         Route::post('/pick-update', 'update')->name('pick.update');
         Route::post('/pick-destroy', 'destroy')->name('pick.destroy');
         Route::post('/verify-pick', 'verifyPick')->name('verify.pick');
+    });
+    
+    Route::controller(TrackingController::class)->group(function () {
+        Route::get('/notifications', 'index')->name('notification.index')->middleware('check.rol.permissions:notification.index');
     });
     #################################################################### FIN OPERACIONES #############################################################################################
     #
