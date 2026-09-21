@@ -191,8 +191,11 @@ if (!function_exists('USDConversion')) {
 
 if (!function_exists('normalizePhone')) {
     
-    function normalizePhone(string $phone, int $defaultCountryCode = 58): string
+    function normalizePhone(string $phone, ?int $defaultCountryCode = 58): string
     {
+        // Si viene null, usar el código por defecto
+        $defaultCountryCode = $defaultCountryCode ?? 58;
+        
         // 1. Eliminar todo lo que no sea un número
         $numbers = preg_replace('/[^0-9]/', '', $phone);
         
@@ -200,24 +203,20 @@ if (!function_exists('normalizePhone')) {
             throw new \Exception("El número de teléfono proporcionado no contiene dígitos válidos.");
         }
         
-        // 2. Manejo del cero inicial local (ej: 0414... o 0300...)
-        // Si el número es relativamente largo y empieza por 0, comúnmente se omite al internacionalizar.
+        // 2. Manejo del cero inicial local
         if (str_starts_with($numbers, '0') && strlen($numbers) > 8) {
             $numbers = ltrim($numbers, '0');
         }
         
-        // 3. Validación de longitud estándar internacional (E.164)
-        // Los números de teléfono globales suelen tener entre 7 (locales mínimos) y 15 dígitos (con código de país).
+        // 3. Validación de longitud
         $length = strlen($numbers);
         
         if ($length < 7 || $length > 15) {
             throw new \Exception("La longitud del número de teléfono no es válida.");
         }
         
-        // 4. Asegurar que incluya el código de país
-        // Si el número es corto (ej: 7 a 11 dígitos), asumimos que es un número local y le anteponemos el código por defecto.
-        // Si ya es más largo (ej: 11 a 15 dígitos), se asume que ya trae un código de país incorporado.
-        $defaultCodeStr = (string)$defaultCountryCode;
+        // 4. Asegurar código de país
+        $defaultCodeStr = (string) $defaultCountryCode;
         
         if ($length <= 11 && !str_starts_with($numbers, $defaultCodeStr)) {
             $numbers = $defaultCodeStr . $numbers;

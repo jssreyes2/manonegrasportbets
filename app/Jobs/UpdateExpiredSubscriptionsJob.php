@@ -3,6 +3,7 @@
 namespace App\Jobs;
 
 use App\Models\Notification;
+use App\Models\Plan;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Bus\Queueable;
@@ -69,12 +70,12 @@ class UpdateExpiredSubscriptionsJob implements ShouldQueue
                             ]);
                             
                             $data = [
-                                'name'      => capitalize_first($subscription->first_name) . ' ' . capitalize_first($subscription->last_name),
-                                'email'     => $subscription->email,
-                                'subject'   => $subject,
-                                'message'   => $bodyText . ' ' . $subscription->subscription_plan . ' ' . $bodyText1,
-                                'plan_name' => $subscription->subscription_plan,
-                                'bcc'       => config('app.mail_copy_ocult'),
+                                'name'           => capitalize_first($subscription->first_name) . ' ' . capitalize_first($subscription->last_name),
+                                'email'          => $subscription->email,
+                                'subject'        => $subject,
+                                'message'        => $bodyText . ' ' . $subscription->subscription_plan . ' ' . $bodyText1,
+                                'plan_name'      => $subscription->subscription_plan,
+                                'bcc'            => config('app.mail_copy_ocult'),
                                 'tracking_token' => $notification?->tracking_token,
                             ];
                             
@@ -109,6 +110,8 @@ class UpdateExpiredSubscriptionsJob implements ShouldQueue
                     }
                 }, 'subscriptions.id', 'id');
             
+            $this->activatePlans();
+            
             Log::info("Actualización completada", [
                 'procesadas'   => $expiredCount,
                 'actualizadas' => $updatedCount,
@@ -126,5 +129,10 @@ class UpdateExpiredSubscriptionsJob implements ShouldQueue
             'error' => $exception->getMessage(),
             'trace' => $exception->getTraceAsString()
         ]);
+    }
+    
+    private function activatePlans()
+    {
+        Plan::where('is_active', false)->update(['is_active' => true, 'updated_at' => now()]);
     }
 }
