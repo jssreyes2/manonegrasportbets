@@ -93,7 +93,7 @@ class SendMailServices
                 $templateText
             );
             
-            $notification=Notification::notificationCreate([
+            $notification = Notification::notificationCreate([
                 'user_id'   => $user->id,
                 'channel'   => Notification::CHANNEL_EMAIL,
                 'type'      => Notification::TYPE_WELCOME,
@@ -124,15 +124,15 @@ class SendMailServices
             }
             
             Log::error('Error en sendMailRegisterUser', [
-                'user_id'       => $user->id ?? null,
-                'user_email'    => $user->email ?? null,
-                'user_name'     => $user->name ?? null,
-                'tracking_token'=> $data['tracking_token'] ?? null,
-                'error_message' => $e->getMessage(),
-                'error_code'    => $e->getCode(),
-                'error_file'    => $e->getFile(),
-                'error_line'    => $e->getLine(),
-                'trace'         => $e->getTraceAsString(),
+                'user_id'        => $user->id ?? null,
+                'user_email'     => $user->email ?? null,
+                'user_name'      => $user->name ?? null,
+                'tracking_token' => $data['tracking_token'] ?? null,
+                'error_message'  => $e->getMessage(),
+                'error_code'     => $e->getCode(),
+                'error_file'     => $e->getFile(),
+                'error_line'     => $e->getLine(),
+                'trace'          => $e->getTraceAsString(),
             ]);
             return false;
         }
@@ -218,6 +218,7 @@ class SendMailServices
                 'plan_name'      => $data['plan_name'] ?? null,
                 'template_email' => 'emails.notification',
                 'bcc'            => $data['bcc'] ?? null,
+                'tracking_token' => $data['tracking_token'] ?? null,
             ]);
             
         } catch (\Exception $e) {
