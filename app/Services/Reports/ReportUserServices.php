@@ -12,43 +12,22 @@ use App\Repositories\Settings\UserRepository;
 class ReportUserServices
 {
     
-    public function prepareViewIndexData($request)
+    public function prepareViewIndexData(array $data)
     {
-        $filter = $request->filter ?? [];
-        $id     = $request->id ?? [];
+        
+        $filter = $data['filter'] ?? [];
+        $id     = $data['id'] ?? [];
         
         if (empty($filter) and $id) {
-            $filter = array_merge($filter, ['id' => $request->id]);
+            $filter = array_merge($filter, ['id' => $data['id']]);
         }
         
-        $filter = array_merge($filter, ['rol_id' => $request->rol, 'completed_profile' => true]);
-        
-        $users = UserRepository::getUserProfile($filter);
-        
-        $typeUser         = 'USUARIOS';
-        $routeBack        = "get.report.user";
-        $btnViewProfile   = false;
-        $routeExportExcel = 'excel.report.customer';
-        
-        if ($request->rol == Rol::ROL_CUSTOMER) {
-            $typeUser = 'CLIENTES';
-        }
-        
-        if ($request->rol == Rol::ROL_FREELANCER) {
-            $typeUser         = 'FREELANCERS';
-            $routeBack        = "get.report.freelancers";
-            $btnViewProfile   = true;
-            $routeExportExcel = 'excel.report.freelancers';
-        }
-        
+        $filter['rol_id']=Rol::ROL_CUSTOMER;
+        $filter['completed_profile']=true;
         
         $viewData = [
-            'filter'           => $filter,
-            'users'            => $users->paginate(30),
-            'typeUser'         => $typeUser,
-            'routeBack'        => $routeBack,
-            'btnViewProfile'   => $btnViewProfile,
-            'routeExportExcel' => $routeExportExcel,
+            'users'  => UserRepository::getUserProfile($filter)->paginate(config('app.npage')),
+            'filter' => $filter,
         ];
         
         return view('admin.report.table-users', $viewData);

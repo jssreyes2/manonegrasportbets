@@ -3,8 +3,11 @@
 namespace App\Services;
 
 
+use App\Models\Payment;
 use App\Models\Rol;
+use App\Models\Subscription;
 use App\Repositories\Settings\UserRepository;
+use App\Services\User\PaymentServices;
 use Illuminate\Support\Facades\Auth;
 
 class AdministrativePanelServices
@@ -17,16 +20,16 @@ class AdministrativePanelServices
             return redirect()->route('subscription');
         }
         
-        $customersQuery = UserRepository::getUserProfile(['rol_id' => Rol::ROL_CUSTOMER, 'completed_profile' => true]);
+        $customersQuery  = UserRepository::getUserProfile(['rol_id' => Rol::ROL_CUSTOMER, 'completed_profile' => true]);
+        $totalSuccessful = app(PaymentServices::class)->getPayments(['input_status' => 1])->sum('payments.total');
+        $subscriptions   = Subscription::getSubscription()->filter()->count();
+        
         
         return view('admin.dashboard', [
-            'clients'              => $customersQuery->paginate(config('app.npage')),
-            'totalCustomer'        => $customersQuery->count(),
-            'totalFreelancers'     => $this->formatNumber(0),
-            'totalServiceRequests' => $this->formatNumber(0),
-            'totalContacts'        => $this->formatNumber(0),
-            'totalSubscriptions'   => $this->formatNumber(0),
-            'totalProducts'        => $this->formatNumber(0),
+            'clients'            => $customersQuery->paginate(config('app.npage')),
+            'totalCustomer'      => $customersQuery->count(),
+            'totalSuccessful'    => $totalSuccessful,
+            'totalSubscriptions' => $this->formatNumber($subscriptions),
         ]);
     }
     

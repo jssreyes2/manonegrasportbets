@@ -9,10 +9,10 @@
             <div class="row">
                 <div class="col-lg-4 col-md-6 col-sm-6 col-12">
                     <!-- small box -->
-                    <div class="small-box bg-info">
+                    <div class="small-box bg-lightblue color-palette">
                         <div class="inner">
                             <h3>{{$totalCustomer >= 10 ? $totalCustomer : '0'.$totalCustomer}}</h3>
-                            <p>{{ __t('text.usuario', 'Users') }} </p>
+                            <p>Usuarios </p>
                         </div>
                         <div class="icon">
                             <i class="fas fa-users"></i>
@@ -21,24 +21,24 @@
                     </div>
                 </div>
 
-                <!-- ./col -->
                 <div class="col-lg-4 col-md-6 col-sm-6 col-12">
                     <!-- small box -->
-                    <div class="small-box bg-warning">
+                    <div class="small-box bg-teal color-palette">
                         <div class="inner">
-                            <h3>{{$totalContacts}}</h3>
-                            <p>Comentarios</p>
+                            <h3>{{$totalSuccessful}}</h3>
+                            <p>Pagos Exitosos</p>
                         </div>
                         <div class="icon">
-                            <i class="fas fa-book"></i>
+                            <i class="fas fa-dollar-sign"></i>
                         </div>
-                        <a href="{{route('staticpage.contacts')}}" class="small-box-footer"> Más Información <i class="fas fa-arrow-circle-right"></i></a>
+                        <a href="{{route('get.payment.user')}}" class="small-box-footer"> Más Información <i class="fas fa-arrow-circle-right"></i></a>
                     </div>
                 </div>
 
+                <!-- ./col -->
                 <div class="col-lg-4 col-md-6 col-sm-6 col-12">
                     <!-- small box -->
-                    <div class="small-box bg-success">
+                    <div class="small-box bg-warning color-palette">
                         <div class="inner">
                             <h3>{{$totalSubscriptions}}</h3>
                             <p>Suscripciones</p>
@@ -46,9 +46,11 @@
                         <div class="icon">
                             <i class="fas fa-book-open"></i>
                         </div>
-                        <a href="{{route('get.user.subscription')}}" class="small-box-footer"> Más Información <i class="fas fa-arrow-circle-right"></i></a>
+                        <a href="{{route('get.subscription')}}" class="small-box-footer"> Más Información <i class="fas fa-arrow-circle-right"></i></a>
                     </div>
                 </div>
+
+
                 <!-- ./col -->
             </div>
             <!-- /.row -->
@@ -75,6 +77,7 @@
                                     <th>Nombres y Apellidos</th>
                                     <th>Correo electrónico</th>
                                     <th>Teléfono</th>
+                                    <th>País</th>
                                     <th>Status</th>
                                     <th>Creación</th>
                                 </tr>
@@ -87,6 +90,7 @@
                                         <td>{{ucwords($item['first_name'].' '.$item['last_name'])}}</td>
                                         <td>{{$item['email']}}</td>
                                         <td>{{$item['phone']}}</td>
+                                        <td>{{$item['name']}}</td>
                                         <td>{{(($item['is_active']) ? 'Activo' : 'Inactivo')}}</td>
                                         <td>{{date('d/m/Y', strtotime($item['created_at'])),}}</td>
                                     </tr>

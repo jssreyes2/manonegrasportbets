@@ -2,13 +2,11 @@
 
 namespace App\Services\Settings;
 
-use App\Models\Notification;
 use App\Models\Rol;
 use App\Models\User;
 use App\Models\WebSuscription;
 use App\Repositories\Settings\UserRepository;
 use App\Services\SendMailServices;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Contracts\Encryption\DecryptException;
 use Exception;

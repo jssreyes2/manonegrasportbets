@@ -57,7 +57,8 @@ class UserRepository
     {
         // Construir query base
         $query = User::leftJoin('users_profiles', 'users.id', '=', 'users_profiles.user_id')
-            ->join('roles', 'users.rol_id', '=', 'roles.id');
+            ->join('roles', 'users.rol_id', '=', 'roles.id')
+            ->join('countries', 'users_profiles.country_id', '=', 'countries.id');
         
         $query->select([
             'users.id',
@@ -73,6 +74,7 @@ class UserRepository
             'users_profiles.country_id',
             'users_profiles.photo',
             'users_profiles.completed_profile',
+            'countries.name',
         ]);
         
         // Resto de las condiciones...
@@ -83,7 +85,10 @@ class UserRepository
                 $query->where(function ($q) use ($searchTerm) {
                     $q->WhereRaw("CONCAT(users_profiles.first_name, ' ', users_profiles.last_name) LIKE ?", ["%{$searchTerm}%"])
                         ->orWhere('users_profiles.first_name', 'like', "%{$searchTerm}%")
-                        ->orWhere('users_profiles.last_name', 'like', "%{$searchTerm}%");
+                        ->orWhere('users_profiles.last_name', 'like', "%{$searchTerm}%")
+                        ->orWhere('users.email', 'like', "%{$searchTerm}%")
+                        ->orWhere('countries.name', 'like', "%{$searchTerm}%")
+                        ->orWhere('users_profiles.phone', 'like', "%{$searchTerm}%");
                 });
             }
             

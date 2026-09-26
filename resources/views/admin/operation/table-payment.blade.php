@@ -5,7 +5,7 @@
     <div class="row">
         <div class="col-lg-6 col-md-6 col-sm-6 col-12">
             <!-- small box -->
-            <div class="small-box bg-success">
+            <div class="small-box bg-teal color-palette">
                 <div class="inner">
                     <h3>{{$totalSuccessful}}</h3>
                     <p>{{ __t('text.backend.tables.successful_payments', 'Successful payments') }} </p>
@@ -18,7 +18,7 @@
 
         <div class="col-lg-6 col-md-6 col-sm-6 col-12">
             <!-- small box -->
-            <div class="small-box bg-danger">
+            <div class="small-box bg-danger color-palette">
                 <div class="inner">
                     <h3>{{$totalFail}}</h3>
                     <p>{{ __t('text.backend.tables.failed_payments', 'Failed payments') }} </p>

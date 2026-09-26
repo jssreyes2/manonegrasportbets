@@ -12,7 +12,7 @@ class ReportUserController extends Controller
     
     public function index(Request $request)
     {
-        return $this->report->prepareViewIndexData($request);
+        return $this->report->prepareViewIndexData($request->all());
     }
     
     public function exportExcelUser(Request $request)
