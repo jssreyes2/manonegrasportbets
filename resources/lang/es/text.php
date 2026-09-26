@@ -224,6 +224,9 @@ a los mercados deportivos con mayor liquidez del mundo: NBA, NFL, MLB y fútbol 
             'recommended'      => 'RECOMENDADO',
             'active_plan'      => 'PLAN ACTIVO',
             'pay_with_whop'    => 'Pagar con Whop',
+            'start_date'       => 'Fecha Inicio',
+            'end_date'         => 'Fecha Final',
+        
         ],
         
         'messages' => [
@@ -278,7 +281,7 @@ a los mercados deportivos con mayor liquidez del mundo: NBA, NFL, MLB y fútbol 
             'attention'                 => 'Atención',
             'notification_change_email' => 'Al cambiar tu correo electrónico, la sesión se cerrará automáticamente. Te enviaremos un mensaje de verificación a tu nueva dirección; una vez confirmado, podrás volver a iniciar sesión con los cambios aplicados',
             'user_not_logged_in'        => 'Usuario no logueado',
-            'alert_table'        => 'Opps!! No se encontraron resultados. No hay coincidencias registradas en el sistema.',
+            'alert_table'               => 'Opps!! No se encontraron resultados. No hay coincidencias registradas en el sistema.',
         ],
         
         'reports' => [
@@ -302,8 +305,7 @@ a los mercados deportivos con mayor liquidez del mundo: NBA, NFL, MLB y fútbol 
             'failed'       => 'Fallido',
             'search'       => 'Buscar...',
             'all_statuses' => 'Todos los Estatus...',
-            'my_payments' => 'Mis Pagos',
-            
+            'my_payments'  => 'Mis Pagos',
         
         
         ],

@@ -72,14 +72,26 @@
             <x-admin.select-language/>
         @endif
 
+        @if(isset($dateFilter))
+
+            <div class="form-group col-lg-3 col-md-6 col-sm-6 col-12">
+                <input type="text" name="filter[start_date]" class="form-control date" placeholder="{{__t('text.backend.forms.start_date', 'Start Date')}}" value="{{($filterArray['start_date'] ?? '')}}" autocomplete="off">
+            </div>
+
+            <div class="form-group col-lg-3 col-md-6 col-sm-6 col-12">
+                <input type="text" name="filter[end_date]" class="form-control date" placeholder="{{__t('text.backend.forms.end_date', 'End Date')}}" value="{{($filterArray['end_date'] ?? '')}}" autocomplete="off">
+            </div>
+
+        @endif
+
         @if(isset($extraFilterStatusPick) && $extraFilterStatusPick)
             <div class="form-group col-lg-3 col-md-6 col-sm-6 col-12">
                 <select class='form-control' id='input_status' name="filter[input_status]">
                     <option value=''>{{__t('text.backend.tables.all_statuses', 'Todos los Estatus...')}}</option>
-                    <option value='1' {{ (array_key_exists('input_status', $filterArray) && (int)$filterArray['input_status'] === 1) ? 'selected' : '' }}>
+                    <option value='1' {{ (array_key_exists('input_status', $filterArray) && $filterArray['input_status'] === 1) ? 'selected' : '' }}>
                         {{__t('text.backend.tables.successful', 'Exitoso')}}
                     </option>
-                    <option value='0' {{ (array_key_exists('input_status', $filterArray) && (int)$filterArray['input_status'] === 0) ? 'selected' : '' }}>
+                    <option value='0' {{ (array_key_exists('input_status', $filterArray) && ($filterArray['input_status']!==null && (int)$filterArray['input_status'] ===0)) ? 'selected' : '' }}>
                         {{__t('text.backend.tables.failed', 'Fallido')}}
                     </option>
                 </select>

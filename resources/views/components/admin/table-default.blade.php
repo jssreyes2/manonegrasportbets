@@ -11,6 +11,7 @@
     'extraFilterPageStatic' => false,
     'extraFilterLanguage' => false,
     'extraFilterStatusPick' => false,
+    'dateFilter' => false,
     'plans' => []
 ])
 
@@ -20,7 +21,7 @@
         @if($showBtnNew)
             <a href="javascript:void(0)" class="btn btn-outline-info new_form"><i class="fas fa-plus"></i> Nuevo</a>
         @endif
-        
+
         @if($routeExport)
             <a href="{{ $routeExport }}" class="btn btn-outline-dark"><i class="fas fa-file-excel"></i> Excel</a>
         @endif
@@ -38,6 +39,7 @@
             'extraFilterPageStatic' => $extraFilterPageStatic,
             'extraFilterLanguage' => $extraFilterLanguage,
             'extraFilterStatusPick' => $extraFilterStatusPick,
+            'dateFilter' => $dateFilter,
         ])
 
         <div class="table-responsive">

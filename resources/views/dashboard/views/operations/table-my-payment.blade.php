@@ -7,6 +7,7 @@
                            :filter="$filter"
                            :showBtnNew="false"
                            :extraFilterStatusPick="true"
+                           :extraFilterStatusPick="true"
                            routeExport=""
     >
         <thead>
@@ -36,7 +37,7 @@
                     <td><span class="badge {{$classStatus}}">{{$substatus}}</span></td>
                     <td>{{$payment->total}}</td>
                     <td>{{$payment->currency}}</td>
-                    <td>{{ date('d/m/Y', strtotime($payment->created_at)) }}</td>
+                    <td>{{ date('d/m/Y', strtotime($payment->paid_at)) }}</td>
                 </tr>
             @endforeach
         @else

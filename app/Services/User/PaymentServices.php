@@ -3,6 +3,7 @@
 namespace App\Services\User;
 
 use App\Models\Payment;
+use App\Models\Rol;
 use App\Services\Register\CategoryServices;
 use Illuminate\Support\Facades\Auth;
 
@@ -21,11 +22,7 @@ class PaymentServices
     
     public function index(array $data = [])
     {
-        
         $user = Auth::user();
-        if ($user && !$user->profile?->completed_profile) {
-            return redirect()->route('profile');
-        }
         
         $filter = $data['filter'] ?? [];
         $id     = $data['id'] ?? [];
@@ -34,10 +31,19 @@ class PaymentServices
             $filter = array_merge($filter, ['id' => $data['id']]);
         }
         
-        $filter['user_id'] = $user->id;
-    
+        if ($user && $user->rol_id == Rol::ROL_CUSTOMER && !$user->profile?->completed_profile) {
+            return redirect()->route('profile');
+        }
+        
+        $view = "dashboard.views.operations.table-my-payment";
+        
+        $filter['user_id'] = $user->rol_id == Rol::ROL_CUSTOMER ? $user->id : null;
+        if ($user && $user->rol_id != Rol::ROL_CUSTOMER) {
+            $view = "admin.operation.table-payment";
+        }
+        
         $payments = $this->getPayments($filter)->paginate(config('app.npage'));
         
-        return view('dashboard.views.operations.table-my-payment', compact('filter', 'payments'));
+        return view($view, compact('filter', 'payments'));
     }
 }

@@ -24,5 +24,6 @@ Route::controller(ProfileController::class)->group(function () {
 ############ PAGOS #############################
 Route::controller(PaymentController::class)->group(function () {
     Route::get('/my-payments', 'index')->name('my.payment')->middleware(['check.completed.subscription','check.rol.permissions:my.payment']);
+    Route::get('/users-payments', 'index')->name('get.payment.user')->middleware(['check.rol.permissions:get.payment.user']);
 });
 

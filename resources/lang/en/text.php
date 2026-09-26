@@ -218,6 +218,8 @@ return [
             'recommended'      => 'RECOMMENDED',
             'active_plan'      => 'ACTIVE PLAN',
             'pay_with_whop'    => 'Pay with Whop',
+            'start_date'       => 'Start Date',
+            'end_date'         => 'End Date',
         ],
         
         'messages' => [
@@ -271,7 +273,7 @@ return [
             'attention'                 => 'Attention',
             'notification_change_email' => 'When you change your email address, you will be automatically logged out. We will send a verification message to your new address; once confirmed, you will be able to log in again with the changes applied.',
             'user_not_logged_in'        => 'User not logged in',
-            'alert_table'        => 'No results were found. There are no matches recorded in the system.',
+            'alert_table'               => 'No results were found. There are no matches recorded in the system.',
         
         
         ],
@@ -296,7 +298,7 @@ return [
             'failed'       => 'failed',
             'search'       => 'Search...',
             'all_statuses' => 'All Statuses...',
-            'my_payments' => 'My payments',
+            'my_payments'  => 'My payments',
         
         ],
     ],

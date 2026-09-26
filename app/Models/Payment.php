@@ -51,7 +51,7 @@ class Payment extends Model
             'payments.substatus',
             'payments.total',
             'payments.website_plan',
-            'payments.created_at',
+            'payments.paid_at',
             'payments.currency',
             'payments.payment_id'
         )
@@ -67,6 +67,7 @@ class Payment extends Model
             $query->where('users.email', 'like', "%" . $filters['search'] . "%")
                 ->orWhere('users_profiles.first_name', 'like', "%" . $filters['search'] . "%")
                 ->orWhere('users_profiles.last_name', 'like', "%" . $filters['search'] . "%")
+                ->orWhere('users.email', 'like', "%" . $filters['search'] . "%")
                 ->orWhere('payments.payment_id', 'like', "%" . $filters['search'] . "%");
         }
         
@@ -78,7 +79,16 @@ class Payment extends Model
             $query->where('payments.substatus', status_payment($filters['input_status']));
         }
         
-        $query->orderBy('payments.created_at', 'DESC');
+        
+        if (isset($filters['start_date'])) {
+            $query->whereDate('payments.paid_at', '>=', $filters['start_date']);
+        }
+        
+        if (isset($filters['end_date'])) {
+            $query->whereDate('payments.paid_at', '<=', $filters['end_date']);
+        }
+        
+        $query->orderBy('payments.paid_at', 'DESC');
         
         return $query;
     }
