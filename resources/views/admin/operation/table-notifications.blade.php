@@ -12,6 +12,7 @@
                            paginate="{{ $notifications->appends(request()->input())->links('pagination::bootstrap-4') }}"
                            :filter="$filter"
                            :showBtnNew="false"
+                           :dateFilter="true"
     >
         <thead>
         <tr>

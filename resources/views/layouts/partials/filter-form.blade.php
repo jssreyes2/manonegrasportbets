@@ -72,7 +72,7 @@
             <x-admin.select-language/>
         @endif
 
-        @if(isset($dateFilter))
+        @if(isset($dateFilter) && $dateFilter)
 
             <div class="form-group col-lg-3 col-md-6 col-sm-6 col-12">
                 <input type="text" name="filter[start_date]" class="form-control date" placeholder="{{__t('text.backend.forms.start_date', 'Start Date')}}" value="{{($filterArray['start_date'] ?? '')}}" autocomplete="off">

@@ -118,6 +118,14 @@ class Notification extends Model
             $query->where('notifications.id', $filters['id']);
         }
         
+        if (isset($filters['start_date'])) {
+            $query->whereDate('notifications.shipping_date', '>=', $filters['start_date']);
+        }
+        
+        if (isset($filters['end_date'])) {
+            $query->whereDate('notifications.shipping_date', '<=', $filters['end_date']);
+        }
+        
         $query->orderBy('notifications.id', 'DESC');
         
         return $query;
