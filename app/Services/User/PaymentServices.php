@@ -43,7 +43,14 @@ class PaymentServices
         }
         
         $payments = $this->getPayments($filter)->paginate(config('app.npage'));
+        $totalSuccessful = $this->getPayments($filter)
+            ->where('payments.substatus', Payment::PAYMENT_SUCCESS)
+            ->sum('payments.total');
         
-        return view($view, compact('filter', 'payments'));
+        $totalFail = $this->getPayments($filter)
+            ->where('payments.substatus', Payment::PAYMENT_FAIL)
+            ->sum('payments.total');
+        
+        return view($view, compact('filter', 'payments', 'totalSuccessful', 'totalFail'));
     }
 }

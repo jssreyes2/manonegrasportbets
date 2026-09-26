@@ -2,12 +2,43 @@
 @section('title', __t('text.backend.tables.my_payments', 'Mis Pagos'))
 @section('content')
 
+    <div class="row">
+        <div class="col-lg-4 col-md-6 col-sm-6 col-12">
+            <!-- small box -->
+            <div class="small-box bg-success">
+                <div class="inner">
+                    <h3>{{$totalSuccessful}}</h3>
+                    <p>{{ __t('text.backend.tables.successful_payments', 'Successful payments') }} </p>
+                </div>
+                <div class="icon">
+                    <i class="fas fa-dollar-sign"></i>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-4 col-md-6 col-sm-6 col-12">
+            <!-- small box -->
+            <div class="small-box bg-danger">
+                <div class="inner">
+                    <h3>{{$totalFail}}</h3>
+                    <p>{{ __t('text.backend.tables.failed_payments', 'Failed payments') }} </p>
+                </div>
+                <div class="icon">
+                    <i class="fas fa-dollar-sign"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
     <x-admin.table-default cancelRoute="{{ route('my.payment') }}"
                            paginate="{{ $payments->appends(request()->input())->links('pagination::bootstrap-4') }}"
                            :filter="$filter"
                            :showBtnNew="false"
                            :extraFilterStatusPick="true"
                            :extraFilterStatusPick="true"
+                           :dateFilter="true"
                            routeExport=""
     >
         <thead>
