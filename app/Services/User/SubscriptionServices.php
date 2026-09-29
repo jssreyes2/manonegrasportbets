@@ -2,6 +2,7 @@
 
 namespace App\Services\User;
 
+use App\Models\Plan;
 use App\Models\Subscription;
 use App\Models\WebSuscription;
 use App\Services\Register\CategoryServices;
@@ -24,9 +25,21 @@ class SubscriptionServices
         
         $plans = $this->plan->getPlans(['is_active' => true])->get();
         
-        $plansActive = $this->getSubscriptionApproved();
+        $plansActive  = $this->getSubscriptionApproved();
+        $subscription = $user?->subscriptions()->where('subscription_plan', Subscription::PLAN_ELITE)->where('subscription_status', Subscription::STATUS_ACTIVE)->first();
+        $msgElite     = null;
+        if ($subscription && $subscription->subscription_expires_at?->isFuture()) {
+            
+            $msgElite = __t('text.backend.messages.my_plan', $msgElite);
+            
+            $msgElite = str_replace(
+                ['[PLAN]', '[DATE]'],
+                [Subscription::PLAN_ELITE, $subscription->subscription_expires_at->format('d/m/Y')],
+                $msgElite
+            );
+        }
         
-        return view('dashboard.views.frm-subscription', compact('plans', 'plansActive'));
+        return view('dashboard.views.frm-subscription', compact('plans', 'plansActive', 'msgElite'));
     }
     
     public function getClientSubscription()
@@ -69,7 +82,7 @@ class SubscriptionServices
         
         $subscriptions = $user?->subscriptions();
         
-        if(!$subscriptions){
+        if (!$subscriptions) {
             return ['status' => 'fail', 'subscription' => null];
         }
         
@@ -92,7 +105,7 @@ class SubscriptionServices
                 $plans[$key]['name']            = $subscription->subscription_plan;
                 $plans[$key]['expiration_date'] = $subscription->subscription_expires_at->format('d/m/Y');
                 $plans[$key]['remainingDays']   = $remainingDays;
-                $plans[$key]['sure_bettor']   = $subscription->sure_bettor;
+                $plans[$key]['sure_bettor']     = $subscription->sure_bettor;
             }
         }
         
@@ -103,7 +116,7 @@ class SubscriptionServices
     {
         $subscriptionPlans = $this->getSubscriptionApproved();
         
-        if (isset($subscriptionPlans['plans']) && count($subscriptionPlans['plans']) >0) {
+        if (isset($subscriptionPlans['plans']) && count($subscriptionPlans['plans']) > 0) {
             return true;
         }
         

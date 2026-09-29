@@ -64,14 +64,6 @@ class PickServices
         
         try {
             
-            if ($data['source'] == PICK::SOURCE_SUSCRIPTION) {
-                $plan = $this->plan->getPlans(['id' => $data['plan_id']])->first();
-                
-                if ($data && $plan->is_active) {
-                    return response()->json(['status' => 'fail', 'message' => 'Para enviar el Pick del plan ' . $plan->name . ' debe estar inactivo, por favor verifique']);
-                }
-            }
-            
             $pick = Pick::createPick($data);
             
             DB::commit();

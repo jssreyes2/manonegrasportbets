@@ -282,6 +282,7 @@ a los mercados deportivos con mayor liquidez del mundo: NBA, NFL, MLB y fútbol 
             'notification_change_email' => 'Al cambiar tu correo electrónico, la sesión se cerrará automáticamente. Te enviaremos un mensaje de verificación a tu nueva dirección; una vez confirmado, podrás volver a iniciar sesión con los cambios aplicados',
             'user_not_logged_in'        => 'Usuario no logueado',
             'alert_table'               => 'Opps!! No se encontraron resultados. No hay coincidencias registradas en el sistema.',
+            'my_plan'                   => "Tu plan [PLAN] comenzará a jugar a partir del día: [DATE]",
         ],
         
         'reports' => [

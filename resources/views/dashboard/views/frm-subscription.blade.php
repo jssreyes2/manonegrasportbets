@@ -117,7 +117,16 @@
                     @endforeach
                 @endif
             </div>
+            
 
+            @if($msgElite)
+            <div class="col-12">
+                <div class="alert alert-info alert-dismissible">
+                    <h5><i class="icon fas fa-check"></i> {{$msgElite}} </h5>
+                </div>
+            </div>
+            @endif
+            
         </div>
     </section>
 @endsection

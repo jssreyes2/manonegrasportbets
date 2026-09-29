@@ -274,8 +274,7 @@ return [
             'notification_change_email' => 'When you change your email address, you will be automatically logged out. We will send a verification message to your new address; once confirmed, you will be able to log in again with the changes applied.',
             'user_not_logged_in'        => 'User not logged in',
             'alert_table'               => 'No results were found. There are no matches recorded in the system.',
-        
-        
+            'my_plan'                   => "Your plan [PLAN] will become active starting on: [DATE]",
         ],
         
         'reports' => [

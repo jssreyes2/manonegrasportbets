@@ -4,6 +4,7 @@ namespace App\Services\Whop;
 
 use App\Models\Notification;
 use App\Models\Payment;
+use App\Models\Pick;
 use App\Models\Plan;
 use App\Models\Subscription;
 use App\Models\User;
@@ -258,7 +259,13 @@ class WhopWebhookServices
                 'whop_membership_id' => $membershipId
             ])->first();
             
-            $expirationDate = Carbon::parse($baseDate)->addDays($plan['duration_days'])->startOfDay();
+            
+            $durationDays = $plan['duration_days'];
+            if (Pick::whereDate('created_at', now()->format('Y-m-d'))->where('plan_id', Plan::ID_PLAN_ELITE)->exists()) {
+                $durationDays = $plan['duration_days'] + 1;
+            }
+            
+            $expirationDate = Carbon::parse($baseDate)->addDays($durationDays)->startOfDay();
             
             if (!$subscription) {
                 Subscription::create([
