@@ -44,6 +44,7 @@ class SendMassivePickEmailJob implements ShouldQueue
                     'subscription_expires_at' => true,
                     'subscription_status'     => Subscription::STATUS_ACTIVE,
                     'subscription_plan'       => $this->pick->plan->source,
+                    'winner'                  => true,
                 ]),
                 
                 Pick::SOURCE_WEB_SUSCRIPTION => WebSuscription::query(),

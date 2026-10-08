@@ -101,7 +101,13 @@ class Subscription extends Model
         }
         
         if (isset($filters['subscription_expires_at'])) {
-            $query->whereDate('subscriptions.subscription_expires_at', '>=', now()->format('Y-m-d'));
+            $operator = '>=';
+            
+            if (isset($filters['subscription_plan']) && $filters['subscription_plan'] == self::PLAN_ELITE) {
+                $operator = '=';
+            }
+            
+            $query->whereDate('subscriptions.subscription_expires_at', $operator, now()->format('Y-m-d'));
         }
         
         if (isset($filters['expired'])) {
@@ -122,6 +128,13 @@ class Subscription extends Model
         
         if (isset($filters['now'])) {
             $query->whereDate('subscriptions.created_at', '=', now()->format('Y-m-d'));
+        }
+        
+        if (isset($filters['winner'], $filters['subscription_plan']) && ($filters['subscription_plan'] === self::PLAN_ELITE)) {
+            $query->where(function ($q) {
+                $q->where('subscriptions.winner', '!=', true)
+                    ->orWhereNull('subscriptions.winner');
+            });
         }
         
         $query->orderBy('subscriptions.user_id', 'ASC');
