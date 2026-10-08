@@ -43,12 +43,10 @@ class MassiveUpdatePickJob implements ShouldQueue
                 'winner'                  => true,
             ]);
             
-            
             if (!$suscriptionsUsers) {
                 Log::warning("Job detenido: Pick sin suscripción", ['pick_id' => $this->pick->id ?? null]);
                 return;
             }
-            
             
             $suscriptionsUsers->chunk(50, function ($subscriptions) use (&$successCount, &$failedCount) {
                 foreach ($subscriptions as $subscription) {
@@ -61,22 +59,6 @@ class MassiveUpdatePickJob implements ShouldQueue
                         }
                         
                         $subscription->winner = $this->pick->right;
-                        if ($subscription->subscription_plan == Subscription::PLAN_ELITE) {
-                            $subscription->sure_bettor = $subscription->quantity_pick == 2 && !$this->pick->right;
-                            
-                            if ($subscription->sure_bettor) {
-                                $newDate                               = \Carbon\Carbon::parse($subscription->subscription_expires_at)
-                                    ->addDay()
-                                    ->startOfDay()
-                                    ->toDateTimeString();
-                                $subscription->subscription_expires_at = $newDate;
-                            }
-                            
-                            if (($subscription->quantity_pick > 2 && !$this->pick->right) || $this->pick->right) {
-                                $subscription->sure_bettor = false;
-                            }
-                        }
-                        
                         $subscription->save();
                         
                         $successCount++;

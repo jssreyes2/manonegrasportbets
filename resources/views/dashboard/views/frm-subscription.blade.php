@@ -66,9 +66,9 @@
                             $lang = (app()->getLocale() == \App\Models\Country::LANGUAGE_EN) ? 'en' : 'es';
 
                             $tipoPlan = match($item->source) {
-                                \App\Models\Plan::PLAN_SOURCE_SUSCRIPCION => '50',
-                                \App\Models\Plan::PLAN_SOURCE_VIP => '100',
-                                default => '30', // Por defecto o PLAN_SOURCE_ELITE
+                                \App\Models\Plan::PLAN_SOURCE_SUSCRIPCION => '15',
+                                \App\Models\Plan::PLAN_SOURCE_VIP => '40',
+                                default => '70', // Por defecto o PLAN_SOURCE_ELITE
                             };
 
                             $imgPlan = "img/plan-{$lang}-{$tipoPlan}.jpg";

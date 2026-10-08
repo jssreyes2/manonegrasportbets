@@ -35,7 +35,7 @@ class SendEmailJob implements ShouldQueue
                 return; // No reintentar
             }
             
-            $mailService = app(SendMailServices::class); // Usar el contenedor
+            $mailService = app(SendMailServices::class);
             $result = $mailService->sendMailNotification($this->data);
             
             if (!$result) {

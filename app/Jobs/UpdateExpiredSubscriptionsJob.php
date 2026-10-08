@@ -54,10 +54,6 @@ class UpdateExpiredSubscriptionsJob implements ShouldQueue
                             
                             $notification = null;
                             
-                            if ($subscription->sure_bettor) {
-                                continue;
-                            }
-                            
                             $expiredCount++;
                             
                             $notification = Notification::notificationCreate([

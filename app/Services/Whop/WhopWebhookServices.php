@@ -259,13 +259,7 @@ class WhopWebhookServices
                 'whop_membership_id' => $membershipId
             ])->first();
             
-            
-            $durationDays = $plan['duration_days'];
-            if (Pick::whereDate('created_at', now()->format('Y-m-d'))->where('plan_id', Plan::ID_PLAN_ELITE)->exists()) {
-                $durationDays = $plan['duration_days'] + 1;
-            }
-            
-            $expirationDate = Carbon::parse($baseDate)->addDays($durationDays)->startOfDay();
+            $expirationDate = Carbon::parse($baseDate)->addDays($plan['duration_days'])->startOfDay();
             
             if (!$subscription) {
                 Subscription::create([
