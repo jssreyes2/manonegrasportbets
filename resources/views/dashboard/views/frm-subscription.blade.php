@@ -66,9 +66,12 @@
                             $lang = (app()->getLocale() == \App\Models\Country::LANGUAGE_EN) ? 'en' : 'es';
 
                             $tipoPlan = match($item->source) {
-                                \App\Models\Plan::PLAN_SOURCE_SUSCRIPCION => '15',
-                                \App\Models\Plan::PLAN_SOURCE_VIP => '40',
-                                default => '70', // Por defecto o PLAN_SOURCE_ELITE
+                                \App\Models\Plan::PLAN_SOURCE_SUSCRIPCION => '50',
+                                \App\Models\Plan::PLAN_SOURCE_VIP => '100',
+                                \App\Models\Plan::PLAN_SOURCE_VEP => '40',
+                                \App\Models\Plan::PLAN_SOURCE_SUS => '15',
+                                \App\Models\Plan::PLAN_SOURCE_ELIT => '70',
+                                default => '30', // Por defecto o PLAN_SOURCE_ELITE
                             };
 
                             $imgPlan = "img/plan-{$lang}-{$tipoPlan}.jpg";
@@ -117,16 +120,16 @@
                     @endforeach
                 @endif
             </div>
-            
+
 
             @if($msgElite)
-            <div class="col-12">
-                <div class="alert alert-info alert-dismissible">
-                    <h5><i class="icon fas fa-check"></i> {{$msgElite}} </h5>
+                <div class="col-12">
+                    <div class="alert alert-info alert-dismissible">
+                        <h5><i class="icon fas fa-check"></i> {{$msgElite}} </h5>
+                    </div>
                 </div>
-            </div>
             @endif
-            
+
         </div>
     </section>
 @endsection

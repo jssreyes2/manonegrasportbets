@@ -18,6 +18,9 @@ class Plan extends Model
     const CURRENCY_USD = 'usd';
     const PLAN_SOURCE_SUSCRIPCION = 'suscripcion';
     const PLAN_SOURCE_VIP = 'vip';
+    const PLAN_SOURCE_ELIT = 'plan-elit';
+    const PLAN_SOURCE_SUS = 'plan-sus';
+    const PLAN_SOURCE_VEP = 'plan-vep';
     
     protected $table = 'plans';
     
