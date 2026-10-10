@@ -30,18 +30,15 @@ class NotificationServices
         return view('admin.operation.table-notifications', compact('filter', 'notifications'))->with('error', $data['msg_error'] ?? session('error'));
     }
     
-    
     public function emailOpen(array $data = [])
     {
-        $token = $data['token'];
+        $token = $data['token'] ?? null;
         
-        // Validación mínima: token de 64 chars
         if (!is_string($token) || strlen($token) !== 64) {
             return $this->gifResponse();
         }
         
         try {
-            // Solo actualizamos si aún no se ha abierto
             DB::table('notifications')
                 ->where('tracking_token', $token)
                 ->whereNull('deleted_at')
@@ -51,9 +48,7 @@ class NotificationServices
                     'opening_date' => now(),
                     'updated_at'   => now(),
                 ]);
-            
         } catch (\Throwable $e) {
-            // Nunca rompemos la respuesta por un error de tracking
             Log::error('[tracking/email-open] ' . $e->getMessage(), [
                 'token' => $token,
             ]);
@@ -61,6 +56,7 @@ class NotificationServices
         
         return $this->gifResponse();
     }
+    
     
     private function gifResponse()
     {

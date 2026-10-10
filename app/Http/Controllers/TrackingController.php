@@ -18,6 +18,6 @@ class TrackingController extends Controller
     
     public function emailOpen(Request $request)
     {
-        return $this->notification->emailOpen($request->all());
+        return $this->notification->emailOpen($request->only('token'));
     }
 }

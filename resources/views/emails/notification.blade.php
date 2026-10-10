@@ -17,7 +17,7 @@
         </div>
 
         @if(!empty($data['tracking_token'] ?? null))
-            <img src="{{config('app.url')}}/tracking/email-open?token={{$data['tracking_token']}}" width="1" height="1" alt=""/>
+            <img src="{{config('app.url')}}/tracking/email-open?token={{$data['tracking_token'] ?? ''}}" width="1" height="1" alt=""/>
         @endif
 
     </div>

@@ -26,7 +26,7 @@
         <p class="info-text">{{__t('text.email.template.you_need_help', 'If you have any questions or need assistance, please do not hesitate to contact us by replying to this email.')}}</p>
 
         @if(!empty($data['tracking_token'] ?? null))
-            <img src="{{config('app.url')}}/tracking/email-open?token={{$data['tracking_token']}}" width="1" height="1" alt=""/>
+            <img src="{{config('app.url')}}/tracking/email-open?token={{$data['tracking_token'] ?? ''}}" width="1" height="1" alt=""/>
         @endif
     </div>
 
