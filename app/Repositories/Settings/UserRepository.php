@@ -58,7 +58,7 @@ class UserRepository
         // Construir query base
         $query = User::leftJoin('users_profiles', 'users.id', '=', 'users_profiles.user_id')
             ->join('roles', 'users.rol_id', '=', 'roles.id')
-            ->join('countries', 'users_profiles.country_id', '=', 'countries.id');
+            ->leftJoin('countries', 'users_profiles.country_id', '=', 'countries.id');
         
         $query->select([
             'users.id',
