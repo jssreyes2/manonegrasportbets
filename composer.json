@@ -50,10 +50,7 @@
         "post-autoload-dump": [
             "Illuminate\\Foundation\\ComposerScripts::postAutoloadDump",
             "@php artisan package:discover --ansi",
-            "@php -r \"if (version_compare(PHP_VERSION, '8.4.0', '>=')) { error_reporting(E_ALL & ~E_DEPRECATED); }\"",
-            "@php artisan ide-helper:generate",
-            "@php artisan ide-helper:models --nowrite",
-            "@php artisan ide-helper:meta"
+            "@php -r \"if (version_compare(PHP_VERSION, '8.4.0', '>=')) { error_reporting(E_ALL & ~E_DEPRECATED); }\""
         ],
         "post-update-cmd": [
             "@php artisan vendor:publish --tag=laravel-assets --ansi --force"
