@@ -2,30 +2,29 @@
 
 namespace App\Http\Middleware;
 
+use App\Services\User\SubscriptionServices;
 use Closure;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
 
 class ActiveSubscription
 {
+    public function __construct(protected SubscriptionServices $subscriptionServices)
+    {
+    }
+
     public function handle(
         Request $request,
         Closure $next
     ): Response {
         $user = $request->user();
-        
+
         if (!$user) {
             return redirect()->route('login');
         }
-        
-        $active =
-            $user->subscription_status === 'active'
-            && (
-                $user->subscription_expires_at === null
-                || $user->subscription_expires_at->isFuture()
-            );
-        
-        if (!$active) {
+
+        // El estado vive en la tabla subscriptions, no en users
+        if (!$this->subscriptionServices->verfirySubscription()) {
             return redirect()
                 ->route('plans')
                 ->with(
@@ -33,7 +32,7 @@ class ActiveSubscription
                     'Necesitas un plan activo para ver los picks.'
                 );
         }
-        
+
         return $next($request);
     }
 }

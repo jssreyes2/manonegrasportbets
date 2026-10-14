@@ -99,14 +99,21 @@ class SubscriptionServices
         
         $plans = [];
         
-        foreach ($subscriptions as $key => $subscription) {
-            $remainingDays = daysRemaining($subscription->subscription_expires_at);
-            if ($remainingDays >= 0) {
-                $plans[$key]['name']            = $subscription->subscription_plan;
-                $plans[$key]['expiration_date'] = $subscription->subscription_expires_at->format('d/m/Y');
-                $plans[$key]['remainingDays']   = $remainingDays;
-                $plans[$key]['sure_bettor']     = $subscription->sure_bettor;
+        $today = now()->startOfDay();
+
+        foreach ($subscriptions as $subscription) {
+            // daysRemaining() nunca devuelve negativos, por eso se valida el vencimiento directamente
+            if (!$subscription->subscription_expires_at || $subscription->subscription_expires_at->copy()->startOfDay()->lt($today)) {
+                continue;
             }
+
+            // Índices consecutivos: createCheckout() consulta $plans[0]
+            $plans[] = [
+                'name'            => $subscription->subscription_plan,
+                'expiration_date' => $subscription->subscription_expires_at->format('d/m/Y'),
+                'remainingDays'   => daysRemaining($subscription->subscription_expires_at),
+                'sure_bettor'     => $subscription->sure_bettor,
+            ];
         }
         
         return ['plans' => $plans];
