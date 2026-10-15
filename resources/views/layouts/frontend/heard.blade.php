@@ -14,10 +14,15 @@
     <meta name="theme-color" content="#050505">
     <link rel="icon" type="image/x-icon" href="{{ asset('img/logo.ico') }}">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <script>document.documentElement.classList.add('js');</script>
+    {{-- Oculta [data-reveal] solo para animarlo; si app_web.js no arranca en 2.5s, se muestra todo --}}
+    <script>
+        document.documentElement.classList.add('js');
+        setTimeout(function () { if (!window.__revealReady) document.documentElement.classList.remove('js'); }, 2500);
+    </script>
     <script type="text/javascript" src="{{ asset('plugins/jquery/jquery.min.js') }}"></script>
     @vite(['resources/css/app_web.css', 'resources/js/app_web.js'])
     <script src="https://unpkg.com/lucide@0.460.0/dist/umd/lucide.min.js"></script>
+    <script>document.addEventListener('DOMContentLoaded', function () { if (window.lucide) window.lucide.createIcons(); });</script>
 
 </head>
 

@@ -160,7 +160,19 @@
     </div>
 @endforeach
 
-@if($cards->isNotEmpty())
+@if($cards->isEmpty())
+    {{-- Sin planes cargados (BD no disponible o sin planes activos): nunca dejar la sección vacía --}}
+    <div class="max-w-xl mx-auto text-center rounded-2xl border border-lime-400/30 bg-neutral-950/70 p-8" data-reveal>
+        <div class="w-12 h-12 mx-auto rounded-xl bg-lime-400/10 border border-lime-400/30 flex items-center justify-center text-lime-400 mb-4">
+            <i data-lucide="layers" class="w-6 h-6"></i>
+        </div>
+        <h3 class="text-lg font-black text-white uppercase mb-2">{{ $L('fallback_title') }}</h3>
+        <p class="text-sm text-neutral-400 mb-6">{{ $L('fallback_text') }}</p>
+        <a href="{{ $planCta }}" class="btn-neon inline-flex items-center justify-center gap-2 font-bold uppercase tracking-wider text-xs px-6 py-3.5 rounded-xl">
+            {{ $L('fallback_cta') }} <i data-lucide="arrow-right" class="w-4 h-4"></i>
+        </a>
+    </div>
+@else
     <p class="mt-8 text-center text-xs text-neutral-500 flex items-center justify-center gap-2">
         <i data-lucide="lock" class="w-3.5 h-3.5 text-lime-400"></i> {{ $L('secure_note') }}
     </p>

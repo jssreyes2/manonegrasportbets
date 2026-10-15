@@ -9,7 +9,8 @@ use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\WebPage\StaticPageController;
 use App\Models\StaticPage;
 use App\Models\FrequentlyAskedQuestion;
-use App\Services\Register\PlanServices;
+use App\Models\Plan;
+use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\Dashboard\PickController;
 use App\Http\Controllers\Dashboard\CheckoutController;
 use App\Http\Middleware\ActiveSubscription;
@@ -52,10 +53,15 @@ $landingFaqs = fn() => rescue(
     collect(),
 );
 
-// Planes activos (mismo origen que la vista Suscripción del panel)
+// Planes activos (mismos que la vista Suscripción del panel). Sin select de columnas
+// ni orden por `language`: así no falla si la tabla de producción no tiene alguna.
 $activePlans = fn() => rescue(
-    fn() => app(PlanServices::class)->getPlans(['is_active' => true])->get(),
-    collect(),
+    fn() => Plan::where('is_active', true)->orderBy('price')->get(),
+    function (Throwable $e) {
+        Log::error('Landing: no se pudieron cargar los planes activos', ['error' => $e->getMessage()]);
+        return collect();
+    },
+    false,
 );
 
 Route::get('/', function () use ($landingFaqs, $activePlans) {

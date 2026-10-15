@@ -14,15 +14,20 @@ import toastr from './toastr-wrapper.js';
 
 // 2. Ejecución segura (Lucide ahora vendrá de forma global)
 const iniciarTodo = () => {
+    // Primero el revelado: si algo de lo demás falla, el contenido no queda oculto
+    initReveal();
+
+    [initMobileMenu, initAuthDropdown, initCounters, initFreePick, initMobileCta].forEach((init) => {
+        try {
+            init();
+        } catch (e) {
+            console.error(e);
+        }
+    });
+
     if (window.lucide) {
         window.lucide.createIcons();
     }
-    initMobileMenu();
-    initAuthDropdown();
-    initReveal();
-    initCounters();
-    initFreePick();
-    initMobileCta();
 };
 
 if (document.readyState === 'loading') {
@@ -79,6 +84,8 @@ function initAuthDropdown() {
 }
 // 5. Revelado de secciones al hacer scroll
 function initReveal() {
+    window.__revealReady = true;
+
     const items = document.querySelectorAll('[data-reveal]');
     if (!items.length) return;
 
