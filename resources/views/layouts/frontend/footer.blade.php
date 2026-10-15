@@ -1,28 +1,31 @@
 <!-- Modal Suscripción -->
-<div id="modal" class="fixed inset-0 z-50 bg-black/90 backdrop-blur-md flex items-center justify-center hidden">
-    <div class="bg-[#0a0a0a] border border-neutral-800 rounded-2xl p-6 w-full max-w-sm mx-4 shadow-2xl">
-        <div class="flex justify-between items-center mb-4">
-            <h3 class="text-lg font-bold text-white">🎯 Pick Gratis</h3>
-            <button onclick="cerrarModal()" class="text-neutral-500 hover:text-white">✕</button>
+<div id="modal" class="fixed inset-0 z-[60] bg-black/90 backdrop-blur-md flex items-center justify-center hidden" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+    <div class="relative bg-[#0a0a0a] border border-lime-400/30 rounded-2xl p-6 sm:p-7 w-full max-w-sm mx-4 shadow-[0_0_60px_rgba(163,230,53,0.15)]">
+        <button type="button" onclick="cerrarModal()" class="absolute top-4 right-4 text-neutral-500 hover:text-white" aria-label="Close">
+            <i data-lucide="x" class="w-5 h-5"></i>
+        </button>
+        <div class="w-12 h-12 rounded-xl bg-lime-400/10 border border-lime-400/30 flex items-center justify-center text-lime-400 mb-4">
+            <i data-lucide="gift" class="w-6 h-6"></i>
         </div>
-
+        <h3 id="modal-title" class="text-xl font-black text-white uppercase tracking-tight">{{__t('text.frontend.landing.modal_title')}}</h3>
+        <p class="text-sm text-neutral-400 mt-1 mb-5">{{__t('text.frontend.landing.modal_text')}}</p>
 
         <form id="frm-suscription" class="space-y-3" novalidate>
             @csrf
             <input type="text" id="full_name" name="full_name" placeholder="{{__t('text.frontend.footer_full_name','Full Name')}}" required
-                   class="w-full px-4 py-2.5 bg-black/50 border border-neutral-700 rounded-lg text-white text-sm focus:border-orange-500 focus:outline-none">
+                   class="w-full px-4 py-2.5 bg-black/50 border border-neutral-700 rounded-lg text-white text-sm focus:border-lime-400 focus:outline-none">
 
             <input type="email" id="email" name="email" placeholder="{{__t('text.frontend.footer_email','Email')}}" required
-                   class="w-full px-4 py-2.5 bg-black/50 border border-neutral-700 rounded-lg text-white text-sm focus:border-orange-500 focus:outline-none">
+                   class="w-full px-4 py-2.5 bg-black/50 border border-neutral-700 rounded-lg text-white text-sm focus:border-lime-400 focus:outline-none">
 
             <div id="loading_form" class="loading-container" style="display: none;">
                 <div class="spinner"></div>
             </div>
 
-            <button type="submit" id="btnSubmit" style="cursor: pointer" class="w-full py-2.5 font-bold text-sm text-white bg-gradient-to-r from-pink-500 to-orange-500 rounded-lg hover:opacity-90 transition flex items-center justify-center gap-2">
+            <button type="submit" id="btnSubmit" style="cursor: pointer" class="w-full py-3 font-bold text-sm uppercase tracking-wider btn-neon rounded-lg transition flex items-center justify-center gap-2">
                 <span id="btnText">{{__t('text.frontend.footer_subscribe', 'Subscribe')}}</span>
                 <!-- Spinner oculto por defecto con Tailwind -->
-                <svg id="loadingSpinner" class="animate-spin h-5 w-5 text-white hidden" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                <svg id="loadingSpinner" class="animate-spin h-5 w-5 text-black hidden" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
                     <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
                     <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                 </svg>
@@ -30,6 +33,10 @@
 
         </form>
 
+        <ul class="mt-4 flex flex-wrap justify-center gap-x-4 gap-y-1 text-[11px] text-neutral-500">
+            <li class="flex items-center gap-1"><i data-lucide="check" class="w-3 h-3 text-lime-400"></i>{{__t('text.frontend.landing.free_b1')}}</li>
+            <li class="flex items-center gap-1"><i data-lucide="check" class="w-3 h-3 text-lime-400"></i>{{__t('text.frontend.landing.free_b2')}}</li>
+        </ul>
     </div>
 </div>
 
@@ -90,8 +97,8 @@
                 </p>
                 <div class="pt-2">
                     <!-- Botón Degradado con sombra neón e icono de flecha -->
-                    <a id="btnSuscribir" style="cursor: pointer"
-                       class="inline-flex items-center gap-2 font-bold uppercase tracking-wider text-xs px-6 py-3.5 rounded-full text-white bg-gradient-to-r from-pink-500 to-orange-500 shadow-[0_0_20px_rgba(239,68,68,0.3)]hover:shadow-[0_0_35px_rgba(249,115,22,0.6)] hover:opacity-95 transition-all duration-300">
+                    <a id="btnSuscribir" href="#" data-open-freepick
+                       class="btn-neon btn-shine inline-flex items-center gap-2 font-bold uppercase tracking-wider text-xs px-6 py-3.5 rounded-full transition-all duration-300">
                         {{__t('text.frontend.footer_subscribe', 'Subscribe')}}
                         <i data-lucide="arrow-right" class="w-4 h-4"></i>
                     </a>
@@ -100,24 +107,23 @@
 
         </div>
 
+        <!-- Juego responsable -->
+        <div class="flex items-start gap-3 border border-neutral-900 rounded-xl p-4 text-[11px] leading-relaxed text-neutral-500">
+            <span class="shrink-0 w-8 h-8 rounded-full border border-red-500/40 text-red-400 font-black text-[10px] flex items-center justify-center">+18</span>
+            <p>{{__t('text.frontend.landing.responsible')}}</p>
+        </div>
+
         <!-- Divisor de base y marca registrada -->
         <div class="border-t border-neutral-900 pt-8 mt-8 flex flex-col sm:flex-row items-center justify-between text-[11px] text-neutral-600 tracking-wide text-center sm:text-left gap-4">
             <p class="font-bold text-neutral-500 uppercase tracking-widest">LA MANO NEGRA - SPORT INSIGHTS</p>
-            <p>&copy; 2026 La Mano Negra. {{__t('text.frontend.footer_all_rights_reserved', 'All rights reserved.')}}</p>
+            <p>&copy; {{ date('Y') }} La Mano Negra. {{__t('text.frontend.footer_all_rights_reserved', 'All rights reserved.')}}</p>
         </div>
 
     </div>
 </footer>
 
-@section('script')
-    <script type="text/javascript">
+<script type="text/javascript">
         $(document).ready(function () {
-            // Abrir modal al hacer clic en el botón del footer
-            $('#btnSuscribir').on('click', function (e) {
-                e.preventDefault(); // Evita comportamientos por defecto si es un enlace
-                $('#modal').removeClass('hidden');
-            });
-
             $('#frm-suscription').on('submit', function (event) {
                 event.preventDefault();
                 var form = this;

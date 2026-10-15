@@ -1,18 +1,27 @@
 <!DOCTYPE html>
-<html lang="es" class="scroll-smooth">
+<html lang="{{ app()->getLocale() }}" class="scroll-smooth">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>La Mano Negra</title>
+    <title>@yield('title', 'La Mano Negra') | Sport Insights</title>
+    <meta name="description" content="{{ __t('text.frontend.landing.meta_description') }}">
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="La Mano Negra">
+    <meta property="og:title" content="La Mano Negra | Sport Insights">
+    <meta property="og:description" content="{{ __t('text.frontend.landing.meta_description') }}">
+    <meta property="og:image" content="{{ asset('img/logo-faro.jpg') }}">
+    <meta property="og:url" content="{{ url()->current() }}">
+    <meta name="theme-color" content="#050505">
     <link rel="icon" type="image/x-icon" href="{{ asset('img/logo.ico') }}">
     <meta name="csrf-token" content="{{ csrf_token() }}">
+    <script>document.documentElement.classList.add('js');</script>
     <script type="text/javascript" src="{{ asset('plugins/jquery/jquery.min.js') }}"></script>
     @vite(['resources/css/app_web.css', 'resources/js/app_web.js'])
-    <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="https://unpkg.com/lucide@0.460.0/dist/umd/lucide.min.js"></script>
 
 </head>
 
-<body class="bg-plasma text-neutral-100 font-sans antialiased">
+<body class="bg-plasma text-neutral-100 font-sans antialiased" @yield('body_attrs')>
 <header class="border-b border-neutral-800/60 bg-black/50 backdrop-blur-lg sticky top-0 z-50">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between md:justify-start md:gap-16" style="height: 100px;">
 
@@ -44,6 +53,16 @@
                      class="absolute top-full left-1/2 -translate-x-1/2 mt-2 w-56 bg-black/95 backdrop-blur-xl border border-neutral-800/60 rounded-xl shadow-2xl overflow-hidden transition-all duration-200 opacity-0 invisible -translate-y-2 pointer-events-none z-50">
                     <div class="p-4 space-y-3">
                         <div class="text-xs text-neutral-500 uppercase tracking-wider font-semibold mb-2">{{__t('text.frontend.menu_access', 'Access')}}</div>
+                        @auth
+                        <a href="{{ route('admin.panel') }}" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-neutral-300 hover:bg-lime-400/10 hover:text-lime-400 transition-all group">
+                            <i data-lucide="layout-dashboard" class="w-5 h-5 text-neutral-500 group-hover:text-lime-400 transition-colors"></i>
+                            {{__t('text.frontend.landing.my_dashboard')}}
+                        </a>
+                        <a href="{{ route('logout') }}" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-neutral-300 hover:bg-lime-400/10 hover:text-lime-400 transition-all group">
+                            <i data-lucide="log-out" class="w-5 h-5 text-neutral-500 group-hover:text-lime-400 transition-colors"></i>
+                            {{__t('text.frontend.landing.logout')}}
+                        </a>
+                        @else
                         <a href="{{ route('show.login-customer') }}" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-neutral-300 hover:bg-lime-400/10 hover:text-lime-400 transition-all group">
                             <svg class="w-5 h-5 text-neutral-500 group-hover:text-lime-400 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1"></path>
@@ -56,6 +75,7 @@
                             </svg>
                             {{__t('text.frontend.menu_sign_up', 'Sign up')}}
                         </a>
+                        @endauth
                     </div>
                 </div>
             </div>
@@ -83,9 +103,15 @@
         <a href="{{route('show.how-it-works')}}" class="block text-neutral-300 hover:text-lime-400 font-semibold py-2 transition-colors">{{__t('text.frontend.menu_how_it_works', 'How It Works')}}</a>
         <a href="{{route('show.members')}}" class="block text-neutral-300 hover:text-lime-400 font-semibold py-2 transition-colors">{{__t('text.frontend.menu_members', 'Members')}}</a>
         <a href="{{route('show.plans')}}" class="block text-neutral-300 hover:text-lime-400 font-semibold py-2 transition-colors">{{__t('text.frontend.menu_plans', 'Plans')}}</a>
-        <a href="{{route('show.who-we-are')}}" class="block text-lime-400 font-bold py-2 border-b border-lime-400/20 max-w-[150px] mx-auto">{{__t('text.frontend.menu_about_us', 'About Us')}}</a>
+        <a href="{{route('show.who-we-are')}}" class="block text-neutral-300 hover:text-lime-400 font-semibold py-2 transition-colors">{{__t('text.frontend.menu_about_us', 'About Us')}}</a>
 
         <div class="pt-4 border-t border-neutral-800/40 flex flex-col gap-3">
+            @auth
+            <a href="{{ route('admin.panel') }}" class="flex items-center justify-center gap-2 text-neutral-300 hover:text-lime-400 font-semibold py-2 transition-colors">
+                <i data-lucide="layout-dashboard" class="w-5 h-5"></i>
+                {{__t('text.frontend.landing.my_dashboard')}}
+            </a>
+            @else
             <a href="{{ route('show.login-customer') }}" class="flex items-center justify-center gap-2 text-neutral-300 hover:text-lime-400 font-semibold py-2 transition-colors">
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1"></path>
@@ -98,6 +124,7 @@
                 </svg>
                 {{__t('text.frontend.menu_sign_up', 'Sign up')}}
             </a>
+            @endauth
 
             <div class="language-selector">
                 <a href="{{ route('lang.switch', 'es') }}" class="{{ app()->getLocale() == 'es' ? 'active' : '' }}">
@@ -120,8 +147,20 @@
 </header>
 
 @yield('content')
-@yield('script')
+
+@guest
+<div id="mobile-cta" class="md:hidden fixed bottom-0 inset-x-0 z-40 bg-black/90 backdrop-blur-xl border-t border-neutral-800/80 px-4 py-3 flex gap-3">
+    <button type="button" data-open-freepick class="flex-1 inline-flex items-center justify-center gap-2 border border-lime-400/40 text-lime-300 rounded-xl py-3 text-xs font-bold uppercase tracking-wider">
+        <i data-lucide="gift" class="w-4 h-4"></i> {{__t('text.frontend.landing.mobile_free')}}
+    </button>
+    <a href="{{route('show.plans')}}" class="flex-1 inline-flex items-center justify-center gap-2 btn-neon rounded-xl py-3 text-xs font-bold uppercase tracking-wider">
+        <i data-lucide="zap" class="w-4 h-4"></i> {{__t('text.frontend.landing.mobile_plans')}}
+    </a>
+</div>
+@endguest
+
 @include('layouts.frontend.footer')
+@yield('script')
 
 <script type="text/javascript">
     window.errorHandler = function (xhr, status, error) {

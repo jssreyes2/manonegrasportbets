@@ -78,7 +78,7 @@
 
                         <!-- DESCRIPCIÓN -->
                         <p class="text-neutral-400 text-xs leading-relaxed mb-6 text-left">
-                            El referente mundial en **Hándicap Asiático para Fútbol** y líneas principales de la **NBA/MLB**. Margen de comisión más bajo del mercado, ideal para grandes volúmenes **sin riesgo de limitación** por ganar.
+                            El referente mundial en <strong class="text-neutral-200">Hándicap Asiático para Fútbol</strong> y líneas principales de la <strong class="text-neutral-200">NBA/MLB</strong>. Margen de comisión más bajo del mercado, ideal para grandes volúmenes <strong class="text-neutral-200">sin riesgo de limitación</strong> por ganar.
                         </p>
                     </div>
 
@@ -108,7 +108,7 @@
 
                         <!-- DESCRIPCIÓN -->
                         <p class="text-neutral-400 text-xs leading-relaxed mb-6 text-left">
-                            La mayor plataforma de **apuestas cruzadas (Exchange)** del mundo. Permite actuar como corredor apostando a favor o en contra de un resultado, ideal para **hacer trading deportivo** en vivo con cuotas reales sin margen del bookie.
+                            La mayor plataforma de <strong class="text-neutral-200">apuestas cruzadas (Exchange)</strong> del mundo. Permite actuar como corredor apostando a favor o en contra de un resultado, ideal para <strong class="text-neutral-200">hacer trading deportivo</strong> en vivo con cuotas reales sin margen del bookie.
                         </p>
                     </div>
 
@@ -138,7 +138,7 @@
 
                         <!-- DESCRIPCIÓN -->
                         <p class="text-neutral-400 text-xs leading-relaxed mb-6 text-left">
-                            Líder indiscutible en **apuestas deportivas con criptomonedas**. Destaca por sus retiros instantáneos sin comisiones bancarias, excelentes cuotas en deportes de combate como la **UFC** y transmisiones en vivo en alta definición.
+                            Líder indiscutible en <strong class="text-neutral-200">apuestas deportivas con criptomonedas</strong>. Destaca por sus retiros instantáneos sin comisiones bancarias, excelentes cuotas en deportes de combate como la <strong class="text-neutral-200">UFC</strong> y transmisiones en vivo en alta definición.
                         </p>
                     </div>
 
@@ -168,7 +168,7 @@
 
                         <!-- DESCRIPCIÓN -->
                         <p class="text-neutral-400 text-xs leading-relaxed mb-6 text-left">
-                            La plataforma con la mayor variedad de **mercados en directo** y líneas secundarias (córners, tarjetas, actuaciones del jugador). Indispensable para apostadores de **tenis** por su cobertura en torneos ITF y Challengers.
+                            La plataforma con la mayor variedad de <strong class="text-neutral-200">mercados en directo</strong> y líneas secundarias (córners, tarjetas, actuaciones del jugador). Indispensable para apostadores de <strong class="text-neutral-200">tenis</strong> por su cobertura en torneos ITF y Challengers.
                         </p>
                     </div>
 

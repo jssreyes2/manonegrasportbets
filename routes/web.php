@@ -8,6 +8,8 @@ use App\Http\Controllers\Admin\Settings\UserController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\WebPage\StaticPageController;
 use App\Models\StaticPage;
+use App\Models\FrequentlyAskedQuestion;
+use App\Services\Register\PlanServices;
 use App\Http\Controllers\Dashboard\PickController;
 use App\Http\Controllers\Dashboard\CheckoutController;
 use App\Http\Middleware\ActiveSubscription;
@@ -40,8 +42,24 @@ Route::middleware('auth')->group(function () {
 
 Route::get('/access-manager', [HomeController::class, 'formLogin'])->name('formLogin');
 
-Route::get('/', function () {
-    return view('frontend.principal');
+// FAQs destacadas para las landings; si la BD falla la página se muestra igual
+$landingFaqs = fn() => rescue(
+    fn() => FrequentlyAskedQuestion::where('is_active', true)
+        ->where('language', session_language())
+        ->orderBy('orden')
+        ->take(5)
+        ->get(),
+    collect(),
+);
+
+// Planes activos (mismo origen que la vista Suscripción del panel)
+$activePlans = fn() => rescue(
+    fn() => app(PlanServices::class)->getPlans(['is_active' => true])->get(),
+    collect(),
+);
+
+Route::get('/', function () use ($landingFaqs, $activePlans) {
+    return view('frontend.principal', ['faqs' => $landingFaqs(), 'activePlans' => $activePlans()]);
 })->name('show.principal');
 
 Route::get('/how-it-works', function () {
@@ -52,8 +70,8 @@ Route::get('/members', function () {
     return view('frontend.members', ['classMembers' => 'border-b-2 border-lime-400']);
 })->name('show.members');
 
-Route::get('/plans', function () {
-    return view('frontend.plans', ['classPlans' => 'border-b-2 border-lime-400']);
+Route::get('/plans', function () use ($landingFaqs, $activePlans) {
+    return view('frontend.plans', ['classPlans' => 'border-b-2 border-lime-400', 'faqs' => $landingFaqs(), 'activePlans' => $activePlans()]);
 })->name('show.plans');
 
 Route::get('/login-customer', function () {

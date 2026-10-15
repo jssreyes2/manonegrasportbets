@@ -87,3 +87,83 @@ td.field input.error, td.field select.error, tr.errorRow td.field input, tr.erro
     font-weight: bold; /* Opcional: para destacarlo aún más */
     border-bottom: 2px solid #a3e635; /* Borde inferior verde */
 }
+
+/* ===== Landing: animaciones y utilidades de conversión ===== */
+
+/* Revelado al hacer scroll (solo si JS está activo, para no ocultar contenido sin JS) */
+html.js [data-reveal] {
+    opacity: 0;
+}
+html.js [data-reveal].is-visible {
+    animation: reveal-up 0.7s cubic-bezier(0.22, 1, 0.36, 1) var(--reveal-delay, 0ms) forwards;
+}
+@keyframes reveal-up {
+    from { opacity: 0; transform: translateY(24px); }
+    to   { opacity: 1; transform: none; }
+}
+
+/* Ticker de deportes */
+.marquee {
+    mask-image: linear-gradient(to right, transparent, #000 10%, #000 90%, transparent);
+}
+.marquee-track {
+    display: flex;
+    width: max-content;
+    animation: marquee 35s linear infinite;
+}
+.marquee:hover .marquee-track {
+    animation-play-state: paused;
+}
+@keyframes marquee {
+    from { transform: translateX(0); }
+    to   { transform: translateX(-50%); }
+}
+
+/* Flotación suave para elementos decorativos */
+.float-slow {
+    animation: float-slow 6s ease-in-out infinite;
+}
+@keyframes float-slow {
+    0%, 100% { transform: translateY(0); }
+    50%      { transform: translateY(-10px); }
+}
+
+/* Brillo que recorre el botón principal */
+.btn-shine {
+    position: relative;
+    overflow: hidden;
+}
+.btn-shine::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(120deg, transparent 30%, rgba(255, 255, 255, 0.45) 50%, transparent 70%);
+    transform: translateX(-100%);
+    animation: shine 3.5s ease-in-out infinite;
+}
+@keyframes shine {
+    0%, 60% { transform: translateX(-100%); }
+    100%    { transform: translateX(100%); }
+}
+
+/* Barra CTA fija en móvil */
+#mobile-cta {
+    transform: translateY(110%);
+    transition: transform 0.3s ease;
+}
+#mobile-cta.is-shown {
+    transform: translateY(0);
+}
+
+/* Acordeón FAQ: oculta el marcador nativo en Safari */
+details > summary::-webkit-details-marker {
+    display: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    html.js [data-reveal] { opacity: 1; }
+    html.js [data-reveal].is-visible,
+    .marquee-track,
+    .float-slow,
+    .btn-shine::after { animation: none; }
+}
