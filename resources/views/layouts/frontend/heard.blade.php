@@ -31,8 +31,13 @@
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between md:justify-start md:gap-16" style="height: 100px;">
 
         <div class="md:hidden flex items-center">
-            <button id="menu-btn" class="text-neutral-400 hover:text-lime-400 focus:outline-none p-2">
-                <i id="menu-icon" data-lucide="menu" class="w-6 h-6"></i>
+            <button id="menu-btn" type="button" aria-controls="mobile-menu" aria-expanded="false" aria-label="Menu" class="text-neutral-400 hover:text-lime-400 focus:outline-none p-2">
+                <svg id="menu-icon-open" class="w-6 h-6 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+                </svg>
+                <svg id="menu-icon-close" class="w-6 h-6 pointer-events-none hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                </svg>
             </button>
         </div>
 
@@ -150,6 +155,25 @@
         </div>
     </div>
 </header>
+
+{{-- Menú hamburguesa inline: no depende de app_web.js, así funciona aunque el bundle de Vite no cargue --}}
+<script>
+    (function () {
+        var btn = document.getElementById('menu-btn');
+        var menu = document.getElementById('mobile-menu');
+        if (!btn || !menu) return;
+
+        var iconOpen = document.getElementById('menu-icon-open');
+        var iconClose = document.getElementById('menu-icon-close');
+
+        btn.addEventListener('click', function () {
+            var isOpen = menu.classList.toggle('hidden') === false;
+            btn.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+            if (iconOpen) iconOpen.classList.toggle('hidden', isOpen);
+            if (iconClose) iconClose.classList.toggle('hidden', !isOpen);
+        });
+    })();
+</script>
 
 @yield('content')
 

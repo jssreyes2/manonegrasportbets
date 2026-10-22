@@ -17,7 +17,7 @@ const iniciarTodo = () => {
     // Primero el revelado: si algo de lo demás falla, el contenido no queda oculto
     initReveal();
 
-    [initMobileMenu, initAuthDropdown, initCounters, initFreePick, initMobileCta].forEach((init) => {
+    [initAuthDropdown, initCounters, initFreePick, initMobileCta].forEach((init) => {
         try {
             init();
         } catch (e) {
@@ -36,29 +36,7 @@ if (document.readyState === 'loading') {
     iniciarTodo();
 }
 
-// 3. Lógica del Menú Móvil (Hamburguesa)
-function initMobileMenu() {
-    const menuBtn = document.getElementById('menu-btn');
-    const mobileMenu = document.getElementById('mobile-menu');
-
-    if (!menuBtn || !mobileMenu) return;
-
-    menuBtn.addEventListener('click', () => {
-        mobileMenu.classList.toggle('hidden');
-
-        const menuIcon = document.getElementById('menu-icon');
-        if (!menuIcon) return;
-
-        const isMenuOpen = !mobileMenu.classList.contains('hidden');
-        if (isMenuOpen) {
-            menuIcon.setAttribute('data-lucide', 'x');
-        } else {
-            menuIcon.setAttribute('data-lucide', 'menu');
-        }
-
-        if (window.lucide) window.lucide.createIcons();
-    });
-}
+// 3. El menú móvil (hamburguesa) vive inline en layouts/frontend/heard.blade.php
 
 // 4. Lógica del Dropdown "Mi Cuenta"
 function initAuthDropdown() {
