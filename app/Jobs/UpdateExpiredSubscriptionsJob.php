@@ -3,6 +3,7 @@
 namespace App\Jobs;
 
 use App\Models\Notification;
+use App\Models\Pick;
 use App\Models\Plan;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
@@ -18,6 +19,8 @@ class UpdateExpiredSubscriptionsJob implements ShouldQueue
     
     public $timeout = 600;  // 10 minutos (job masivo)
     public $tries   = 1;    // NO reintentar para evitar duplicados
+    
+    private array $pendingEliteDays = [];
     
     public function __construct()
     {
@@ -55,6 +58,12 @@ class UpdateExpiredSubscriptionsJob implements ShouldQueue
                             $notification = null;
                             
                             if ($subscription->sure_bettor) {
+                                continue;
+                            }
+                            
+                            // Elite con picks de su día sin calificar: se espera el resultado para decidir el seguro del apostador
+                            if ($subscription->subscription_plan === Subscription::PLAN_ELITE
+                                && $this->hasPendingElitePicks($subscription->subscription_expires_at->format('Y-m-d'))) {
                                 continue;
                             }
                             
@@ -129,6 +138,15 @@ class UpdateExpiredSubscriptionsJob implements ShouldQueue
             'error' => $exception->getMessage(),
             'trace' => $exception->getTraceAsString()
         ]);
+    }
+    
+    private function hasPendingElitePicks(string $day): bool
+    {
+        return $this->pendingEliteDays[$day] ??= Pick::where('plan_id', Plan::ID_PLAN_ELITE)
+            ->where('source', Pick::SOURCE_SUSCRIPTION)
+            ->whereDate('created_at', $day)
+            ->whereNull('right')
+            ->exists();
     }
     
     private function activatePlans()

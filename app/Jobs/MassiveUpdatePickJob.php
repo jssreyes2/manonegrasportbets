@@ -53,7 +53,14 @@ class MassiveUpdatePickJob implements ShouldQueue
             }
             
             
-            $suscriptionsUsers->chunk(50, function ($subscriptions) use (&$successCount, &$failedCount) {
+            // Seguro del apostador: exige que todos los picks del plan publicados ese día estén calificados como perdidos
+            $dayPicksLost = !Pick::where('plan_id', $this->pick->plan_id)
+                ->where('source', Pick::SOURCE_SUSCRIPTION)
+                ->whereDate('created_at', $this->pick->created_at->format('Y-m-d'))
+                ->where(fn($q) => $q->whereNull('right')->orWhere('right', true))
+                ->exists();
+            
+            $suscriptionsUsers->chunk(50, function ($subscriptions) use (&$successCount, &$failedCount, $dayPicksLost) {
                 foreach ($subscriptions as $subscription) {
                     try {
                         
@@ -63,11 +70,14 @@ class MassiveUpdatePickJob implements ShouldQueue
                             continue;
                         }
                         
-                        $subscription->winner = $this->pick->right;
                         if ($subscription->subscription_plan == Subscription::PLAN_ELITE) {
-                            $subscription->sure_bettor = $subscription->quantity_pick == 2 && !$this->pick->right;
+                            // Un acierto del día no se pierde por un fallo calificado después
+                            $subscription->winner = $subscription->winner || $this->pick->right;
                             
-                            if ($subscription->sure_bettor) {
+                            // Solo si perdió los dos picks que se le enviaron en el día
+                            $lostBoth = !$subscription->winner && $subscription->quantity_pick == 2 && $dayPicksLost;
+                            
+                            if ($lostBoth && !$subscription->sure_bettor) {
                                 $newDate                               = \Carbon\Carbon::parse($subscription->subscription_expires_at)
                                     ->addDay()
                                     ->startOfDay()
@@ -75,9 +85,9 @@ class MassiveUpdatePickJob implements ShouldQueue
                                 $subscription->subscription_expires_at = $newDate;
                             }
                             
-                            if (($subscription->quantity_pick > 2 && !$this->pick->right) || $this->pick->right) {
-                                $subscription->sure_bettor = false;
-                            }
+                            $subscription->sure_bettor = $lostBoth;
+                        } else {
+                            $subscription->winner = $this->pick->right;
                         }
                         
                         $subscription->save();
