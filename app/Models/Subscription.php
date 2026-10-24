@@ -107,7 +107,10 @@ class Subscription extends Model
                 $operator = '=';
             }
             
-            $query->whereDate('subscriptions.subscription_expires_at', $operator, now()->format('Y-m-d'));
+            // true = hoy; también acepta una fecha concreta (Y-m-d)
+            $date = $filters['subscription_expires_at'] === true ? now()->format('Y-m-d') : $filters['subscription_expires_at'];
+            
+            $query->whereDate('subscriptions.subscription_expires_at', $operator, $date);
         }
         
         if (isset($filters['expired'])) {

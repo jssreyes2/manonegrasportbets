@@ -268,7 +268,8 @@ class WhopWebhookServices
             ->first();
 
         // Si renueva con el plan aún vigente, los días se suman al vencimiento actual
-        $baseDate = now();
+        $now      = now();
+        $baseDate = $now;
         if ($subscription
             && $subscription->subscription_status === Subscription::STATUS_ACTIVE
             && $subscription->subscription_expires_at?->greaterThan($baseDate)) {
@@ -292,6 +293,14 @@ class WhopWebhookServices
             'whop_membership_id'      => $membershipId,
             'subscription_expires_at' => $expirationDate,
         ];
+
+        // Renovación de un plan ya vencido: arranca un ciclo nuevo sin el estado de picks del anterior
+        if ($subscription && $baseDate === $now) {
+            $subscription->winner        = null;
+            $subscription->sure_bettor   = null;
+            $subscription->quantity_pick = null;
+            $subscription->send_email    = null;
+        }
 
         if ($subscription) {
             $subscription->update($attributes);

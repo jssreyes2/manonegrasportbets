@@ -37,10 +37,13 @@ class MassiveUpdatePickJob implements ShouldQueue
             }
             
             $suscriptionsUsers = Subscription::getSubscription()->filter([
-                'subscription_expires_at' => true,
+                // Se compara contra el día del pick, no contra hoy: si se califica tarde no debe tocar a quien compró después
+                'subscription_expires_at' => $this->pick->created_at->format('Y-m-d'),
                 'subscription_status'     => Subscription::STATUS_ACTIVE,
                 'subscription_plan'       => $this->pick->plan->source,
                 'winner'                  => true,
+                // Solo quienes recibieron un pick en este ciclo
+                'send_email'              => true,
             ]);
             
             
