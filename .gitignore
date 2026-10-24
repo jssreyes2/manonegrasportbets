@@ -15,7 +15,8 @@ intelephense_cache/
 /public/hot
 /public/storage
 /public/js
-/public/css
+/public/css/*
+!/public/css/style-frm-login-admin.css
 /storage/clockwork
 /storage/debugbar
 /storage/logs/*.log

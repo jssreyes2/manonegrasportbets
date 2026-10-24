@@ -1,0 +1,386 @@
+/* Login del panel de administración: panel de marca oscuro + formulario claro */
+:root {
+    --lg-ink: #0b0b0c;
+    --lg-ink-2: #161618;
+    --lg-bg: #f4f5f7;
+    --lg-surface: #ffffff;
+    --lg-text: #111827;
+    --lg-muted: #6b7280;
+    --lg-brand: #a3e635;
+    --lg-brand-hover: #bef264;
+    --lg-brand-ink: #3f6212;
+    --lg-danger: #b91c1c;
+    --lg-danger-soft: #fee2e2;
+}
+
+html, body {
+    min-height: 100%;
+}
+
+body {
+    margin: 0;
+    font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+    color: var(--lg-text);
+    background: var(--lg-bg);
+}
+
+#app > main {
+    padding: 0 !important;
+}
+
+.lg-shell {
+    display: flex;
+    min-height: 100vh;
+}
+
+/* ---------- Panel de marca ---------- */
+.lg-brand {
+    position: relative;
+    flex: 0 0 46%;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: 40px;
+    padding: 48px 56px;
+    overflow: hidden;
+    color: #fff;
+    background:
+        radial-gradient(circle at 15% 20%, rgba(163, 230, 53, .16) 0%, transparent 45%),
+        radial-gradient(circle at 85% 85%, rgba(163, 230, 53, .10) 0%, transparent 45%),
+        var(--lg-ink);
+}
+
+/* Retícula sutil que se desvanece hacia los bordes */
+.lg-brand::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background-image: linear-gradient(rgba(255, 255, 255, .035) 1px, transparent 1px),
+                      linear-gradient(90deg, rgba(255, 255, 255, .035) 1px, transparent 1px);
+    background-size: 44px 44px;
+    -webkit-mask-image: radial-gradient(circle at 30% 40%, #000 0%, transparent 75%);
+    mask-image: radial-gradient(circle at 30% 40%, #000 0%, transparent 75%);
+    pointer-events: none;
+}
+
+.lg-brand > * {
+    position: relative;
+    z-index: 1;
+}
+
+.lg-logo {
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+    font-family: 'Poppins', sans-serif;
+    font-size: 1.15rem;
+    font-weight: 600;
+    color: #fff;
+    text-decoration: none;
+}
+
+.lg-logo:hover {
+    color: #fff;
+    text-decoration: none;
+}
+
+.lg-logo img {
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    box-shadow: 0 0 0 2px rgba(163, 230, 53, .4), 0 0 24px rgba(163, 230, 53, .25);
+}
+
+.lg-logo b {
+    color: var(--lg-brand);
+    font-weight: 600;
+}
+
+.lg-headline {
+    max-width: 440px;
+}
+
+.lg-eyebrow {
+    display: inline-block;
+    margin-bottom: 16px;
+    padding: 4px 12px;
+    font-size: .75rem;
+    font-weight: 600;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+    border-radius: 999px;
+    color: var(--lg-brand);
+    background: rgba(163, 230, 53, .1);
+    border: 1px solid rgba(163, 230, 53, .25);
+}
+
+.lg-headline h2 {
+    margin: 0 0 14px;
+    font-family: 'Poppins', sans-serif;
+    font-size: 2.3rem;
+    font-weight: 600;
+    line-height: 1.15;
+    color: #fff;
+}
+
+.lg-headline h2 span {
+    color: var(--lg-brand);
+}
+
+.lg-headline p {
+    margin: 0;
+    font-size: 1rem;
+    line-height: 1.6;
+    color: #a1a1aa;
+}
+
+.lg-features {
+    display: grid;
+    gap: 12px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.lg-features li {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: .9rem;
+    color: #d4d4d8;
+}
+
+.lg-features i {
+    width: 34px;
+    height: 34px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 10px;
+    font-size: .85rem;
+    color: var(--lg-brand);
+    background: var(--lg-ink-2);
+    border: 1px solid rgba(255, 255, 255, .07);
+}
+
+/* ---------- Formulario ---------- */
+.lg-main {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 40px 24px;
+}
+
+.lg-card {
+    width: 100%;
+    max-width: 400px;
+}
+
+.lg-card-logo {
+    display: none;
+    margin-bottom: 28px;
+}
+
+.lg-card-logo .lg-logo,
+.lg-card-logo .lg-logo:hover {
+    color: var(--lg-text);
+}
+
+.lg-card-logo .lg-logo b {
+    color: var(--lg-brand-ink);
+}
+
+.lg-card h1 {
+    margin: 0 0 6px;
+    font-family: 'Poppins', sans-serif;
+    font-size: 1.75rem;
+    font-weight: 600;
+}
+
+.lg-card .lg-sub {
+    margin: 0 0 28px;
+    color: var(--lg-muted);
+}
+
+.lg-field {
+    margin-bottom: 18px;
+}
+
+.lg-field > label {
+    display: block;
+    margin-bottom: 6px;
+    font-size: .82rem;
+    font-weight: 600;
+    color: #374151;
+}
+
+.lg-input {
+    position: relative;
+}
+
+.lg-input > i {
+    position: absolute;
+    top: 50%;
+    left: 14px;
+    transform: translateY(-50%);
+    color: #9ca3af;
+    pointer-events: none;
+}
+
+.lg-input .form-control {
+    height: 46px;
+    padding: 0 44px 0 40px;
+    font-size: .95rem;
+    border: 1px solid #d1d5db;
+    border-radius: 10px;
+    background: var(--lg-surface);
+    box-shadow: none;
+}
+
+.lg-input .form-control:focus {
+    border-color: #84cc16;
+    box-shadow: 0 0 0 3px rgba(163, 230, 53, .25);
+}
+
+.lg-input .form-control.error {
+    border-color: var(--lg-danger) !important;
+    background: var(--lg-surface) !important;
+}
+
+label.error {
+    display: block !important;
+    margin-top: 6px;
+    font-size: .78rem;
+    font-weight: 500;
+    color: var(--lg-danger);
+}
+
+.lg-toggle {
+    position: absolute;
+    top: 50%;
+    right: 6px;
+    transform: translateY(-50%);
+    width: 34px;
+    height: 34px;
+    border: 0;
+    border-radius: 8px;
+    color: #9ca3af;
+    background: transparent;
+    cursor: pointer;
+}
+
+.lg-toggle:hover {
+    color: var(--lg-text);
+    background: #f3f4f6;
+}
+
+.lg-alert {
+    display: none;
+    align-items: flex-start;
+    gap: 8px;
+    margin-bottom: 18px;
+    padding: 10px 12px;
+    font-size: .86rem;
+    border-radius: 10px;
+    color: var(--lg-danger);
+    background: var(--lg-danger-soft);
+    border: 1px solid #fecaca;
+}
+
+.lg-alert.show {
+    display: flex;
+}
+
+.lg-submit {
+    width: 100%;
+    height: 48px;
+    margin-top: 6px;
+    border: 0;
+    border-radius: 10px;
+    font-weight: 600;
+    font-size: .95rem;
+    color: var(--lg-ink);
+    background: var(--lg-brand);
+    box-shadow: 0 6px 20px rgba(163, 230, 53, .35);
+    transition: background .15s ease, box-shadow .15s ease, transform .15s ease;
+}
+
+.lg-submit:hover:not(:disabled) {
+    background: var(--lg-brand-hover);
+    transform: translateY(-1px);
+}
+
+.lg-submit:focus {
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(163, 230, 53, .4);
+}
+
+.lg-submit:disabled {
+    cursor: wait;
+    opacity: .85;
+}
+
+.lg-spinner {
+    display: none;
+    width: 18px;
+    height: 18px;
+    margin-right: 8px;
+    vertical-align: -3px;
+    border: 2px solid rgba(11, 11, 12, .25);
+    border-top-color: var(--lg-ink);
+    border-radius: 50%;
+    animation: lg-spin .7s linear infinite;
+}
+
+.lg-submit.is-loading .lg-spinner {
+    display: inline-block;
+}
+
+.lg-submit.is-loading .lg-icon {
+    display: none;
+}
+
+@keyframes lg-spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+.lg-back {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    margin-top: 24px;
+    font-size: .86rem;
+    color: var(--lg-muted);
+}
+
+.lg-back:hover {
+    color: var(--lg-brand-ink);
+    text-decoration: none;
+}
+
+.lg-foot {
+    margin: 40px 0 0;
+    font-size: .78rem;
+    color: #9ca3af;
+}
+
+/* ---------- Responsive ---------- */
+@media (max-width: 991.98px) {
+    .lg-brand {
+        display: none;
+    }
+
+    .lg-card-logo {
+        display: block;
+    }
+}
+
+@media (max-width: 575.98px) {
+    .lg-main {
+        align-items: flex-start;
+        padding: 48px 20px 32px;
+    }
+}
