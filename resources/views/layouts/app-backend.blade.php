@@ -2,7 +2,7 @@
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
 <head>
     <meta charset="utf-8">
-    <title>La Mano Negra</title>
+    <title>@hasSection('title')@yield('title') · @endif La Mano Negra</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <link rel="icon" type="image/x-icon" href="{{ asset('img/logo.ico') }}">
@@ -14,39 +14,45 @@
     @yield('style')
 </head>
 
-<body class="sidebar-mini layout-fixed text-sm">
+@php
+    $authUser   = \Illuminate\Support\Facades\Auth::user();
+    $isCustomer = $authUser->rol_id == \App\Models\Rol::ROL_CUSTOMER;
+    $userName   = $authUser?->profile?->first_name ? userShortName() : explode('@', $authUser?->email)[0];
+    $userPhoto  = getImageUrl('users/' . $authUser?->id, $authUser?->profile?->photo);
+    $panelText  = __t('text.backend.messages.control_panel', 'Panel de Control');
+@endphp
+
+<body class="hold-transition sidebar-mini layout-fixed tbh-admin">
 <div class="wrapper">
-    <nav class="main-header navbar navbar-expand navbar-dark navbar-light">
-        <!-- Botón del menú lateral (Izquierda) -->
-        <ul class="navbar-nav">
+    <nav class="main-header navbar navbar-expand navbar-white">
+        <ul class="navbar-nav align-items-center">
             <li class="nav-item">
-                <a class="nav-link" data-widget="pushmenu" href="#" role="button" style="color: #ffffff"><i class="fas fa-bars"></i></a>
+                <a class="nav-link tbh-toggle" data-widget="pushmenu" href="#" role="button" aria-label="Menú"><i class="fas fa-bars"></i></a>
             </li>
         </ul>
 
-        <!-- Elementos de la derecha -->
         <ul class="navbar-nav ml-auto align-items-center">
-
-            @if(\Illuminate\Support\Facades\Auth::user()->rol_id == \App\Models\Rol::ROL_CUSTOMER)
-                <li class="nav-item d-flex align-items-center px-2" style="gap: 8px;">
-                    <!-- Botón Español -->
-                    <a href="{{ route('lang.switch', 'es') }}" class="nav-link px-1 {{ app()->getLocale() == 'es' ? 'font-weight-bold text-warning' : 'text-light' }}" title="Español" style="display: inline-flex; align-items: center; gap: 6px;">
-                          {{__t('text.frontend.menu_es_spanish', '🇪🇸 Spanish')}}
-                    </a>
-
-                    <span class="text-muted">|</span>
-
-                    <!-- Botón Inglés -->
-                    <a href="{{ route('lang.switch', 'en') }}" class="nav-link px-1 {{ app()->getLocale() == 'en' ? 'font-weight-bold text-warning' : 'text-light' }}" title="English" style="display: inline-flex; align-items: center; gap: 6px;">
-                          {{__t('text.frontend.menu_en_english', '🇺🇸 English')}}
-                    </a>
+            @if($isCustomer)
+                <li class="nav-item">
+                    <div class="tbh-lang">
+                        <a href="{{ route('lang.switch', 'es') }}" class="{{ app()->getLocale() == 'es' ? 'active' : '' }}" title="Español">ES</a>
+                        <a href="{{ route('lang.switch', 'en') }}" class="{{ app()->getLocale() == 'en' ? 'active' : '' }}" title="English">EN</a>
+                    </div>
                 </li>
             @endif
 
-            <!-- Botón de Salir -->
+            <li class="nav-item d-none d-md-flex tbh-header-user">
+                <img src="{{ $userPhoto }}" alt="">
+                <div>
+                    <div class="tbh-user-name">{{ capitalize_first($userName) }}</div>
+                    <div class="tbh-user-role">{{ $authUser->rol->name }}</div>
+                </div>
+            </li>
+
             <li class="nav-item">
-                <a class="nav-link" href="{{ route('logout') }}" onclick="event.preventDefault(); document.getElementById('logout-form').submit();" style="color: #ffffff">
-                    <i class="fas fa-sign-out-alt"></i> {{(\Illuminate\Support\Facades\Auth::user()->rol_id == \App\Models\Rol::ROL_CUSTOMER) ? __t('text.backend.messages.log_out', 'Cerrar Sesión') : 'Cerrar Sesión'}}
+                <a class="nav-link tbh-logout" href="{{ route('logout') }}" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
+                    <i class="fas fa-sign-out-alt"></i>
+                    <span class="d-none d-sm-inline">{{ $isCustomer ? __t('text.backend.messages.log_out', 'Cerrar Sesión') : 'Cerrar Sesión' }}</span>
                 </a>
             </li>
         </ul>
@@ -54,37 +60,26 @@
         <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-none">@csrf</form>
     </nav>
 
-    <aside class="main-sidebar sidebar-dark-info elevation-4">
-        <a href="" class="brand-link">
-            <span class="brand-text font-weight-light">La Mano Negra</span>
-        </a>
-        <div class="sidebar">
-            <nav class="mt-2">
-                <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu">
-                    <li class="nav-item"><i class="nav-icon fas fa-tachometer-alt"></i>
-                        <p>{{__t('text.backend.messages.control_panel', 'Panel de Control') }}</p>
-                    </li>
-                    @auth
-                        @include('layouts.menu-backend')
-                    @endauth
-                </ul>
-            </nav>
-        </div>
+    <aside class="main-sidebar sidebar-dark-primary">
+        @auth
+            @include('layouts.menu-backend', ['isCustomer' => $isCustomer, 'userName' => $userName, 'userPhoto' => $userPhoto, 'panelText' => $panelText])
+        @endauth
     </aside>
 
     <div class="content-wrapper">
-
         <div class="content-header">
             <div class="container-fluid">
-                <div class="row mb-2">
-                    <div class="col-sm-12">
-                        <ol class="breadcrumb float-sm-right">
-                            <li class="breadcrumb-item" style="color: #2a2a2a">@yield('title')</li>
-                            <li class="breadcrumb-item active">{{ __t('text.backend.messages.control_panel', 'Panel de Control') }}</li>
+                <div class="tbh-page-head">
+                    <div>
+                        <h1 class="tbh-page-title">@yield('title')</h1>
+                        <ol class="breadcrumb">
+                            <li class="breadcrumb-item"><a href="{{ route($route) }}">{{ $panelText }}</a></li>
+                            <li class="breadcrumb-item active">@yield('title')</li>
                         </ol>
-                    </div><!-- /.col -->
-                </div><!-- /.row -->
-            </div><!-- /.container-fluid -->
+                    </div>
+                    @yield('page-actions')
+                </div>
+            </div>
         </div>
 
         <section class="content">
@@ -92,13 +87,13 @@
 
                 @if(session('success'))
                     <div class="alert alert-success alert-dismissible fade show" id="successAlert">
-                        <i class="fas fa-check-circle"></i> {{ session('success') }}
+                        <i class="fas fa-check-circle mr-1"></i> {{ session('success') }}
                         <button type="button" class="close" data-dismiss="alert">&times;</button>
                     </div>
                 @endif
                 @if(session('error'))
                     <div class="alert alert-danger alert-dismissible fade show" id="errorAlert">
-                        <i class="fas fa-exclamation-circle"></i> {{ session('error') }}
+                        <i class="fas fa-exclamation-circle mr-1"></i> {{ session('error') }}
                         <button type="button" class="close" data-dismiss="alert">&times;</button>
                     </div>
                 @endif
@@ -107,10 +102,8 @@
         </section>
     </div>
 
-    <!-- /.content-wrapper -->
     <footer class="main-footer">
-        <strong>Copyright &copy; 2026 </strong>
-        La Mano Negra
+        &copy; {{ date('Y') }} La Mano Negra
     </footer>
 
     @include('layouts.modal-confirmation')

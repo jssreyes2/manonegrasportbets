@@ -16,6 +16,7 @@
 ])
 
 <div class="card card-info card-outline">
+    @if($showBtnNew || $routeExport)
     <div class="card-header">
 
         @if($showBtnNew)
@@ -26,7 +27,7 @@
             <a href="{{ $routeExport }}" class="btn btn-outline-dark"><i class="fas fa-file-excel"></i> Excel</a>
         @endif
     </div>
-
+    @endif
 
     <div class="card-body">
         @include('layouts.partials.filter-form', [

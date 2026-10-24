@@ -1,0 +1,813 @@
+/* ==========================================================================
+   Tema del backend: contenido claro, sidebar oscuro y acento lima de la marca.
+   Se carga encima de AdminLTE, por eso varias reglas igualan su especificidad.
+   ========================================================================== */
+
+:root {
+    --tbh-bg: #f4f5f7;
+    --tbh-surface: #ffffff;
+    --tbh-surface-2: #f9fafb;
+    --tbh-border: #e5e7eb;
+    --tbh-text: #111827;
+    --tbh-muted: #6b7280;
+
+    --tbh-brand: #a3e635;
+    --tbh-brand-hover: #bef264;
+    --tbh-brand-ink: #3f6212;   /* lima legible sobre blanco */
+    --tbh-brand-soft: #f3fbe4;
+
+    /* Botones de acción: grafito sobrio en lugar del lima neón */
+    --tbh-action: #1f2329;
+    --tbh-action-hover: #343a42;
+    --tbh-action-ring: rgba(31, 35, 41, .18);
+
+    --tbh-sidebar: #0b0b0c;
+    --tbh-sidebar-2: #161618;
+    --tbh-sidebar-text: #a1a1aa;
+    --tbh-sidebar-line: rgba(255, 255, 255, .07);
+
+    --tbh-success: #15803d;
+    --tbh-success-soft: #dcfce7;
+    --tbh-danger: #b91c1c;
+    --tbh-danger-soft: #fee2e2;
+    --tbh-warning: #a16207;
+    --tbh-warning-soft: #fef3c7;
+    --tbh-info: #1d4ed8;
+    --tbh-info-soft: #dbeafe;
+
+    --tbh-radius: 12px;
+    --tbh-radius-sm: 8px;
+    --tbh-shadow: 0 1px 2px rgba(16, 24, 40, .05), 0 1px 3px rgba(16, 24, 40, .06);
+    --tbh-shadow-lg: 0 10px 30px rgba(16, 24, 40, .08);
+}
+
+/* ---------- Base ---------- */
+body.tbh-admin {
+    font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+    font-size: .9rem;
+    color: var(--tbh-text);
+    background: var(--tbh-bg);
+}
+
+.tbh-admin .content-wrapper {
+    background: var(--tbh-bg);
+}
+
+.tbh-admin a {
+    color: var(--tbh-brand-ink);
+}
+
+.tbh-admin .text-primary {
+    color: var(--tbh-brand-ink) !important;
+}
+
+/* Varias vistas repiten section.content/container-fluid dentro del layout: sin sangría doble */
+.tbh-admin .content .content,
+.tbh-admin .content .content > .container-fluid,
+.tbh-admin .content > .container-fluid > .content > .container-fluid {
+    padding-left: 0;
+    padding-right: 0;
+}
+
+.tbh-admin h1, .tbh-admin h2, .tbh-admin h3, .tbh-admin h4, .tbh-admin h5 {
+    font-family: 'Poppins', 'Inter', sans-serif;
+    color: var(--tbh-text);
+}
+
+/* ---------- Barra superior ---------- */
+.tbh-admin .main-header {
+    background: var(--tbh-surface);
+    border-bottom: 1px solid var(--tbh-border);
+    min-height: 60px;
+}
+
+.tbh-admin .main-header .nav-link {
+    color: var(--tbh-muted);
+    height: auto;
+}
+
+.tbh-admin .main-header .nav-link:hover {
+    color: var(--tbh-text);
+}
+
+.tbh-toggle {
+    width: 40px;
+    height: 40px !important;
+    display: inline-flex !important;
+    align-items: center;
+    justify-content: center;
+    border-radius: var(--tbh-radius-sm);
+}
+
+.tbh-toggle:hover {
+    background: var(--tbh-surface-2);
+}
+
+.tbh-header-user {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 0 12px;
+    margin-right: 4px;
+    border-right: 1px solid var(--tbh-border);
+}
+
+.tbh-header-user img {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.tbh-header-user .tbh-user-name {
+    font-weight: 600;
+    line-height: 1.1;
+    color: var(--tbh-text);
+}
+
+.tbh-header-user .tbh-user-role {
+    font-size: .75rem;
+    color: var(--tbh-muted);
+}
+
+.tbh-logout {
+    display: inline-flex !important;
+    align-items: center;
+    gap: 6px;
+    border-radius: var(--tbh-radius-sm);
+    font-weight: 500;
+}
+
+.tbh-logout:hover {
+    background: var(--tbh-danger-soft);
+    color: var(--tbh-danger) !important;
+}
+
+.tbh-lang {
+    display: inline-flex;
+    padding: 3px;
+    margin-right: 8px;
+    border-radius: 999px;
+    background: var(--tbh-surface-2);
+    border: 1px solid var(--tbh-border);
+}
+
+.tbh-lang a {
+    padding: 4px 12px;
+    border-radius: 999px;
+    font-size: .8rem;
+    font-weight: 600;
+    color: var(--tbh-muted);
+}
+
+.tbh-lang a.active {
+    background: var(--tbh-sidebar);
+    color: var(--tbh-brand);
+}
+
+/* ---------- Sidebar ---------- */
+.tbh-admin .main-sidebar {
+    background: var(--tbh-sidebar);
+    box-shadow: none !important;
+}
+
+.tbh-admin .main-sidebar .brand-link {
+    height: 60px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 0 18px;
+    border-bottom: 1px solid var(--tbh-sidebar-line) !important;
+    color: #fff;
+}
+
+.tbh-admin .main-sidebar .brand-link .brand-image {
+    float: none;
+    margin: 0;
+    max-height: 34px;
+    width: 34px;
+    border-radius: 50%;
+    box-shadow: 0 0 0 2px rgba(163, 230, 53, .35);
+}
+
+.tbh-admin .main-sidebar .brand-text {
+    font-family: 'Poppins', sans-serif;
+    font-weight: 600 !important;
+    letter-spacing: .2px;
+}
+
+.tbh-admin .main-sidebar .brand-text b {
+    color: var(--tbh-brand);
+    font-weight: 600;
+}
+
+.tbh-admin .sidebar {
+    padding: 0 10px;
+}
+
+.tbh-admin .user-panel {
+    align-items: center;
+    padding: 14px 6px;
+    margin: 12px 0 8px;
+    border-radius: var(--tbh-radius);
+    background: var(--tbh-sidebar-2);
+    border: 1px solid var(--tbh-sidebar-line) !important;
+}
+
+.tbh-admin .user-panel img {
+    width: 38px;
+    height: 38px;
+    object-fit: cover;
+}
+
+.tbh-admin .user-panel .info {
+    padding: 0 10px;
+    line-height: 1.25;
+}
+
+.tbh-admin .user-panel .tbh-user-name {
+    color: #fff;
+    font-weight: 600;
+}
+
+.tbh-role-badge {
+    display: inline-block;
+    margin-top: 3px;
+    padding: 1px 8px;
+    font-size: .7rem;
+    font-weight: 600;
+    border-radius: 999px;
+    color: var(--tbh-brand);
+    background: rgba(163, 230, 53, .12);
+}
+
+.tbh-nav-label {
+    padding: 14px 12px 6px;
+    font-size: .68rem;
+    font-weight: 600;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+    color: #52525b;
+}
+
+.tbh-admin .nav-sidebar .nav-link {
+    color: var(--tbh-sidebar-text);
+    border-radius: var(--tbh-radius-sm);
+    margin-bottom: 2px;
+    padding: .55rem .75rem;
+    transition: background .15s ease, color .15s ease;
+}
+
+.tbh-admin .nav-sidebar .nav-link p {
+    text-transform: none;
+}
+
+.tbh-admin .nav-sidebar .nav-link:hover {
+    color: #fff;
+    background: var(--tbh-sidebar-2);
+}
+
+.tbh-admin .nav-sidebar > .nav-item > .nav-link.active,
+.tbh-admin .sidebar-dark-primary .nav-sidebar > .nav-item > .nav-link.active {
+    color: var(--tbh-sidebar);
+    background: var(--tbh-brand);
+    box-shadow: 0 0 18px rgba(163, 230, 53, .25);
+    font-weight: 600;
+}
+
+.tbh-admin .nav-sidebar > .nav-item.menu-open > .nav-link:not(.active) {
+    color: #fff;
+}
+
+/* Padre del submenú activo: se destaca sin competir con el hijo */
+.tbh-admin .nav-sidebar > .nav-item.has-treeview.menu-open > .nav-link.active {
+    color: #fff;
+    background: var(--tbh-sidebar-2);
+    box-shadow: none;
+}
+
+.tbh-admin .nav-treeview {
+    margin: 2px 0 6px;
+}
+
+.tbh-admin .nav-treeview > .nav-item > .nav-link {
+    padding-left: 1.1rem;
+    font-size: .86rem;
+}
+
+.tbh-admin .nav-treeview > .nav-item > .nav-link .nav-icon {
+    font-size: .8rem;
+}
+
+.tbh-admin .nav-treeview > .nav-item > .nav-link.active,
+.tbh-admin .sidebar-dark-primary .nav-treeview > .nav-item > .nav-link.active {
+    color: var(--tbh-brand);
+    background: rgba(163, 230, 53, .1);
+    font-weight: 600;
+}
+
+/* Sidebar colapsado (modo mini) */
+.sidebar-collapse.tbh-admin .user-panel {
+    padding: 8px 0;
+    background: transparent;
+    border-color: transparent !important;
+}
+
+/* ---------- Cabecera de página ---------- */
+.tbh-admin .content-header {
+    padding: 22px .5rem 10px;
+}
+
+.tbh-page-head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 8px;
+}
+
+.tbh-page-title {
+    margin: 0;
+    font-size: 1.45rem;
+    font-weight: 600;
+}
+
+.tbh-admin .content-header .breadcrumb {
+    margin: 4px 0 0;
+    padding: 0;
+    background: transparent;
+    font-size: .8rem;
+}
+
+.tbh-admin .content-header .breadcrumb-item,
+.tbh-admin .content-header .breadcrumb-item.active,
+.tbh-admin .content-header .breadcrumb-item a {
+    color: var(--tbh-muted);
+}
+
+/* ---------- Tarjetas ---------- */
+.tbh-admin .card {
+    border: 1px solid var(--tbh-border);
+    border-radius: var(--tbh-radius);
+    box-shadow: var(--tbh-shadow);
+    background: var(--tbh-surface);
+}
+
+.tbh-admin .card.card-outline {
+    border-top: 1px solid var(--tbh-border);
+}
+
+.tbh-admin .card-header,
+.tbh-admin .card[class*=card-] > .card-header {
+    background: var(--tbh-surface);
+    color: var(--tbh-text);
+    border-bottom: 1px solid var(--tbh-border);
+    border-radius: var(--tbh-radius) var(--tbh-radius) 0 0 !important;
+    padding: 14px 20px;
+}
+
+.tbh-admin .card-header .card-title {
+    font-size: 1rem;
+    font-weight: 600;
+    text-transform: none;
+}
+
+.tbh-admin .card-body {
+    border-top: 0;
+    padding: 20px;
+}
+
+.tbh-admin .card-footer {
+    background: var(--tbh-surface-2);
+    border-top: 1px solid var(--tbh-border);
+    border-radius: 0 0 var(--tbh-radius) var(--tbh-radius);
+}
+
+/* ---------- Botones ---------- */
+.tbh-admin .btn {
+    border-radius: var(--tbh-radius-sm);
+    font-weight: 500;
+    padding: .45rem .95rem;
+    transition: background .15s ease, border-color .15s ease, color .15s ease, box-shadow .15s ease;
+}
+
+.tbh-admin .btn-sm {
+    padding: .25rem .6rem;
+}
+
+/* Acción principal del backend (Nuevo, Buscar, Guardar) */
+.tbh-admin .btn-primary,
+.tbh-admin .btn-info,
+.tbh-admin .btn-outline-info,
+.tbh-admin .btn-brand {
+    color: #fff;
+    background: var(--tbh-action);
+    border-color: var(--tbh-action);
+}
+
+.tbh-admin .btn-primary:hover, .tbh-admin .btn-primary:focus,
+.tbh-admin .btn-info:hover, .tbh-admin .btn-info:focus,
+.tbh-admin .btn-outline-info:hover, .tbh-admin .btn-outline-info:focus,
+.tbh-admin .btn-brand:hover, .tbh-admin .btn-brand:focus,
+.tbh-admin .btn-primary:not(:disabled):not(.disabled):active {
+    color: #fff;
+    background: var(--tbh-action-hover);
+    border-color: var(--tbh-action-hover);
+    box-shadow: 0 0 0 3px var(--tbh-action-ring);
+}
+
+.tbh-admin .btn-outline-secondary,
+.tbh-admin .btn-default,
+.tbh-admin .btn-outline-dark {
+    color: var(--tbh-text);
+    background: var(--tbh-surface);
+    border-color: var(--tbh-border);
+}
+
+.tbh-admin .btn-outline-secondary:hover,
+.tbh-admin .btn-default:hover,
+.tbh-admin .btn-outline-dark:hover {
+    color: var(--tbh-text);
+    background: var(--tbh-surface-2);
+    border-color: #d1d5db;
+}
+
+.tbh-admin .btn-outline-success {
+    color: var(--tbh-success);
+    border-color: #bbf7d0;
+    background: var(--tbh-success-soft);
+}
+
+.tbh-admin .btn-outline-success:hover {
+    color: #fff;
+    background: var(--tbh-success);
+    border-color: var(--tbh-success);
+}
+
+.tbh-admin .btn-success {
+    color: #fff;
+    background: var(--tbh-success);
+    border-color: var(--tbh-success);
+}
+
+.tbh-admin .btn-success:hover,
+.tbh-admin .btn-success:focus {
+    background: #166534;
+    border-color: #166534;
+}
+
+.tbh-admin .btn-danger {
+    background: var(--tbh-danger);
+    border-color: var(--tbh-danger);
+}
+
+/* ---------- Formularios ---------- */
+.tbh-admin .form-control,
+.tbh-admin .custom-select,
+.tbh-admin .select2-container--default .select2-selection--single,
+.tbh-admin .select2-container--default .select2-selection--multiple {
+    border: 1px solid #d1d5db;
+    border-radius: var(--tbh-radius-sm);
+    min-height: 38px;
+    color: var(--tbh-text);
+    box-shadow: none;
+}
+
+.tbh-admin .form-control:focus,
+.tbh-admin .custom-select:focus,
+.tbh-admin .select2-container--focus .select2-selection {
+    border-color: #9ca3af;
+    box-shadow: 0 0 0 3px var(--tbh-action-ring);
+}
+
+.tbh-admin label:not(.form-check-label):not(.custom-control-label) {
+    font-weight: 600;
+    font-size: .82rem;
+    color: #374151;
+}
+
+/* ---------- Tablas ---------- */
+.tbh-admin .table {
+    color: var(--tbh-text);
+    margin-bottom: 0;
+}
+
+.tbh-admin .table-responsive {
+    border: 1px solid var(--tbh-border);
+    border-radius: var(--tbh-radius-sm);
+}
+
+.tbh-admin .card-body.p-0 > .table,
+.tbh-admin .card-body.p-0 .table-responsive,
+.tbh-admin .card-body.table-responsive {
+    border: 0;
+    border-radius: 0;
+}
+
+.tbh-admin .table.table-bordered,
+.tbh-admin .table.table-bordered th,
+.tbh-admin .table.table-bordered td {
+    border-left: 0;
+    border-right: 0;
+}
+
+.tbh-admin .table thead th {
+    background: var(--tbh-surface-2);
+    border-top: 0;
+    border-bottom: 1px solid var(--tbh-border);
+    color: var(--tbh-muted);
+    font-size: .72rem;
+    font-weight: 600;
+    letter-spacing: .05em;
+    text-transform: uppercase;
+    white-space: nowrap;
+    padding: 12px 16px;
+}
+
+.tbh-admin .table td {
+    vertical-align: middle;
+    border-top: 1px solid #f0f1f3;
+    padding: 12px 16px;
+}
+
+.tbh-admin .table-striped tbody tr:nth-of-type(odd) {
+    background: transparent;
+}
+
+.tbh-admin .table tbody tr:hover {
+    background: #fafbfc;
+}
+
+/* Contenidos largos (picks, mensajes) se ajustan en vez de desbordar la tabla */
+.tbh-admin .table td .flex-wrap .badge {
+    white-space: normal;
+    text-align: left;
+    line-height: 1.35;
+}
+
+/* ---------- Badges ---------- */
+.tbh-admin .badge {
+    font-weight: 600;
+    padding: .35em .65em;
+    border-radius: 6px;
+}
+
+.tbh-admin .badge.bg-success, .tbh-admin .badge-success {
+    color: var(--tbh-success) !important;
+    background: var(--tbh-success-soft) !important;
+}
+
+.tbh-admin .badge.bg-danger, .tbh-admin .badge-danger {
+    color: var(--tbh-danger) !important;
+    background: var(--tbh-danger-soft) !important;
+}
+
+.tbh-admin .badge.bg-warning, .tbh-admin .badge-warning {
+    color: var(--tbh-warning) !important;
+    background: var(--tbh-warning-soft) !important;
+}
+
+.tbh-admin .badge.bg-info, .tbh-admin .badge-info {
+    color: var(--tbh-info) !important;
+    background: var(--tbh-info-soft) !important;
+}
+
+.tbh-admin .badge.bg-light {
+    color: #374151 !important;
+    background: #f3f4f6 !important;
+    border-color: var(--tbh-border) !important;
+}
+
+/* ---------- Tarjetas de métricas ---------- */
+.tbh-stat {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    height: 100%;
+    padding: 20px;
+    color: var(--tbh-text) !important;
+    background: var(--tbh-surface);
+    border: 1px solid var(--tbh-border);
+    border-radius: var(--tbh-radius);
+    box-shadow: var(--tbh-shadow);
+    transition: box-shadow .2s ease, transform .2s ease, border-color .2s ease;
+}
+
+.tbh-stat:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--tbh-shadow-lg);
+    border-color: #d9f99d;
+}
+
+.tbh-stat-icon {
+    flex: 0 0 48px;
+    width: 48px;
+    height: 48px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 12px;
+    font-size: 1.15rem;
+    color: var(--tbh-brand);
+    background: var(--tbh-sidebar);
+}
+
+.tbh-stat-label {
+    font-size: .8rem;
+    font-weight: 500;
+    color: var(--tbh-muted);
+}
+
+.tbh-stat-value {
+    font-family: 'Poppins', sans-serif;
+    font-size: 1.6rem;
+    font-weight: 600;
+    line-height: 1.2;
+}
+
+.tbh-stat-link {
+    margin-left: auto;
+    color: #9ca3af;
+    font-size: .85rem;
+}
+
+.tbh-stat:hover .tbh-stat-link {
+    color: var(--tbh-brand-ink);
+}
+
+/* ---------- Paginación ---------- */
+.tbh-admin .pagination {
+    margin: 16px 0 0;
+    gap: 4px;
+}
+
+.tbh-admin .page-link {
+    border: 1px solid var(--tbh-border);
+    border-radius: var(--tbh-radius-sm) !important;
+    color: var(--tbh-text);
+    min-width: 36px;
+    text-align: center;
+}
+
+.tbh-admin .page-item.active .page-link {
+    color: #fff;
+    background: var(--tbh-action);
+    border-color: var(--tbh-action);
+    font-weight: 600;
+}
+
+/* ---------- Alertas ---------- */
+.tbh-admin .alert {
+    border: 1px solid transparent;
+    border-radius: var(--tbh-radius-sm);
+}
+
+.tbh-admin .alert-success {
+    color: var(--tbh-success);
+    background: var(--tbh-success-soft);
+    border-color: #bbf7d0;
+}
+
+.tbh-admin .alert-danger {
+    color: var(--tbh-danger);
+    background: var(--tbh-danger-soft);
+    border-color: #fecaca;
+}
+
+.tbh-admin .alert-warning {
+    color: var(--tbh-warning);
+    background: var(--tbh-warning-soft);
+    border-color: #fde68a;
+}
+
+.tbh-admin .alert-info {
+    color: var(--tbh-info);
+    background: var(--tbh-info-soft);
+    border-color: #bfdbfe;
+}
+
+.tbh-admin .alert .close {
+    color: inherit;
+    opacity: .6;
+}
+
+/* ---------- Dropdowns y modales ---------- */
+.tbh-admin .dropdown-menu {
+    border: 1px solid var(--tbh-border);
+    border-radius: var(--tbh-radius-sm);
+    box-shadow: var(--tbh-shadow-lg);
+    padding: 6px;
+}
+
+.tbh-admin .dropdown-item {
+    border-radius: 6px;
+    padding: 7px 12px;
+    font-size: .86rem;
+}
+
+.tbh-admin .dropdown-item:active {
+    color: var(--tbh-text);
+    background: var(--tbh-surface-2);
+}
+
+.tbh-admin .modal-content {
+    border: 0;
+    border-radius: var(--tbh-radius);
+    box-shadow: 0 25px 50px rgba(0, 0, 0, .25);
+}
+
+.tbh-admin .modal-header {
+    border-bottom: 1px solid var(--tbh-border);
+    padding: 16px 20px;
+}
+
+.tbh-admin .modal-footer {
+    border-top: 1px solid var(--tbh-border);
+}
+
+/* ---------- Pie ---------- */
+.tbh-admin .main-footer {
+    background: transparent;
+    border-top: 1px solid var(--tbh-border);
+    color: var(--tbh-muted);
+    font-size: .8rem;
+}
+
+/* ---------- Planes del cliente ---------- */
+.tbh-plan-card {
+    border-radius: 16px !important;
+    overflow: hidden;
+    transition: transform .2s ease, box-shadow .2s ease;
+}
+
+.tbh-plan-card:hover {
+    transform: translateY(-3px);
+    box-shadow: var(--tbh-shadow-lg);
+}
+
+.tbh-plan-card img {
+    border-radius: 12px;
+}
+
+.tbh-plan-card.is-active {
+    border-color: var(--tbh-brand) !important;
+    box-shadow: 0 0 0 3px rgba(163, 230, 53, .25);
+}
+
+.tbh-plan-active {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 12px;
+    border-radius: 999px;
+    font-weight: 600;
+    color: var(--tbh-brand-ink);
+    background: var(--tbh-brand-soft);
+    border: 1px solid #d9f99d;
+}
+
+.tbh-btn-pay {
+    padding: .8rem 1rem !important;
+    border-radius: 999px !important;
+    font-weight: 600 !important;
+    letter-spacing: .2px;
+}
+
+/* ---------- Móvil ---------- */
+@media (max-width: 767.98px) {
+    .tbh-admin .content-header {
+        padding: 16px .25rem 6px;
+    }
+
+    .tbh-page-title {
+        font-size: 1.2rem;
+    }
+
+    .tbh-admin .card-body {
+        padding: 14px;
+    }
+
+    .tbh-admin .table thead th,
+    .tbh-admin .table td {
+        padding: 10px 12px;
+    }
+}
+
+/* ---------- Botones de formulario ---------- */
+.tbh-form-actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 10px;
+}
+
+.tbh-form-actions .btn {
+    min-width: 120px;
+}
+
+@media (max-width: 575.98px) {
+    .tbh-form-actions .btn {
+        flex: 1 1 100%;
+    }
+}

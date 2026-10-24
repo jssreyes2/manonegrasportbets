@@ -7,6 +7,7 @@
 @import '../../public/plugins/datepicker/jquery.ui.datepicker.css';
 @import '../../public/plugins/bs-stepper/css/bs-stepper.min.css';
 @import '../../public/plugins/summernote/summernote-bs4.min.css';
+@import './admin-theme.css';
 
 
 

@@ -1,17 +1,11 @@
 <div class="card-footer">
-    <div class="row">
-        <div class="col-md-1">
-            <button type="submit" class="btn btn-block btn-outline-secondary">
-                Enviar
-            </button>
-        </div>
+    <div class="tbh-form-actions">
+        <button type="submit" class="btn btn-outline-info">
+            <i class="fas fa-check-circle mr-1"></i> Enviar
+        </button>
 
         @if(isset($route_cancel))
-        <div class="col-md-1">
-            <a href="{{$route_cancel}}" class="btn btn-block btn-outline-secondary">
-                Cancelar
-            </a>
-        </div>
+            <a href="{{$route_cancel}}" class="btn btn-outline-secondary">Cancelar</a>
         @endif
 
         <img src="{{asset('img/loadingfrm.gif')}}" id="loading_form" style="display: none">

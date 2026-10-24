@@ -5,75 +5,129 @@
 @endsection
 
 @section('content')
-    <div class="login-wrapper" style="width: 400px;">
-        <div class="card formulario">
-            <div class="card-header">
-                <h3 class="title">
-                <span class="icono-login">
-                    <i class="fas fa-user-astronaut"></i>
-                </span>
-                    {{__t('text.frontend.login_customer_authentication', 'AUTHENTICATION')}}
-                </h3>
-                <p class="subtitle">La Mano Negra</p>
+    <div class="lg-shell">
+        <aside class="lg-brand">
+            <a href="{{ route('show.principal') }}" class="lg-logo">
+                <img src="{{ asset('img/logo.png') }}" alt="">
+                <span>La Mano <b>Negra</b></span>
+            </a>
+
+            <div class="lg-headline">
+                <span class="lg-eyebrow">Panel de administración</span>
+                <h2>Todo tu negocio de <span>picks</span> en un solo lugar.</h2>
+                <p>Publica jugadas, califica resultados y controla suscripciones y pagos.</p>
             </div>
-            <div class="card-body">
-                <form action="" id="login" method="post">
+
+            <ul class="lg-features">
+                <li><i class="fas fa-futbol"></i> Picks y calificación de resultados</li>
+                <li><i class="fas fa-id-card"></i> Suscripciones y seguro del apostador</li>
+                <li><i class="fas fa-chart-line"></i> Pagos y reportes de clientes</li>
+            </ul>
+        </aside>
+
+        <main class="lg-main">
+            <div class="lg-card">
+                <div class="lg-card-logo">
+                    <a href="{{ route('show.principal') }}" class="lg-logo">
+                        <img src="{{ asset('img/logo.png') }}" alt="">
+                        <span>La Mano <b>Negra</b></span>
+                    </a>
+                </div>
+
+                <h1>Iniciar sesión</h1>
+                <p class="lg-sub">Acceso exclusivo para el equipo administrativo.</p>
+
+                <div class="lg-alert" id="login-alert" role="alert">
+                    <i class="fas fa-exclamation-circle mt-1"></i>
+                    <span></span>
+                </div>
+
+                <form action="" id="login" method="post" novalidate>
                     @csrf
 
-                    <!-- Campo Email -->
-                    <div class="input-group mb-3">
-                        <input type="email" id="email" name="email" class="form-control required email" placeholder="{{__t('text.backend.forms.email', 'Email')}}" autocomplete="off">
-                        <span class="input-group-text">
-                        <i class="fas fa-envelope"></i>
-                    </span>
+                    <div class="lg-field">
+                        <label for="email">Correo electrónico</label>
+                        <div class="lg-input">
+                            <i class="fas fa-envelope"></i>
+                            <input type="email" id="email" name="email" class="form-control required email" placeholder="nombre@correo.com" autocomplete="username" autofocus>
+                        </div>
                     </div>
 
-                    <!-- Campo Contraseña -->
-                    <div class="input-group mb-3">
-                        <input type="password" id="password" name="password" class="form-control required" placeholder="{{__t('text.backend.forms.password', 'Password')}}" autocomplete="off">
-                        <span class="input-group-text">
-                        <i class="fas fa-lock"></i>
-                    </span>
-                    </div>
-
-                    <!-- Botón y Loading -->
-                    <div class="row g-0">
-                        <div class="col-12">
-                            <button type="submit" class="btn btn-primary btn-block btn-login">
-                                <i class="fas fa-arrow-right-to-bracket me-2"></i>
-                                {{__t('text.frontend.login_customer_authenticate', 'Authenticate and Access')}}
+                    <div class="lg-field">
+                        <label for="password">Contraseña</label>
+                        <div class="lg-input">
+                            <i class="fas fa-lock"></i>
+                            <input type="password" id="password" name="password" class="form-control required" placeholder="••••••••" autocomplete="current-password">
+                            <button type="button" class="lg-toggle" id="toggle-password" aria-label="Mostrar contraseña">
+                                <i class="fas fa-eye"></i>
                             </button>
                         </div>
-
-                        <div id="loading_form" class="loading-container" style="display: none;">
-                            <div class="spinner"></div>
-                        </div>
                     </div>
+
+                    <button type="submit" class="lg-submit" id="btn-login">
+                        <span class="lg-spinner"></span>
+                        <i class="fas fa-sign-in-alt mr-2 lg-icon"></i>
+                        <span class="lg-label">Ingresar al panel</span>
+                    </button>
                 </form>
 
-{{--                <!-- Enlaces adicionales -->--}}
-{{--                <div class="footer-links">--}}
-{{--                    <a href="#"><i class="far fa-question-circle me-1"></i> ¿Olvidaste tu contraseña?</a>--}}
-{{--                </div>--}}
+                <a href="{{ route('show.principal') }}" class="lg-back"><i class="fas fa-arrow-left"></i> Volver al sitio</a>
+
+                <p class="lg-foot">&copy; {{ date('Y') }} La Mano Negra</p>
             </div>
-        </div>
+        </main>
     </div>
 @endsection
 
 @section('script')
     <script type="text/javascript">
+        $(function () {
+            const $form = $('#login');
+            const $btn = $('#btn-login');
+            const $alert = $('#login-alert');
 
-        $("body").on('submit', '#login', function (event) {
-            event.preventDefault()
-            if ($('#login').valid()) {
+            $form.validate({
+                errorPlacement: function (error, element) {
+                    error.insertAfter(element.closest('.lg-input'));
+                },
+                messages: {
+                    email: {required: 'Ingresa tu correo electrónico.', email: 'Ingresa un correo válido.'},
+                    password: {required: 'Ingresa tu contraseña.'}
+                }
+            });
 
-                var formData = new FormData(document.getElementById("login"));
-                formData.append("source", "admin");
-                $('#loading_form').css('display', 'flex');
+            $('#toggle-password').on('click', function () {
+                const $input = $('#password');
+                const show = $input.attr('type') === 'password';
+                $input.attr('type', show ? 'text' : 'password');
+                $(this).attr('aria-label', show ? 'Ocultar contraseña' : 'Mostrar contraseña')
+                    .find('i').toggleClass('fa-eye', !show).toggleClass('fa-eye-slash', show);
+            });
+
+            function setLoading(loading) {
+                $btn.prop('disabled', loading).toggleClass('is-loading', loading);
+                $btn.find('.lg-label').text(loading ? 'Verificando…' : 'Ingresar al panel');
+            }
+
+            function showError(message) {
+                $alert.find('span').text(message);
+                $alert.addClass('show');
+            }
+
+            $form.on('submit', function (event) {
+                event.preventDefault();
+                $alert.removeClass('show');
+
+                if (!$form.valid()) {
+                    return;
+                }
+
+                const formData = new FormData(this);
+                formData.append('source', 'admin');
 
                 $.ajax({
                     headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
-                    type: "POST",
+                    type: 'POST',
                     url: "{{ route('verify.authenticate') }}",
                     cache: false,
                     contentType: false,
@@ -81,26 +135,36 @@
                     dataType: 'json',
                     data: formData,
                     beforeSend: function () {
-                        $(':button').prop('disabled', true);
+                        setLoading(true);
                     },
                     success: function (response) {
-
-                        if (response.status == 'success') {
-                            toastr.success(response.message)
-
-                            setTimeout(function () {
-                                window.location.href = "{{route('admin.panel')}}";
-                            }, 1000);
+                        if (response.status === 'success') {
+                            $btn.find('.lg-label').text('Entrando…');
+                            window.location.href = "{{ route('admin.panel') }}";
+                            return;
                         }
 
-                        if (response.status == 'fail') {
-                            $(':button').prop('disabled', false);
-                            $('#loading_form').hide();
-                            toastr.error(response.message)
+                        setLoading(false);
+
+                        if (response.error_time) {
+                            showError('Demasiados intentos. Espera un momento antes de volver a intentarlo.');
+                            return;
                         }
+
+                        showError(response.message || 'Correo electrónico o contraseña incorrectos.');
+                    },
+                    error: function (xhr) {
+                        setLoading(false);
+
+                        if (xhr.status === 419) {
+                            showError('La sesión expiró. Recarga la página e intenta de nuevo.');
+                            return;
+                        }
+
+                        showError('No se pudo conectar con el servidor. Intenta de nuevo.');
                     }
                 });
-            }
+            });
         });
     </script>
 @endsection

@@ -1,59 +1,32 @@
 @extends('layouts.app-backend')
-@section('title', 'Admin')
+@section('title', 'Resumen')
 @section('content')
 
     <!-- Main content -->
     <section class="content">
         <div class="container-fluid">
-            <!-- Small boxes (Stat box) -->
             <div class="row">
-                <div class="col-lg-4 col-md-6 col-sm-6 col-12">
-                    <!-- small box -->
-                    <div class="small-box bg-lightblue color-palette">
-                        <div class="inner">
-                            <h3>{{$totalCustomer >= 10 ? $totalCustomer : '0'.$totalCustomer}}</h3>
-                            <p>Usuarios </p>
-                        </div>
-                        <div class="icon">
-                            <i class="fas fa-users"></i>
-                        </div>
-                        <a href="{{route('get.report.user')}}" class="small-box-footer"> Más Información <i class="fas fa-arrow-circle-right"></i></a>
+                @php
+                    $stats = [
+                        ['label' => 'Usuarios',        'value' => $totalCustomer >= 10 ? $totalCustomer : '0' . $totalCustomer, 'icon' => 'fas fa-users',       'route' => route('get.report.user')],
+                        ['label' => 'Pagos exitosos',  'value' => is_numeric($totalSuccessful) ? '$' . number_format($totalSuccessful, 2) : $totalSuccessful, 'icon' => 'fas fa-dollar-sign',  'route' => route('get.payment.user')],
+                        ['label' => 'Suscripciones',   'value' => $totalSubscriptions, 'icon' => 'fas fa-id-card',      'route' => route('get.subscription')],
+                    ];
+                @endphp
+
+                @foreach($stats as $stat)
+                    <div class="col-lg-4 col-md-6 col-12 mb-3">
+                        <a href="{{ $stat['route'] }}" class="tbh-stat">
+                            <div class="tbh-stat-icon"><i class="{{ $stat['icon'] }}"></i></div>
+                            <div>
+                                <div class="tbh-stat-label">{{ $stat['label'] }}</div>
+                                <div class="tbh-stat-value">{{ $stat['value'] }}</div>
+                            </div>
+                            <span class="tbh-stat-link"><i class="fas fa-arrow-right"></i></span>
+                        </a>
                     </div>
-                </div>
-
-                <div class="col-lg-4 col-md-6 col-sm-6 col-12">
-                    <!-- small box -->
-                    <div class="small-box bg-teal color-palette">
-                        <div class="inner">
-                            <h3>{{$totalSuccessful}}</h3>
-                            <p>Pagos Exitosos</p>
-                        </div>
-                        <div class="icon">
-                            <i class="fas fa-dollar-sign"></i>
-                        </div>
-                        <a href="{{route('get.payment.user')}}" class="small-box-footer"> Más Información <i class="fas fa-arrow-circle-right"></i></a>
-                    </div>
-                </div>
-
-                <!-- ./col -->
-                <div class="col-lg-4 col-md-6 col-sm-6 col-12">
-                    <!-- small box -->
-                    <div class="small-box bg-warning color-palette">
-                        <div class="inner">
-                            <h3>{{$totalSubscriptions}}</h3>
-                            <p>Suscripciones</p>
-                        </div>
-                        <div class="icon">
-                            <i class="fas fa-book-open"></i>
-                        </div>
-                        <a href="{{route('get.subscription')}}" class="small-box-footer"> Más Información <i class="fas fa-arrow-circle-right"></i></a>
-                    </div>
-                </div>
-
-
-                <!-- ./col -->
+                @endforeach
             </div>
-            <!-- /.row -->
         </div><!-- /.container-fluid -->
 
 
@@ -64,9 +37,9 @@
             @else
 
                 <div class="col-12">
-                    <div class="card card-gray-dark">
+                    <div class="card">
                         <div class="card-header">
-                            <h3 class="card-title">USUARIOS PERFIL COMPLETADOS</h3>
+                            <h3 class="card-title">Usuarios con perfil completado</h3>
                         </div>
                         <!-- /.card-header -->
                         <div class="card-body table-responsive p-0">
@@ -83,15 +56,13 @@
                                 </tr>
                                 </thead>
                                 <tbody>
-
-                                <tbody>
                                 @foreach($clients AS $item)
                                     <tr>
                                         <td>{{ucwords($item['first_name'].' '.$item['last_name'])}}</td>
                                         <td>{{$item['email']}}</td>
                                         <td>{{$item['phone']}}</td>
                                         <td>{{$item['name']}}</td>
-                                        <td>{{(($item['is_active']) ? 'Activo' : 'Inactivo')}}</td>
+                                        <td>{!! $item['is_active'] ? '<span class="badge bg-success">Activo</span>' : '<span class="badge bg-light">Inactivo</span>' !!}</td>
                                         <td>{{date('d/m/Y', strtotime($item['created_at'])),}}</td>
                                     </tr>
                                 @endforeach

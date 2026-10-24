@@ -1,46 +1,49 @@
+@php
+    // Ícono por ruta para los submenús que no tienen uno cargado en BD
+    $routeIcons = [
+        'get.subscription'      => 'fas fa-id-card',
+        'pick.index'            => 'fas fa-futbol',
+        'get.web.subscription'  => 'fas fa-envelope-open-text',
+        'notification.index'    => 'fas fa-bell',
+        'get.payment.user'      => 'fas fa-dollar-sign',
+        'my.payment'            => 'fas fa-receipt',
+        'get.report.user'       => 'fas fa-users',
+        'get.user.subscription' => 'fas fa-user-check',
+        'rol.index'             => 'fas fa-user-shield',
+        'user.index'            => 'fas fa-user-cog',
+        'menu.index'            => 'fas fa-bars',
+        'submenu.index'         => 'fas fa-stream',
+        'parameter.index'       => 'fas fa-sliders-h',
+        'plan.index'            => 'fas fa-layer-group',
+        'faq.index'             => 'fas fa-question-circle',
+        'staticpage.index'      => 'fas fa-file-alt',
+        'staticpage.contacts'   => 'fas fa-comments',
+        'profile'               => 'fas fa-user',
+        'change.password'       => 'fas fa-key',
+        'subscription'          => 'fas fa-crown',
+    ];
+
+    $iconFor = fn($menu) => ($menu['icono'] ?? null) ?: ($routeIcons[$menu['route']] ?? 'far fa-circle');
+
+    $ruta = $item['route'] ? route($item['route']) : '';
+@endphp
+
 @if ($item['submenu'] == [])
-    @php
-        $ruta = '';
-        if ($item['route']) {
-            try {
-                $ruta = route($item['route']);
-            } catch (\Throwable $e) {
-                throw $e;
-            }
-        } // <-- Faltaba cerrar esta llave
-    @endphp
     <li class="nav-item">
-        <a href="{{ $ruta }}" class="nav-link">
-            <i class="{{$item['icono']}}"></i>
-            <p>
-                {{$item['name']}}
-            </p>
+        <a href="{{ $ruta }}" class="nav-link {{ $item['route'] && Route::currentRouteName() == $item['route'] ? 'active' : '' }}">
+            <i class="nav-icon {{ $iconFor($item) }}"></i>
+            <p>{{ $item['name'] }}</p>
         </a>
     </li>
 @else
-
     @php
-        $ruta = '';
-        if ($item['route']) {
-            try {
-                $ruta = route($item['route']);
-            } catch (\Throwable $e) {
-                throw $e;
-            }
-        }
-
-        $display = '';
-        $menuOpen = '';
-        if (array_search(Route::currentRouteName(), array_column($item['submenu'], 'route')) !== false) {
-            $menuOpen = 'menu-open';
-            $display = 'active';
-        }
+        $isOpen = array_search(Route::currentRouteName(), array_column($item['submenu'], 'route')) !== false;
     @endphp
-    <li class="nav-item has-treeview {{$menuOpen}}">
-        <a href="#" class="nav-link {{$display}}">
-            <i class="nav-icon {{$item['icono']}}"></i>
+    <li class="nav-item has-treeview {{ $isOpen ? 'menu-open' : '' }}">
+        <a href="#" class="nav-link {{ $isOpen ? 'active' : '' }}">
+            <i class="nav-icon {{ $iconFor($item) }}"></i>
             <p>
-                {{$item['name']}}
+                {{ $item['name'] }}
                 <i class="right fas fa-angle-left"></i>
             </p>
         </a>
@@ -49,21 +52,12 @@
             @foreach ($item['submenu'] as $submenu)
                 @if ($submenu['submenu'] == [])
                     @php
-                        $ruta = '';
-                        if ($submenu['route']) {
-                            try {
-                                $ruta = route($submenu['route']);
-                            } catch (\Throwable $e) {
-                                throw $e;
-                            }
-                        } // <-- Faltaba cerrar esta llave
+                        $subRuta = $submenu['route'] ? route($submenu['route']) : '';
                     @endphp
                     <li class="nav-item">
-                        <a href="{{ $ruta }}" class="nav-link @if(Request::url() == $ruta) active @endif">
-                            <i class="nav-icon fas fa-list-ol green"></i>
-                            <p>
-                                {{ $submenu['name'] }}
-                            </p>
+                        <a href="{{ $subRuta }}" class="nav-link @if($subRuta && Request::url() == $subRuta) active @endif">
+                            <i class="nav-icon {{ $iconFor($submenu) }}"></i>
+                            <p>{{ $submenu['name'] }}</p>
                         </a>
                     </li>
                 @else

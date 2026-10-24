@@ -36,6 +36,12 @@
                 </div>
             @endif
 
+            @if($msgElite)
+                <div class="alert alert-success d-flex align-items-center">
+                    <i class="fas fa-crown mr-2"></i> <strong>{{$msgElite}}</strong>
+                </div>
+            @endif
+
             <div class="row">
 
                 @if(count($plans) <= 0)
@@ -79,25 +85,17 @@
                         @endphp
 
                         <div class="col-lg-4 col-md-6 mb-4">
-                            <div class="card h-100 border-0 shadow-lg rounded-4 overflow-hidden"
-                                 style="background: #ffffff; transition: transform 0.3s ease; border: 1px solid rgba(212, 175, 55, 0.2);">
+                            <div class="card h-100 tbh-plan-card {{ $textAplnActive ? 'is-active' : '' }}">
 
                                 <div class="card-body d-flex flex-column align-items-center text-center p-4">
                                     <!-- Imagen completa con marco elegante -->
-                                    <div class="position-relative mb-3" style="width: 100%; padding: 8px; border-radius: 16px; background: linear-gradient(135deg, #d4af37, #f5e6a3);">
-                                        <div class="rounded-3 overflow-hidden" style="background: #fff;">
-                                            <img src="{{ asset($imgPlan) }}"
-                                                 alt="La Mano Negra"
-                                                 class="img-fluid w-100"
-                                                 style="display: block; height: auto; object-fit: contain;">
-                                        </div>
-                                    </div>
+                                    <img src="{{ asset($imgPlan) }}" alt="{{ $item->name }}" class="img-fluid w-100 d-block" loading="lazy">
 
-                                    <div class="mt-3 w-100">
+                                    <div class="mt-auto pt-3 w-100">
                                         @if($textAplnActive)
-                                            <button type="button" class="btn btn-default btn-lg btn-block rounded-pill py-3" disabled>
-                                                <i class="fas fa-check-circle mr-2"></i> {{$textAplnActive}} {{$txtSureBettor}}
-                                            </button>
+                                            <div class="tbh-plan-active">
+                                                <i class="fas fa-check-circle"></i> {{$textAplnActive}} {{$txtSureBettor}}
+                                            </div>
                                         @else
 
                                             <form method="POST" class="frm-plan w-100" action="{{ route('checkout.whop', $item->source) }}" target="whop_checkout">
@@ -105,11 +103,8 @@
                                                 <input type="hidden" name="plan_slug" value="{{$item->source}}">
                                                 <input type="hidden" name="user_id" value="{{ auth()->id() }}">
 
-                                                <button type="submit" class="btn btn-info btn-lg w-100 rounded-pill py-3 font-weight-bold shadow-lg"
-                                                        style="transition: all 0.3s ease; background: linear-gradient(135deg, #667eea, #764ba2); border: none; letter-spacing: 0.5px;"
-                                                        onmouseover="this.style.transform='scale(1.02)'; this.style.boxShadow='0 12px 35px rgba(102,126,234,0.4)';"
-                                                        onmouseout="this.style.transform='scale(1)'; this.style.boxShadow='0 8px 25px rgba(0,0,0,0.15)';">
-                                                    <i class="fas fa-credit-card me-2"></i> {{__t('text.backend.forms.pay_with_whop', 'Pagar con Whop')}}
+                                                <button type="submit" class="btn btn-brand btn-lg w-100 tbh-btn-pay">
+                                                    <i class="fas fa-credit-card mr-2"></i> {{__t('text.backend.forms.pay_with_whop', 'Pagar con Whop')}}
                                                 </button>
                                             </form>
                                         @endif
@@ -122,13 +117,6 @@
             </div>
 
 
-            @if($msgElite)
-                <div class="col-12">
-                    <div class="alert alert-info alert-dismissible">
-                        <h5><i class="icon fas fa-check"></i> {{$msgElite}} </h5>
-                    </div>
-                </div>
-            @endif
 
         </div>
     </section>
