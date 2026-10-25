@@ -511,11 +511,12 @@ body.tbh-admin {
     border-right: 0;
 }
 
+/* Encabezado en lima suave de la marca: se distingue del cuerpo sin competir con los datos */
 .tbh-admin .table thead th {
-    background: var(--tbh-surface-2);
+    background: var(--tbh-brand-soft);
     border-top: 0;
-    border-bottom: 1px solid var(--tbh-border);
-    color: var(--tbh-muted);
+    border-bottom: 1px solid #d9f99d;
+    color: var(--tbh-brand-ink);
     font-size: .72rem;
     font-weight: 600;
     letter-spacing: .05em;
@@ -728,6 +729,249 @@ body.tbh-admin {
 .tbh-empty div {
     font-weight: 600;
     color: var(--tbh-text);
+}
+
+/* ---------- Panel de administración ---------- */
+.tbh-stat.is-attention {
+    border-color: #fde68a;
+}
+
+.tbh-delta {
+    display: inline-flex;
+    align-items: center;
+    gap: 3px;
+    padding: 1px 6px;
+    border-radius: 999px;
+    font-weight: 600;
+}
+
+.tbh-delta.is-up {
+    color: var(--tbh-success);
+    background: var(--tbh-success-soft);
+}
+
+.tbh-delta.is-down {
+    color: var(--tbh-danger);
+    background: var(--tbh-danger-soft);
+}
+
+/* Gráfico de columnas en HTML: una serie, sin leyenda (el título la nombra) */
+.tbh-chart {
+    position: relative;
+    padding-left: 64px;
+}
+
+.tbh-chart-grid {
+    position: absolute;
+    top: 24px;
+    right: 0;
+    bottom: 26px;
+    left: 64px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    pointer-events: none;
+}
+
+.tbh-chart-grid span {
+    position: relative;
+    border-top: 1px solid #eef0f2;
+}
+
+.tbh-chart-grid span::before {
+    content: attr(data-value);
+    position: absolute;
+    top: -8px;
+    right: calc(100% + 10px);
+    font-size: .7rem;
+    color: var(--tbh-muted);
+    white-space: nowrap;
+}
+
+.tbh-chart-bars {
+    position: relative;
+    display: flex;
+    align-items: flex-end;
+    gap: 2px;
+    height: 220px;
+    padding-top: 24px;
+}
+
+.tbh-chart-col {
+    position: relative;
+    flex: 1;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-end;
+    outline: none;
+    cursor: default;
+}
+
+.tbh-chart-bar {
+    width: 100%;
+    max-width: 24px;
+    border-radius: 4px 4px 0 0;
+    background: var(--tbh-action);
+    transition: background .15s ease;
+}
+
+.tbh-chart-col:hover .tbh-chart-bar,
+.tbh-chart-col:focus .tbh-chart-bar {
+    background: var(--tbh-action-hover);
+}
+
+.tbh-chart-value {
+    margin-bottom: 4px;
+    font-size: .72rem;
+    font-weight: 600;
+    color: var(--tbh-text);
+    white-space: nowrap;
+}
+
+.tbh-chart-tip {
+    position: absolute;
+    bottom: calc(100% - 16px);
+    left: 50%;
+    z-index: 2;
+    display: none;
+    padding: 6px 10px;
+    border-radius: var(--tbh-radius-sm);
+    font-size: .75rem;
+    text-align: center;
+    white-space: nowrap;
+    color: #fff;
+    background: var(--tbh-sidebar);
+    box-shadow: var(--tbh-shadow-lg);
+    transform: translateX(-50%);
+}
+
+.tbh-chart-tip strong,
+.tbh-chart-tip span {
+    display: block;
+}
+
+.tbh-chart-tip span {
+    color: var(--tbh-sidebar-text);
+}
+
+.tbh-chart-col:hover .tbh-chart-tip,
+.tbh-chart-col:focus .tbh-chart-tip {
+    display: block;
+}
+
+.tbh-chart-labels {
+    display: flex;
+    gap: 2px;
+    margin-top: 8px;
+}
+
+.tbh-chart-labels span {
+    flex: 1;
+    font-size: .75rem;
+    text-align: center;
+    color: var(--tbh-muted);
+}
+
+/* Barras horizontales (activas por plan) */
+.tbh-hbar + .tbh-hbar {
+    margin-top: 14px;
+}
+
+.tbh-hbar-head {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 6px;
+    font-size: .85rem;
+}
+
+.tbh-hbar-track {
+    height: 8px;
+    border-radius: 999px;
+    background: #f0f1f3;
+    overflow: hidden;
+}
+
+.tbh-hbar-fill {
+    height: 100%;
+    border-radius: 999px;
+    background: var(--tbh-action);
+}
+
+.tbh-accuracy {
+    margin-top: 22px;
+    padding-top: 18px;
+    border-top: 1px solid var(--tbh-border);
+}
+
+.tbh-accuracy-value {
+    font-family: 'Poppins', sans-serif;
+    font-size: 2rem;
+    font-weight: 600;
+    line-height: 1.2;
+}
+
+/* Listas compactas dentro de tarjetas */
+.tbh-list {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.tbh-list li {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 20px;
+    border-top: 1px solid #f0f1f3;
+}
+
+.tbh-list li:first-child {
+    border-top: 0;
+}
+
+.tbh-list-icon,
+.tbh-avatar {
+    flex: 0 0 34px;
+    width: 34px;
+    height: 34px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    font-size: .8rem;
+    font-weight: 700;
+    color: var(--tbh-brand-ink);
+    background: var(--tbh-brand-soft);
+}
+
+.tbh-list-icon.is-warning {
+    color: var(--tbh-warning);
+    background: var(--tbh-warning-soft);
+}
+
+.tbh-list-main {
+    flex: 1;
+    min-width: 0;
+}
+
+.tbh-list-main .tbh-cell-sub {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.tbh-list-aside {
+    font-size: .75rem;
+    color: var(--tbh-muted);
+    white-space: nowrap;
+}
+
+.tbh-list li.tbh-list-empty {
+    justify-content: center;
+    padding: 28px 20px;
+    color: var(--tbh-muted);
 }
 
 /* ---------- Paginación ---------- */
