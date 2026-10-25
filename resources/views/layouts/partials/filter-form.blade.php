@@ -88,12 +88,24 @@
             <div class="form-group col-lg-3 col-md-6 col-sm-6 col-12">
                 <select class='form-control' id='input_status' name="filter[input_status]">
                     <option value=''>{{__t('text.backend.tables.all_statuses', 'Todos los Estatus...')}}</option>
-                    <option value='1' {{ (array_key_exists('input_status', $filterArray) && $filterArray['input_status'] === 1) ? 'selected' : '' }}>
+                    <option value='1' {{ (array_key_exists('input_status', $filterArray) && (string)$filterArray['input_status'] === '1') ? 'selected' : '' }}>
                         {{__t('text.backend.tables.successful', 'Exitoso')}}
                     </option>
                     <option value='0' {{ (array_key_exists('input_status', $filterArray) && ($filterArray['input_status']!==null && (int)$filterArray['input_status'] ===0)) ? 'selected' : '' }}>
                         {{__t('text.backend.tables.failed', 'Fallido')}}
                     </option>
+                </select>
+            </div>
+        @endif
+
+        @if(isset($extraFilterStatusPayment) && $extraFilterStatusPayment)
+            @php($paymentStatus = isset($filterArray['input_status']) ? (string)$filterArray['input_status'] : '')
+            <div class="form-group col-lg-3 col-md-6 col-sm-6 col-12">
+                <select class='form-control' id='input_status' name="filter[input_status]">
+                    <option value=''>{{__t('text.backend.tables.all_statuses', 'Todos los Estatus...')}}</option>
+                    <option value='1' {{ $paymentStatus === '1' ? 'selected' : '' }}>{{__t('text.backend.tables.successful', 'Exitoso')}}</option>
+                    <option value='2' {{ $paymentStatus === '2' ? 'selected' : '' }}>{{__t('text.backend.tables.refunded', 'Reembolsado')}}</option>
+                    <option value='0' {{ $paymentStatus === '0' ? 'selected' : '' }}>{{__t('text.backend.tables.failed', 'Fallido')}}</option>
                 </select>
             </div>
         @endif

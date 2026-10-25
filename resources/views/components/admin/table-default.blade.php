@@ -11,6 +11,7 @@
     'extraFilterPageStatic' => false,
     'extraFilterLanguage' => false,
     'extraFilterStatusPick' => false,
+    'extraFilterStatusPayment' => false,
     'dateFilter' => false,
     'plans' => []
 ])
@@ -40,6 +41,7 @@
             'extraFilterPageStatic' => $extraFilterPageStatic,
             'extraFilterLanguage' => $extraFilterLanguage,
             'extraFilterStatusPick' => $extraFilterStatusPick,
+            'extraFilterStatusPayment' => $extraFilterStatusPayment,
             'dateFilter' => $dateFilter,
         ])
 

@@ -437,7 +437,8 @@ if (!function_exists('page_style_translation')) {
             return [
                        1 => 'succeeded',
                        0 => 'failed',
-                   ][$value];
+                       2 => 'refunded',
+                   ][(int)$value] ?? null;
         }
     }
 }

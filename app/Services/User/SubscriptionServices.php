@@ -18,42 +18,34 @@ class SubscriptionServices
     
     public function index()
     {
-        $user = Auth::user();
-        if ($user && !$user->profile?->completed_profile) {
-            return redirect()->route('profile');
-        }
-        
-        $plans = $this->plan->getPlans(['is_active' => true])->get();
-        
-        $plansActive  = $this->getSubscriptionApproved();
-        $subscription = $user?->subscriptions()->where('subscription_plan', Subscription::PLAN_ELITE)->where('subscription_status', Subscription::STATUS_ACTIVE)->first();
-        $msgElite     = null;
-        if ($subscription && $subscription->subscription_expires_at?->isFuture()) {
-            
-            $msgElite = __t('text.backend.messages.my_plan', $msgElite);
-            
-            $msgElite = str_replace(
-                ['[PLAN]', '[DATE]'],
-                [Subscription::PLAN_ELITE, $subscription->subscription_expires_at->format('d/m/Y')],
-                $msgElite
-            );
-        }
-        
-        return view('dashboard.views.frm-subscription', compact('plans', 'plansActive', 'msgElite'));
+        return $this->subscriptionView();
     }
-    
+
     public function getClientSubscription()
+    {
+        return $this->subscriptionView();
+    }
+
+    /**
+     * Vista donde el cliente compra sus planes: catálogo, planes vigentes y aviso de inicio del Elite.
+     */
+    private function subscriptionView()
     {
         $user = Auth::user();
         if ($user && !$user->profile?->completed_profile) {
             return redirect()->route('profile');
         }
-        
+
         $plans = $this->plan->getPlans(['is_active' => true])->get();
-        
-        $plansActive = $this->getSubscriptionApproved();
-        
-        return view('dashboard.views.frm-subscription', compact('plans', 'plansActive'));
+
+        // Planes vigentes indexados por source para cruzarlos con el catálogo
+        $activePlans = collect($this->getSubscriptionApproved()['plans'] ?? [])
+            ->keyBy(fn($plan) => strtolower($plan['name']));
+
+        // Si el pick Elite de hoy ya salió, un Elite comprado ahora empieza mañana
+        $eliteStartsOn = Subscription::nextEliteDay();
+
+        return view('dashboard.views.frm-subscription', compact('plans', 'activePlans', 'eliteStartsOn'));
     }
     
     public function getSubscription(array $data = [])

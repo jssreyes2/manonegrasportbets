@@ -16,10 +16,10 @@
     --tbh-brand-ink: #3f6212;   /* lima legible sobre blanco */
     --tbh-brand-soft: #f3fbe4;
 
-    /* Botones de acción: grafito sobrio en lugar del lima neón */
-    --tbh-action: #1f2329;
-    --tbh-action-hover: #343a42;
-    --tbh-action-ring: rgba(31, 35, 41, .18);
+    /* Botones de acción: verde de la marca, legible con texto blanco (el lima neón no lo es) */
+    --tbh-action: #4d7c0f;
+    --tbh-action-hover: #3f6212;
+    --tbh-action-ring: rgba(77, 124, 15, .22);
 
     --tbh-sidebar: #0b0b0c;
     --tbh-sidebar-2: #161618;
@@ -635,6 +635,101 @@ body.tbh-admin {
     color: var(--tbh-brand-ink);
 }
 
+/* Variantes de color para métricas de estado (pagos exitosos / fallidos) */
+.tbh-stat-icon.is-success {
+    color: var(--tbh-success);
+    background: var(--tbh-success-soft);
+}
+
+.tbh-stat-icon.is-danger {
+    color: var(--tbh-danger);
+    background: var(--tbh-danger-soft);
+}
+
+.tbh-stat-tag {
+    margin-left: auto;
+    align-self: flex-start;
+    padding: 2px 8px;
+    border-radius: 999px;
+    font-size: .7rem;
+    font-weight: 600;
+    letter-spacing: .04em;
+}
+
+.tbh-stat-tag.is-success {
+    color: var(--tbh-success);
+    background: var(--tbh-success-soft);
+}
+
+.tbh-stat-tag.is-danger {
+    color: var(--tbh-danger);
+    background: var(--tbh-danger-soft);
+}
+
+.tbh-stat-icon.is-warning,
+.tbh-stat-tag.is-warning {
+    color: var(--tbh-warning);
+    background: var(--tbh-warning-soft);
+}
+
+.tbh-stat-meta {
+    margin-top: 2px;
+    font-size: .75rem;
+    color: var(--tbh-muted);
+}
+
+/* ---------- Celdas de tabla ---------- */
+.tbh-cell-main {
+    display: block;
+    font-weight: 600;
+}
+
+.tbh-cell-sub {
+    display: block;
+    font-size: .75rem;
+    color: var(--tbh-muted);
+}
+
+.tbh-amount {
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
+}
+
+/* IDs largos (pagos de Whop): monoespaciado y recortado, el completo queda en el title */
+.tbh-mono {
+    display: inline-block;
+    max-width: 160px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    vertical-align: middle;
+    white-space: nowrap;
+    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    font-size: .75rem;
+    color: var(--tbh-muted);
+}
+
+.tbh-admin .table tbody tr.tbh-empty-row:hover {
+    background: transparent;
+}
+
+.tbh-empty {
+    padding: 36px 12px;
+    text-align: center;
+    color: var(--tbh-muted);
+}
+
+.tbh-empty i {
+    display: block;
+    margin-bottom: 10px;
+    font-size: 1.6rem;
+    color: #d1d5db;
+}
+
+.tbh-empty div {
+    font-weight: 600;
+    color: var(--tbh-text);
+}
+
 /* ---------- Paginación ---------- */
 .tbh-admin .pagination {
     margin: 16px 0 0;
@@ -734,7 +829,81 @@ body.tbh-admin {
 }
 
 /* ---------- Planes del cliente ---------- */
+.tbh-section-title {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin: 4px 0 14px;
+    font-family: 'Poppins', 'Inter', sans-serif;
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--tbh-text);
+}
+
+.tbh-section-title i {
+    color: var(--tbh-brand-ink);
+}
+
+/* Resumen de planes vigentes */
+.tbh-my-plan {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    height: 100%;
+    padding: 14px 16px;
+    background: var(--tbh-surface);
+    border: 1px solid #d9f99d;
+    border-radius: var(--tbh-radius);
+    box-shadow: var(--tbh-shadow);
+}
+
+.tbh-my-plan-icon {
+    flex: 0 0 42px;
+    width: 42px;
+    height: 42px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 10px;
+    color: var(--tbh-brand);
+    background: var(--tbh-sidebar);
+}
+
+.tbh-my-plan-name {
+    font-weight: 600;
+    line-height: 1.2;
+}
+
+.tbh-my-plan-date {
+    font-size: .8rem;
+    color: var(--tbh-muted);
+}
+
+.tbh-my-plan-days {
+    min-width: 58px;
+    padding: 6px 10px;
+    text-align: center;
+    border-radius: 10px;
+    background: var(--tbh-brand-soft);
+    color: var(--tbh-brand-ink);
+    line-height: 1.1;
+}
+
+.tbh-my-plan-days strong {
+    display: block;
+    font-family: 'Poppins', sans-serif;
+    font-size: 1.15rem;
+}
+
+.tbh-my-plan-days span {
+    font-size: .7rem;
+    font-weight: 600;
+    text-transform: uppercase;
+}
+
+/* Tarjeta de plan */
 .tbh-plan-card {
+    position: relative;
     border-radius: 16px !important;
     overflow: hidden;
     transition: transform .2s ease, box-shadow .2s ease;
@@ -754,6 +923,62 @@ body.tbh-admin {
     box-shadow: 0 0 0 3px rgba(163, 230, 53, .25);
 }
 
+.tbh-plan-ribbon {
+    position: absolute;
+    top: 22px;
+    right: 22px;
+    z-index: 1;
+    padding: 4px 12px;
+    border-radius: 999px;
+    font-size: .72rem;
+    font-weight: 700;
+    letter-spacing: .03em;
+    text-transform: uppercase;
+    color: #1a1a1a;
+    background: #fbbf24;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, .25);
+}
+
+.tbh-plan-ribbon.is-active {
+    background: var(--tbh-brand);
+}
+
+.tbh-plan-summary {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin: 14px 2px;
+}
+
+.tbh-plan-name {
+    font-family: 'Poppins', 'Inter', sans-serif;
+    font-size: 1.05rem;
+    font-weight: 600;
+    line-height: 1.2;
+}
+
+.tbh-plan-duration {
+    margin-top: 2px;
+    font-size: .8rem;
+    color: var(--tbh-muted);
+}
+
+.tbh-plan-price {
+    font-family: 'Poppins', sans-serif;
+    font-size: 1.6rem;
+    font-weight: 700;
+    line-height: 1;
+    white-space: nowrap;
+}
+
+.tbh-plan-price span {
+    font-family: 'Inter', sans-serif;
+    font-size: .7rem;
+    font-weight: 600;
+    color: var(--tbh-muted);
+}
+
 .tbh-plan-active {
     display: flex;
     align-items: center;
@@ -767,11 +992,117 @@ body.tbh-admin {
     border: 1px solid #d9f99d;
 }
 
+.tbh-plan-note {
+    margin: 10px 0 0;
+    font-size: .78rem;
+    text-align: center;
+    color: var(--tbh-muted);
+}
+
+.tbh-plan-note.is-warning {
+    margin: 0 0 10px;
+    padding: 8px 12px;
+    border-radius: var(--tbh-radius-sm);
+    color: var(--tbh-warning);
+    background: var(--tbh-warning-soft);
+}
+
 .tbh-btn-pay {
     padding: .8rem 1rem !important;
     border-radius: 999px !important;
     font-weight: 600 !important;
     letter-spacing: .2px;
+}
+
+/* Pasos de compra */
+.tbh-how {
+    margin-top: 8px;
+}
+
+.tbh-how-step {
+    display: flex;
+    gap: 12px;
+    height: calc(100% - 12px);
+    margin-bottom: 12px;
+    padding: 14px 16px;
+    border: 1px dashed #d1d5db;
+    border-radius: var(--tbh-radius);
+}
+
+.tbh-how-step > span {
+    flex: 0 0 28px;
+    width: 28px;
+    height: 28px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    font-size: .8rem;
+    font-weight: 700;
+    color: var(--tbh-brand-ink);
+    background: var(--tbh-brand-soft);
+}
+
+.tbh-how-step strong {
+    font-size: .88rem;
+}
+
+.tbh-how-step p {
+    margin: 2px 0 0;
+    font-size: .8rem;
+    color: var(--tbh-muted);
+}
+
+/* Capa de pago en Whop */
+.tbh-pay-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 9999;
+    justify-content: center;
+    align-items: center;
+    padding: 16px;
+    background: rgba(11, 11, 12, .72);
+    backdrop-filter: blur(3px);
+}
+
+.tbh-pay-dialog {
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    max-width: 400px;
+    padding: 32px 28px;
+    text-align: center;
+    background: var(--tbh-surface);
+    border-radius: 16px;
+    box-shadow: 0 25px 50px rgba(0, 0, 0, .3);
+}
+
+.tbh-pay-dialog-icon {
+    width: 56px;
+    height: 56px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 14px;
+    border-radius: 50%;
+    font-size: 1.3rem;
+    color: var(--tbh-brand-ink);
+    background: var(--tbh-brand-soft);
+}
+
+.tbh-spinner {
+    width: 46px;
+    height: 46px;
+    border: 4px solid var(--tbh-border);
+    border-top-color: var(--tbh-action);
+    border-radius: 50%;
+    animation: tbh-spin .8s linear infinite;
+}
+
+@keyframes tbh-spin {
+    to {
+        transform: rotate(360deg);
+    }
 }
 
 /* ---------- Móvil ---------- */

@@ -352,6 +352,9 @@ class WhopWebhookServices
         try {
             app(WhopApiClient::class)->payments->refund($payment['id']);
 
+            // Así no se cuenta como pago exitoso en los reportes
+            Payment::where('payment_id', $payment['id'])->update(['substatus' => Payment::PAYMENT_REFUNDED]);
+
             Log::info('Pago duplicado reembolsado', ['payment_id' => $payment['id']]);
         } catch (Throwable $e) {
             // El pago ya quedó registrado; si falla el reembolso se debe hacer manualmente desde Whop

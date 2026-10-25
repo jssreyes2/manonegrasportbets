@@ -80,11 +80,15 @@ class Subscription extends Model
     {
         $filters = $filters ?? [];
         
+        // Agrupado para que el OR no anule los demás filtros (estatus, plan, usuario)
         if (isset($filters['search'])) {
-            $query->where('users.email', 'like', "%" . $filters['search'] . "%")
-                ->orWhere('users_profiles.first_name', 'like', "%" . $filters['search'] . "%")
-                ->orWhere('users_profiles.last_name', 'like', "%" . $filters['search'] . "%")
-                ->orWhere('countries.name', 'like', "%" . $filters['search'] . "%");
+            $search = "%" . $filters['search'] . "%";
+            $query->where(function ($q) use ($search) {
+                $q->where('users.email', 'like', $search)
+                    ->orWhere('users_profiles.first_name', 'like', $search)
+                    ->orWhere('users_profiles.last_name', 'like', $search)
+                    ->orWhere('countries.name', 'like', $search);
+            });
         }
         
         if (isset($filters['id'])) {

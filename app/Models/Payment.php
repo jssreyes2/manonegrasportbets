@@ -12,6 +12,8 @@ class Payment extends Model
     
     const PAYMENT_SUCCESS = 'succeeded';
     const PAYMENT_FAIL    = 'failed';
+    // Pago duplicado devuelto automáticamente (ver WhopWebhookServices::refundDuplicatePayment)
+    const PAYMENT_REFUNDED = 'refunded';
     
     
     protected $table = 'payments';
@@ -53,7 +55,9 @@ class Payment extends Model
             'payments.website_plan',
             'payments.paid_at',
             'payments.currency',
-            'payments.payment_id'
+            'payments.payment_id',
+            'payments.card_brand',
+            'payments.card_last4'
         )
             ->join('users', 'payments.website_user_id', '=', 'users.id')
             ->join('users_profiles', 'users.id', '=', 'users_profiles.user_id');
@@ -63,20 +67,23 @@ class Payment extends Model
     {
         $filters = $filters ?? [];
         
+        // Agrupado: sin el paréntesis, el OR anulaba el filtro por user_id y un cliente veía pagos ajenos
         if (isset($filters['search'])) {
-            $query->where('users.email', 'like', "%" . $filters['search'] . "%")
-                ->orWhere('users_profiles.first_name', 'like', "%" . $filters['search'] . "%")
-                ->orWhere('users_profiles.last_name', 'like', "%" . $filters['search'] . "%")
-                ->orWhere('users.email', 'like', "%" . $filters['search'] . "%")
-                ->orWhere('payments.payment_id', 'like', "%" . $filters['search'] . "%");
+            $search = "%" . $filters['search'] . "%";
+            $query->where(function ($q) use ($search) {
+                $q->where('users.email', 'like', $search)
+                    ->orWhere('users_profiles.first_name', 'like', $search)
+                    ->orWhere('users_profiles.last_name', 'like', $search)
+                    ->orWhere('payments.payment_id', 'like', $search);
+            });
         }
         
         if (isset($filters['user_id'])) {
             $query->where('users.id', $filters['user_id']);
         }
         
-        if (isset($filters['input_status'])) {
-            $query->where('payments.substatus', status_payment($filters['input_status']));
+        if (isset($filters['input_status']) && ($status = status_payment($filters['input_status']))) {
+            $query->where('payments.substatus', $status);
         }
         
         

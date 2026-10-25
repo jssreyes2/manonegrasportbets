@@ -43,14 +43,25 @@ class PaymentServices
         }
         
         $payments = $this->getPayments($filter)->paginate(config('app.npage'));
-        $totalSuccessful = $this->getPayments($filter)
-            ->where('payments.substatus', Payment::PAYMENT_SUCCESS)
-            ->sum('payments.total');
-        
-        $totalFail = $this->getPayments($filter)
-            ->where('payments.substatus', Payment::PAYMENT_FAIL)
-            ->sum('payments.total');
-        
-        return view($view, compact('filter', 'payments', 'totalSuccessful', 'totalFail'));
+
+        // Monto y cantidad por estatus, respetando los filtros aplicados
+        $totals = $this->getPayments($filter)
+            ->reorder()
+            ->select('payments.substatus')
+            ->selectRaw('COUNT(*) AS quantity, COALESCE(SUM(payments.total), 0) AS amount')
+            ->groupBy('payments.substatus')
+            ->get()
+            ->keyBy('substatus');
+
+        $stats = collect([
+            Payment::PAYMENT_SUCCESS  => ['label' => __t('text.backend.tables.successful_payments', 'Pagos exitosos'), 'icon' => 'fas fa-check', 'tone' => 'success'],
+            Payment::PAYMENT_REFUNDED => ['label' => __t('text.backend.tables.refunded_payments', 'Pagos reembolsados'), 'icon' => 'fas fa-undo', 'tone' => 'warning'],
+            Payment::PAYMENT_FAIL     => ['label' => __t('text.backend.tables.failed_payments', 'Pagos fallidos'), 'icon' => 'fas fa-times', 'tone' => 'danger'],
+        ])->map(fn($stat, $status) => $stat + [
+                'amount'   => (float)($totals[$status]->amount ?? 0),
+                'quantity' => (int)($totals[$status]->quantity ?? 0),
+            ]);
+
+        return view($view, compact('filter', 'payments', 'stats'));
     }
 }
