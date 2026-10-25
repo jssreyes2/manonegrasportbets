@@ -4,6 +4,7 @@ namespace Tests\Feature;
 
 use App\Http\Middleware\ActiveSubscription;
 use App\Models\Payment;
+use App\Models\Pick;
 use App\Models\Plan;
 use App\Models\Subscription;
 use App\Models\User;
@@ -116,7 +117,7 @@ class WhopWebhookTest extends TestCase
         $this->assertSame(1, DB::table('notifications')->where('user_id', $this->user->id)->count());
     }
 
-    public function test_renovacion_con_plan_vigente_suma_dias_y_reutiliza_registro(): void
+    public function test_pago_duplicado_con_plan_vigente_no_suma_dias(): void
     {
         $this->sendEvent($this->paymentEvent('evt_1', 'pay_1', 'suscripcion', 50, 'mem_1'))->assertOk();
         $this->sendEvent($this->paymentEvent('evt_2', 'pay_2', 'suscripcion', 50, 'mem_2'))->assertOk();
@@ -124,8 +125,8 @@ class WhopWebhookTest extends TestCase
         $subscriptions = Subscription::where('user_id', $this->user->id)->get();
 
         $this->assertCount(1, $subscriptions);
-        $this->assertSame('mem_2', $subscriptions->first()->whop_membership_id);
-        $this->assertTrue($subscriptions->first()->subscription_expires_at->equalTo(now()->addDays(60)->startOfDay()));
+        $this->assertSame('mem_1', $subscriptions->first()->whop_membership_id);
+        $this->assertTrue($subscriptions->first()->subscription_expires_at->equalTo(now()->addDays(30)->startOfDay()));
     }
 
     public function test_renovacion_de_plan_vencido_cuenta_desde_hoy(): void
@@ -175,7 +176,7 @@ class WhopWebhookTest extends TestCase
 
     public function test_elite_con_pick_publicado_hoy_empieza_manana(): void
     {
-        DB::table('picks')->insert(['plan_id' => Plan::ID_PLAN_ELITE, 'created_at' => now(), 'updated_at' => now()]);
+        DB::table('picks')->insert(['plan_id' => Plan::ID_PLAN_ELITE, 'source' => Pick::SOURCE_SUSCRIPTION, 'created_at' => now(), 'updated_at' => now()]);
 
         $this->sendEvent($this->paymentEvent('evt_1', 'pay_1', 'elite', 30))->assertOk();
 
@@ -185,12 +186,58 @@ class WhopWebhookTest extends TestCase
 
     public function test_pick_elite_no_agrega_dia_a_otros_planes(): void
     {
-        DB::table('picks')->insert(['plan_id' => Plan::ID_PLAN_ELITE, 'created_at' => now(), 'updated_at' => now()]);
+        DB::table('picks')->insert(['plan_id' => Plan::ID_PLAN_ELITE, 'source' => Pick::SOURCE_SUSCRIPTION, 'created_at' => now(), 'updated_at' => now()]);
 
         $this->sendEvent($this->paymentEvent('evt_1', 'pay_1', 'suscripcion'))->assertOk();
 
         $subscription = Subscription::where('user_id', $this->user->id)->sole();
         $this->assertTrue($subscription->subscription_expires_at->equalTo(now()->addDays(30)->startOfDay()));
+    }
+
+    public function test_pick_free_no_agrega_dia_a_elite(): void
+    {
+        DB::table('picks')->insert(['plan_id' => Plan::ID_PLAN_ELITE, 'source' => Pick::SOURCE_WEB_SUSCRIPTION, 'created_at' => now(), 'updated_at' => now()]);
+
+        $this->sendEvent($this->paymentEvent('evt_1', 'pay_1', 'elite', 30))->assertOk();
+
+        $subscription = Subscription::where('user_id', $this->user->id)->sole();
+        $this->assertTrue($subscription->subscription_expires_at->equalTo(now()->startOfDay()));
+    }
+
+    public function test_pago_elite_con_plan_vigente_no_modifica_suscripcion(): void
+    {
+        $subscription = Subscription::create([
+            'user_id'                 => $this->user->id,
+            'subscription_status'     => Subscription::STATUS_ACTIVE,
+            'subscription_plan'       => 'elite',
+            'subscription_expires_at' => now()->startOfDay(),
+        ]);
+        $subscription->forceFill(['send_email' => true, 'quantity_pick' => 1])->save();
+
+        $this->sendEvent($this->paymentEvent('evt_1', 'pay_1', 'elite', 30, 'mem_2'))->assertOk();
+
+        $subscription->refresh();
+        $this->assertTrue($subscription->subscription_expires_at->equalTo(now()->startOfDay()));
+        $this->assertSame(1, (int)$subscription->quantity_pick);
+        $this->assertNull($subscription->whop_membership_id);
+    }
+
+    public function test_elite_vencido_se_reactiva_desde_hoy(): void
+    {
+        Subscription::create([
+            'user_id'                 => $this->user->id,
+            'subscription_status'     => Subscription::STATUS_EXPIRED,
+            'subscription_plan'       => 'elite',
+            'subscription_expires_at' => now()->subDay()->startOfDay(),
+        ])->forceFill(['send_email' => true, 'quantity_pick' => 2])->save();
+
+        $this->sendEvent($this->paymentEvent('evt_1', 'pay_1', 'elite', 30))->assertOk();
+
+        $subscription = Subscription::where('user_id', $this->user->id)->sole();
+        $this->assertSame(Subscription::STATUS_ACTIVE, $subscription->subscription_status);
+        $this->assertTrue($subscription->subscription_expires_at->equalTo(now()->startOfDay()));
+        $this->assertNull($subscription->send_email);
+        $this->assertNull($subscription->quantity_pick);
     }
 
     public function test_membership_deactivated_expira_suscripcion(): void

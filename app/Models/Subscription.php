@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Traits\GeneratesSlugsTrait;
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -35,6 +36,7 @@ class Subscription extends Model
     {
         return [
             'subscription_expires_at' => 'datetime',
+            'sure_bettor_day'         => 'date',
         ];
     }
     
@@ -61,6 +63,7 @@ class Subscription extends Model
             'subscriptions.quantity_pick',
             'subscriptions.winner',
             'subscriptions.sure_bettor',
+            'subscriptions.sure_bettor_day',
             'subscriptions.created_at',
             'users.email',
             'users_profiles.first_name',
@@ -114,7 +117,18 @@ class Subscription extends Model
         }
         
         if (isset($filters['expired'])) {
-            $query->whereDate('subscriptions.subscription_expires_at', '<=', now()->format('Y-m-d'));
+            $today = now()->format('Y-m-d');
+
+            // Elite vence al terminar su día de servicio; los demás planes al iniciar su fecha de vencimiento
+            $query->where(function ($q) use ($today) {
+                $q->where(function ($q) use ($today) {
+                    $q->where('subscriptions.subscription_plan', self::PLAN_ELITE)
+                        ->whereDate('subscriptions.subscription_expires_at', '<', $today);
+                })->orWhere(function ($q) use ($today) {
+                    $q->where('subscriptions.subscription_plan', '!=', self::PLAN_ELITE)
+                        ->whereDate('subscriptions.subscription_expires_at', '<=', $today);
+                });
+            });
         }
         
         if (isset($filters['subscription_status'])) {
@@ -143,6 +157,25 @@ class Subscription extends Model
         $query->orderBy('subscriptions.user_id', 'ASC');
         
         return $query;
+    }
+    
+    /**
+     * Primer día en que un Elite puede recibir los picks completos a partir de $from:
+     * si ese día es hoy y ya se publicó el pick Elite de hoy, pasa a mañana.
+     */
+    public static function nextEliteDay(?Carbon $from = null): Carbon
+    {
+        $today = now()->startOfDay();
+        $day   = $from ? $from->copy()->startOfDay()->max($today) : $today;
+        
+        if ($day->equalTo($today) && Pick::where('plan_id', Plan::ID_PLAN_ELITE)
+                ->where('source', Pick::SOURCE_SUSCRIPTION)
+                ->whereDate('created_at', $today->format('Y-m-d'))
+                ->exists()) {
+            $day->addDay();
+        }
+        
+        return $day;
     }
     
 }

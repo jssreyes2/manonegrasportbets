@@ -21,6 +21,7 @@ class UpdateExpiredSubscriptionsJob implements ShouldQueue
     public $tries   = 1;    // NO reintentar para evitar duplicados
     
     private array $pendingEliteDays = [];
+    private array $eliteDays        = [];
     
     public function __construct()
     {
@@ -43,9 +44,10 @@ class UpdateExpiredSubscriptionsJob implements ShouldQueue
             Subscription::getSubscription()
                 ->filter([
                     'expired'             => true,
-                    'subscription_status' => Subscription::STATUS_ACTIVE,
-                    'send_email'          => true,
+                    'subscription_status' => Subscription::STATUS_ACTIVE
                 ])
+                // chunkById necesita ordenar solo por id, el filtro ordena por user_id
+                ->reorder()
                 ->chunkById(50, function ($subscriptions) use (
                     &$updatedCount, &$failedCount, &$expiredCount,
                     $subject, $bodyText, $bodyText1
@@ -57,14 +59,20 @@ class UpdateExpiredSubscriptionsJob implements ShouldQueue
                             
                             $notification = null;
                             
-                            if ($subscription->sure_bettor) {
-                                continue;
-                            }
-                            
-                            // Elite con picks de su día sin calificar: se espera el resultado para decidir el seguro del apostador
-                            if ($subscription->subscription_plan === Subscription::PLAN_ELITE
-                                && $this->hasPendingElitePicks($subscription->subscription_expires_at->format('Y-m-d'))) {
-                                continue;
+                            if ($subscription->subscription_plan === Subscription::PLAN_ELITE) {
+                                $eliteDay = $subscription->subscription_expires_at->format('Y-m-d');
+                                
+                                // Picks de su día sin calificar: se espera el resultado para decidir el seguro del apostador
+                                if ($this->hasPendingElitePicks($eliteDay)) {
+                                    continue;
+                                }
+                                
+                                // Su día (comprado o del seguro) no tuvo picks Elite: se pasa al siguiente día con picks
+                                if (!$this->hasElitePicks($eliteDay)) {
+                                    Subscription::whereKey($subscription->id)
+                                        ->update(['subscription_expires_at' => Subscription::nextEliteDay()]);
+                                    continue;
+                                }
                             }
                             
                             $expiredCount++;
@@ -114,6 +122,7 @@ class UpdateExpiredSubscriptionsJob implements ShouldQueue
                                 'send_email'          => null,
                                 'winner'              => null,
                                 'sure_bettor'         => null,
+                                'sure_bettor_day'     => null,
                                 'quantity_pick'       => null
                             ]);
                     }
@@ -146,6 +155,14 @@ class UpdateExpiredSubscriptionsJob implements ShouldQueue
             ->where('source', Pick::SOURCE_SUSCRIPTION)
             ->whereDate('created_at', $day)
             ->whereNull('right')
+            ->exists();
+    }
+    
+    private function hasElitePicks(string $day): bool
+    {
+        return $this->eliteDays[$day] ??= Pick::where('plan_id', Plan::ID_PLAN_ELITE)
+            ->where('source', Pick::SOURCE_SUSCRIPTION)
+            ->whereDate('created_at', $day)
             ->exists();
     }
     

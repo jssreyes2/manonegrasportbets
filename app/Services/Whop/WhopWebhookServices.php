@@ -2,6 +2,7 @@
 
 namespace App\Services\Whop;
 
+use App\Jobs\SendEmailJob;
 use App\Models\Notification;
 use App\Models\Payment;
 use App\Models\Pick;
@@ -15,8 +16,10 @@ use Carbon\Carbon;
 use Illuminate\Database\UniqueConstraintViolationException;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use Matchable\Whop\WhopApiClient;
 use Throwable;
 
 
@@ -24,6 +27,9 @@ class WhopWebhookServices
 {
     // Margen permitido entre el timestamp del webhook y la hora del servidor
     private const SIGNATURE_TOLERANCE_SECONDS = 300;
+
+    // Tiempo que se reutiliza el enlace de pago generado para un usuario y plan
+    private const CHECKOUT_TTL_MINUTES = 30;
     
     public function createCheckout(array $data, $whop)
     {
@@ -47,23 +53,28 @@ class WhopWebhookServices
                 ]);
             }
             
-            // Ejemplo: Crear una configuración de pago / checkout session
-            $checkout = $whop->checkouts->create([
-                'currency' => 'usd',
-                'plan'     => [
-                    'initial_price' => $plan->price,
-                    'plan_type'     => 'one_time',
-                    'company_id'    => config('whop.whop_company_id'),
-                    'currency'      => 'usd',
-                ],
-                
-                'metadata' => [
-                    'website_user_id' => auth()->id(),
-                    'website_plan'    => $plan->source,
-                ]
-            ]);
-            
-            $checkoutUrl = $checkout->purchaseUrl ?? null;
+            // Un solo checkout pendiente por usuario y plan: doble clic u otra pestaña reutilizan el mismo enlace
+            $cacheKey    = 'whop_checkout:' . auth()->id() . ':' . $plan->source;
+            $checkoutUrl = Cache::lock($cacheKey . ':lock', 15)->block(10, function () use ($cacheKey, $whop, $plan) {
+                return Cache::remember($cacheKey, now()->addMinutes(self::CHECKOUT_TTL_MINUTES), function () use ($whop, $plan) {
+                    $checkout = $whop->checkouts->create([
+                        'currency' => 'usd',
+                        'plan'     => [
+                            'initial_price' => $plan->price,
+                            'plan_type'     => 'one_time',
+                            'company_id'    => config('whop.whop_company_id'),
+                            'currency'      => 'usd',
+                        ],
+
+                        'metadata' => [
+                            'website_user_id' => auth()->id(),
+                            'website_plan'    => $plan->source,
+                        ]
+                    ]);
+
+                    return $checkout->purchaseUrl ?? null;
+                });
+            });
             
             if (!$checkoutUrl) {
                 return view('dashboard.views.checkout-error', [
@@ -261,30 +272,45 @@ class WhopWebhookServices
 
         $membershipId = data_get($payment, 'membership.id') ?? data_get($payment, 'member.id') ?? data_get($payment, 'subscription.id');
 
+        // Serializa los pagos del mismo usuario: dos webhooks simultáneos no deben leer la suscripción a la vez
+        User::whereKey($user->id)->lockForUpdate()->first();
+
         // Una sola suscripción por usuario y plan: cada compra one_time trae un membership_id distinto
         $subscription = Subscription::where('user_id', $user->id)
             ->where('subscription_plan', $planSlug)
             ->latest('id')
             ->first();
 
-        // Si renueva con el plan aún vigente, los días se suman al vencimiento actual
-        $now      = now();
-        $baseDate = $now;
-        if ($subscription
+        $now     = now();
+        $isElite = (int)$plan->id === Plan::ID_PLAN_ELITE;
+
+        // Elite vence en su día de servicio (sigue vigente todo ese día); los demás planes vencen al iniciar su fecha
+        $isCurrent = $subscription
             && $subscription->subscription_status === Subscription::STATUS_ACTIVE
-            && $subscription->subscription_expires_at?->greaterThan($baseDate)) {
-            $baseDate = $subscription->subscription_expires_at;
+            && $subscription->subscription_expires_at
+            && ($isElite
+                ? $subscription->subscription_expires_at->greaterThanOrEqualTo($now->copy()->startOfDay())
+                : $subscription->subscription_expires_at->greaterThan($now));
+
+        // No se permite comprar un plan vigente: el checkout ya lo bloquea, esto cubre pagos de checkouts abiertos a la vez
+        if ($isCurrent) {
+            Log::warning('Pago duplicado de un plan vigente, se reembolsa', [
+                'payment_id' => $payment['id'] ?? null,
+                'user_id'    => $user->id,
+                'plan'       => $planSlug,
+                'expires_at' => $subscription->subscription_expires_at,
+            ]);
+
+            $expiresAt = $subscription->subscription_expires_at;
+
+            return fn() => $this->refundDuplicatePayment($payment, $user, $plan, $expiresAt);
         }
 
-        $durationDays = (int)$plan->duration_days;
+        Cache::forget('whop_checkout:' . $user->id . ':' . $planSlug);
 
         // Si el pick Elite de hoy ya fue publicado, el plan Elite empieza a contar desde mañana
-        if ((int)$plan->id === Plan::ID_PLAN_ELITE
-            && Pick::whereDate('created_at', now()->format('Y-m-d'))->where('plan_id', Plan::ID_PLAN_ELITE)->exists()) {
-            $durationDays++;
-        }
-
-        $expirationDate = Carbon::parse($baseDate)->addDays($durationDays)->startOfDay();
+        $startDate      = $isElite ? Subscription::nextEliteDay() : $now;
+        $expirationDate = $startDate->copy()->addDays((int)$plan->duration_days)->startOfDay();
 
         $attributes = [
             'payment_date'            => now(),
@@ -295,11 +321,12 @@ class WhopWebhookServices
         ];
 
         // Renovación de un plan ya vencido: arranca un ciclo nuevo sin el estado de picks del anterior
-        if ($subscription && $baseDate === $now) {
-            $subscription->winner        = null;
-            $subscription->sure_bettor   = null;
-            $subscription->quantity_pick = null;
-            $subscription->send_email    = null;
+        if ($subscription) {
+            $subscription->winner          = null;
+            $subscription->sure_bettor     = null;
+            $subscription->sure_bettor_day = null;
+            $subscription->quantity_pick   = null;
+            $subscription->send_email      = null;
         }
 
         if ($subscription) {
@@ -316,6 +343,67 @@ class WhopWebhookServices
         ]);
 
         return fn() => $this->sendActivationMail($user, $plan, $expirationDate);
+    }
+
+    private function refundDuplicatePayment(array $payment, User $user, Plan $plan, Carbon $expiresAt): void
+    {
+        $error = null;
+
+        try {
+            app(WhopApiClient::class)->payments->refund($payment['id']);
+
+            Log::info('Pago duplicado reembolsado', ['payment_id' => $payment['id']]);
+        } catch (Throwable $e) {
+            // El pago ya quedó registrado; si falla el reembolso se debe hacer manualmente desde Whop
+            $error = $e->getMessage();
+
+            Log::error('No se pudo reembolsar el pago duplicado', [
+                'payment_id' => $payment['id'] ?? null,
+                'message'    => $error,
+            ]);
+        }
+
+        $this->sendRefundNotice($payment, $user, $plan, $expiresAt, $error);
+    }
+
+    private function sendRefundNotice(array $payment, User $user, Plan $plan, Carbon $expiresAt, ?string $error): void
+    {
+        $email = config('app.mail_refund_notify');
+
+        if (!$email) {
+            return;
+        }
+
+        $subject = ($error ? 'Reembolso FALLIDO de pago duplicado - ' : 'Reembolso de pago duplicado - ') . $plan->name;
+
+        $lines = [
+            $error
+                ? 'No se pudo reembolsar automáticamente un pago duplicado. Debe reembolsarse manualmente desde Whop.'
+                : 'Se reembolsó automáticamente un pago duplicado de un plan que el cliente ya tenía vigente.',
+            'Cliente: ' . e(capitalize_first($user->profile?->first_name) . ' ' . capitalize_first($user->profile?->last_name)) . ' (' . e($user->email) . ')',
+            'Plan: ' . e($plan->name) . ', vigente hasta el ' . $expiresAt->format('d/m/Y'),
+            'Pago Whop: ' . e($payment['id'] ?? '-') . ' por ' . e($payment['total'] ?? '-') . ' ' . e(strtoupper((string)($payment['currency'] ?? ''))),
+        ];
+
+        if ($error) {
+            $lines[] = 'Error: ' . e($error);
+        }
+
+        // El reembolso ya se hizo o se intentó: un fallo del correo no debe afectar al webhook
+        try {
+            SendEmailJob::dispatch([
+                'name'      => 'Administrador',
+                'email'     => $email,
+                'subject'   => $subject,
+                'message'   => implode('<br>', $lines),
+                'plan_name' => $plan->name,
+            ])->onQueue('email-notifications');
+        } catch (Throwable $e) {
+            Log::error('No se pudo enviar el aviso de reembolso', [
+                'payment_id' => $payment['id'] ?? null,
+                'message'    => $e->getMessage(),
+            ]);
+        }
     }
 
     private function paymentMatchesPlan(array $payment, Plan $plan): bool

@@ -517,6 +517,7 @@ CREATE TABLE `subscriptions`  (
   `send_email` tinyint(1) NULL DEFAULT NULL COMMENT 'email enviado',
   `winner` tinyint(1) NULL DEFAULT NULL COMMENT 'Ganador',
   `sure_bettor` tinyint(1) NULL DEFAULT NULL COMMENT 'Seguro apostador',
+  `sure_bettor_day` date NULL DEFAULT NULL COMMENT 'Dia que activo el seguro',
   `quantity_pick` int(11) NULL DEFAULT NULL COMMENT 'Cantidad d epicks',
   `created_at` timestamp(0) NULL DEFAULT NULL,
   `updated_at` timestamp(0) NULL DEFAULT NULL,
@@ -527,8 +528,8 @@ CREATE TABLE `subscriptions`  (
 -- ----------------------------
 -- Records of subscriptions
 -- ----------------------------
-INSERT INTO `subscriptions` VALUES (2, 2, '2026-08-23 16:09:35', 'mber_Au4IVEGZ8Decq', 'active', 'elite', '2026-09-07 00:00:00', 1, 1, 0, 3, '2026-09-06 23:09:35', '2026-09-06 21:03:49');
-INSERT INTO `subscriptions` VALUES (3, 4, '2026-08-24 16:48:18', 'mber_Au4IVEGZ8Decq', 'expirado', 'vip', '2026-09-03 16:48:18', NULL, NULL, NULL, NULL, '2026-08-24 23:48:18', '2026-09-06 07:08:31');
+INSERT INTO `subscriptions` VALUES (2, 2, '2026-08-23 16:09:35', 'mber_Au4IVEGZ8Decq', 'active', 'elite', '2026-09-07 00:00:00', 1, 1, 0, NULL, 3, '2026-09-06 23:09:35', '2026-09-06 21:03:49');
+INSERT INTO `subscriptions` VALUES (3, 4, '2026-08-24 16:48:18', 'mber_Au4IVEGZ8Decq', 'expirado', 'vip', '2026-09-03 16:48:18', NULL, NULL, NULL, NULL, NULL, '2026-08-24 23:48:18', '2026-09-06 07:08:31');
 
 -- ----------------------------
 -- Table structure for type_plans
