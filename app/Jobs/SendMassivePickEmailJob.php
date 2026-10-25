@@ -45,8 +45,8 @@ class SendMassivePickEmailJob implements ShouldQueue
                     'subscription_status'     => Subscription::STATUS_ACTIVE,
                     'subscription_plan'       => $this->pick->plan->source,
                     'winner'                  => true,
-                ]),
-                
+                ])->reorder(), // chunkById necesita ordenar solo por id, el filtro ordena por user_id
+
                 Pick::SOURCE_WEB_SUSCRIPTION => WebSuscription::query(),
                 //Pick::SOURCE_WEB_SUSCRIPTION => WebSuscription::whereNull('send_email'),
                 default                      => null,
