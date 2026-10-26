@@ -1,76 +1,69 @@
 @extends('layouts.frontend.heard')
 
+@section('title', __t('text.frontend.menu_login', 'Login'))
+
 @section('content')
-    <main class="flex-1 flex items-center justify-center p-4">
+    <main class="flex-1 flex items-center justify-center p-4 py-12">
         <div class="w-full max-w-md">
 
             <!-- CONTENEDOR DEL FORMULARIO -->
             <div class="bg-neutral-900/40 border border-neutral-800/80 rounded-2xl p-6 sm:p-8 backdrop-blur-md relative overflow-hidden shadow-2xl">
-           
+
                 <!-- Encabezado del Formulario -->
                 <div class="mb-6 text-center">
-                    <span class="text-[10px] font-mono tracking-widest text-lime-400 uppercase block mb-1">{{__t('text.frontend.login_customer_authentication', 'AUTHENTICATION')}} </span>
+                    <span class="text-xs font-mono tracking-widest text-lime-400 uppercase block mb-1">{{__t('text.frontend.login_customer_authentication', 'AUTHENTICATION')}} </span>
                     <h1 class="text-xl font-black text-white uppercase tracking-tight">{{__t('text.frontend.menu_login', 'Login')}}</h1>
-                    <p class="text-neutral-400 text-xs mt-1">{{__t('text.frontend.login_customer_access_credentials', 'Enter your login credentials.')}}</p>
+                    <p class="text-neutral-400 text-sm mt-1">{{__t('text.frontend.login_customer_access_credentials', 'Enter your login credentials.')}}</p>
                 </div>
-                
+
+                @if(session('status'))
+                    <div class="mb-4 flex items-start gap-2 rounded-xl border border-lime-400/30 bg-lime-400/5 p-3 text-sm text-lime-200" role="status">
+                        <i data-lucide="check-circle-2" class="w-4 h-4 mt-0.5 shrink-0"></i> {{ session('status') }}
+                    </div>
+                @endif
+
+                {{-- Aviso de correo sin confirmar: se muestra cuando el login responde unverified --}}
+                <div id="unverified-box" class="tbh-notice mb-4" role="alert" hidden>
+                    <i data-lucide="mail-warning" class="w-4 h-4 mt-0.5 shrink-0"></i>
+                    <div class="space-y-2">
+                        <p id="unverified-text"></p>
+                        <button type="button" id="btn-resend" class="font-bold underline hover:text-white">
+                            {{ __t('text.frontend.ux.resend_verification') }}
+                        </button>
+                    </div>
+                </div>
 
                 <form id="login" class="space-y-4" novalidate>
-                    <!-- Campo: ID de Operador -->
-                    <div class="space-y-1.5">
-                        <label for="email" class="text-[10px] font-mono text-neutral-400 uppercase tracking-wider block">{{__t('text.backend.forms.email', 'Email')}}</label>
-                        <div class="relative bg-black/60 border border-neutral-800 rounded-xl flex items-center px-3.5 py-3 transition-all neon-border-focus">
-                            <i data-lucide="user" class="w-4 h-4 text-neutral-500 shrink-0 mr-3"></i>
-                            <input
-                                    type="email"
-                                    id="email"
-                                    name="email"
-                                    placeholder="user@gmail.com"
-                                    required
-                                    class="w-full bg-transparent text-sm text-white placeholder-neutral-600 focus:outline-none font-mono"
-                            >
-                        </div>
-                    </div>
+                    <x-web.input name="email" type="email" icon="user" :label="__t('text.backend.forms.email', 'Email')"
+                                 placeholder="user@gmail.com" required autocomplete="email" inputmode="email" autocapitalize="off" spellcheck="false"/>
 
-                    <!-- Campo: Llave de Seguridad -->
-                    <div class="space-y-1.5">
-                        <div class="flex justify-between items-center">
-                            <label for="password" class="text-[10px] font-mono text-neutral-400 uppercase tracking-wider block">{{__t('text.backend.forms.password', 'Password')}}</label>
+                    <div>
+                        <x-web.input name="password" type="password" icon="lock" :label="__t('text.backend.forms.password', 'Password')"
+                                     placeholder="••••••••" required autocomplete="current-password"/>
+                        <div class="mt-2 text-right">
+                            <a href="{{ route('password.request') }}" class="text-xs font-semibold text-lime-400 hover:underline">
+                                {{ __t('text.frontend.ux.forgot_password') }}
+                            </a>
                         </div>
-                        <div class="relative bg-black/60 border border-neutral-800 rounded-xl flex items-center px-3.5 py-3 transition-all neon-border-focus">
-                            <i data-lucide="lock" class="w-4 h-4 text-neutral-500 shrink-0 mr-3"></i>
-                            <input
-                                    type="password"
-                                    id="password"
-                                    name="password"
-                                    placeholder="••••••••••••"
-                                    required
-                                    class="w-full bg-transparent text-sm text-white placeholder-neutral-600 focus:outline-none font-mono tracking-widest"
-                            >
-                        </div>
-                    </div>
-
-                    <div id="loading_form" class="loading-container" style="display: none;">
-                        <div class="spinner"></div>
                     </div>
 
                     <!-- Botón de Envío -->
-                    <button type="submit" class="w-full inline-flex items-center justify-center gap-2 btn-neon font-bold uppercase tracking-wider text-xs px-5 py-3.5 rounded-xl transition-all font-sans mt-2">
+                    <button type="submit" class="w-full inline-flex items-center justify-center gap-2 btn-neon font-bold uppercase tracking-wider text-xs px-5 py-3.5 rounded-xl transition-all font-sans mt-2 cursor-pointer">
                         <i data-lucide="shield-check" class="w-4 h-4"></i> {{__t('text.frontend.login_customer_authenticate', 'Authenticate and Access')}}
                     </button>
                 </form>
 
-                <!-- Separador Táctico -->
+                <!-- Separador -->
                 <div class="relative my-6 flex items-center justify-center">
                     <div class="border-t border-neutral-800/80 w-full"></div>
-                    <span class="absolute bg-[#0b0b0b] px-3 font-mono text-[9px] text-neutral-600 uppercase tracking-widest">Ó</span>
+                    <span class="absolute bg-[#0b0b0b] px-3 text-xs text-neutral-500 uppercase tracking-widest">{{ __t('text.frontend.ux.or') }}</span>
                 </div>
 
                 <!-- Enlace para Nuevos Registros -->
                 <div class="text-center">
-                    <p class="text-xs text-neutral-400 font-mono">
+                    <p class="text-sm text-neutral-400">
                         {{__t('text.frontend.login_customer_you_have_an_account', "Don't you have an account?")}}
-                        <a href="{{route('show.register')}}" class="text-lime-400 font-bold hover:underline block sm:inline sm:ml-1 uppercase tracking-tight text-[11px] font-sans">
+                        <a href="{{route('show.register')}}" class="text-lime-400 font-bold hover:underline block sm:inline sm:ml-1 uppercase tracking-tight text-xs font-sans">
                             {{__t('text.frontend.menu_sign_up', 'Sign up')}} &rarr;
                         </a>
                     </p>
@@ -84,37 +77,26 @@
 @section('script')
     <script type="text/javascript">
         $(document).ready(function () {
+            var form = document.getElementById('login');
+            var button = form.querySelector('button[type="submit"]');
+            var unverifiedBox = document.getElementById('unverified-box');
 
-            $('#login').on('submit', function (event) {
+            form.addEventListener('submit', function (event) {
                 event.preventDefault();
-                var form = this;
+                unverifiedBox.hidden = true;
 
-                // --- Validación manual con toastr ---
-                var errors = [];
+                var valid = TBHForm.validate(form, [
+                    {name: 'email', test: TBHForm.rules.required, message: TBH_I18N.required},
+                    {name: 'email', test: TBHForm.rules.email, message: TBH_I18N.email},
+                    {name: 'password', test: TBHForm.rules.required, message: TBH_I18N.required},
+                ]);
+                if (!valid) return;
 
-                var email = form.email.value.trim();
-                if (!email) {
-                    errors.push('Email is required');
-                } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-                    errors.push('Enter a valid email');
-                }
-
-                if (!form.password.value) {
-                    errors.push('Password is required');
-                }
-
-                if (errors.length > 0) {
-                    toastr.error(errors[0]); // o errors.forEach(...) para mostrar todos
-                    return false;
-                }
-
-                // --- Todo OK → AJAX ---
                 var formData = new FormData(form);
                 formData.append("source", "web");
                 formData.append('_token', $('meta[name="csrf-token"]').attr('content'));
 
-                $('#loading_form').css('display', 'flex');
-                $('#login button[type="submit"]').prop('disabled', true);
+                TBHForm.loading(button, true, @json(__t('text.frontend.ux.signing_in')));
 
                 $.ajax({
                     type: "POST",
@@ -126,38 +108,52 @@
                     data: formData,
                     success: function (response) {
                         if (response.status === 'success') {
-                            $('#loading_form').hide();
-                            toastr.success(response.message);
-                            setTimeout(function () {
-                                window.location.href = "{{ route('subscription') }}";
-                            }, 1000);
-                        }
-
-                        if (response.status === 'fail') {
-                            $('#loading_form').hide();
-                            $('#login button[type="submit"]').prop('disabled', false);
-                            toastr.error(response.message);
-                            setTimeout(function () {
-                                location.reload();
-                            }, 1000);
-                        }
-                    },
-                    error: function (xhr, status, error) {
-                        $('#loading_form').hide();
-                        $('#login button[type="submit"]').prop('disabled', false);
-
-                        // Errores 422 de Laravel
-                        if (xhr.status === 422 && xhr.responseJSON && xhr.responseJSON.errors) {
-                            var firstError = Object.values(xhr.responseJSON.errors)[0];
-                            toastr.error(Array.isArray(firstError) ? firstError[0] : firstError);
+                            window.location.href = response.redirect || "{{ route('customer.home') }}";
                             return;
                         }
 
-                        if (typeof window.errorHandler === 'function') {
-                            window.errorHandler(xhr, status, error);
-                        } else {
-                            toastr.error('Connection error');
+                        TBHForm.loading(button, false);
+
+                        // Demasiados intentos: el servidor responde error_time
+                        if (response.error_time) {
+                            toastr.error(@json(__t('text.frontend.ux.too_many_attempts')));
+                            return;
                         }
+
+                        // Correo sin confirmar: se ofrece reenviar el enlace, sin perder lo escrito
+                        if (response.unverified) {
+                            document.getElementById('unverified-text').textContent = response.message;
+                            unverifiedBox.hidden = false;
+                            return;
+                        }
+
+                        TBHForm.error(form.password, response.message);
+                        form.password.select();
+                    },
+                    error: function (xhr) {
+                        TBHForm.loading(button, false);
+                        TBHForm.serverErrors(form, xhr);
+                    }
+                });
+            });
+
+            document.getElementById('btn-resend').addEventListener('click', function () {
+                var resendButton = this;
+                TBHForm.loading(resendButton, true, @json(__t('text.frontend.ux.sending')));
+
+                $.ajax({
+                    type: "POST",
+                    url: "{{ route('resend.verification') }}",
+                    headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
+                    data: {email: form.email.value.trim()},
+                    dataType: 'json',
+                    success: function (response) {
+                        TBHForm.loading(resendButton, false);
+                        toastr.success(response.message);
+                    },
+                    error: function (xhr) {
+                        TBHForm.loading(resendButton, false);
+                        toastr.error(xhr.status === 429 ? @json(__t('text.frontend.ux.too_many_attempts')) : ((xhr.responseJSON && xhr.responseJSON.message) || TBH_I18N.unexpected));
                     }
                 });
             });

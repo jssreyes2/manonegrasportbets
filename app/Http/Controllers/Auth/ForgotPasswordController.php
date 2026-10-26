@@ -4,6 +4,8 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Foundation\Auth\SendsPasswordResetEmails;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Password;
 
 class ForgotPasswordController extends Controller
 {
@@ -19,4 +21,24 @@ class ForgotPasswordController extends Controller
     */
 
     use SendsPasswordResetEmails;
+    
+    protected function validateEmail(Request $request)
+    {
+        $request->validate(['email' => 'required|email'], [
+            'email.required' => __t('text.frontend.ux.v_required'),
+            'email.email'    => __t('text.frontend.ux.v_email'),
+        ]);
+    }
+    
+    /**
+     * Un correo no registrado recibe la misma respuesta que uno válido, para no revelar qué cuentas existen.
+     */
+    protected function sendResetLinkFailedResponse(Request $request, $response)
+    {
+        if ($response === Password::INVALID_USER) {
+            return $this->sendResetLinkResponse($request, Password::RESET_LINK_SENT);
+        }
+        
+        return back()->withInput($request->only('email'))->withErrors(['email' => trans($response)]);
+    }
 }

@@ -12,6 +12,24 @@ class Comment extends Model
     
     protected $table = 'comments';
     
+    const MAX_LENGTH = 1000;
+    
+    // Asuntos del formulario público; la etiqueta se traduce con text.frontend.ux.subject_{valor}
+    const SUBJECTS = ['suggestion', 'payment', 'picks', 'account', 'other'];
+    
+    protected function casts(): array
+    {
+        return ['is_testimonial' => 'boolean'];
+    }
+    
+    /**
+     * Comentarios que el admin marcó para publicarse como testimonio.
+     */
+    public static function testimonials(int $limit = 6)
+    {
+        return self::where('is_testimonial', true)->latest()->take($limit)->get();
+    }
+    
     protected function fullName(): Attribute
     {
         return Attribute::make(get: fn($value) => $value, set: fn($value) => strtolower($value));
@@ -23,6 +41,7 @@ class Comment extends Model
         
         $obj->full_name   = $data['full_name'];
         $obj->email       = $data['email'];
+        $obj->subject     = $data['subject'] ?? null;
         $obj->comment     = $data['comment'];
         
         $obj->save();

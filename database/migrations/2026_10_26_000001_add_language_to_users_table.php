@@ -1,0 +1,31 @@
+<?php
+
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
+
+return new class extends Migration
+{
+    public function up(): void
+    {
+        if (Schema::hasColumn('users', 'language')) {
+            return;
+        }
+
+        // Idioma elegido por el cliente en "Mi cuenta"; se aplica al iniciar sesión
+        Schema::table('users', function (Blueprint $table) {
+            $table->string('language', 2)->nullable()->after('accept_the_terms')->comment('Idioma preferido');
+        });
+    }
+
+    public function down(): void
+    {
+        if (!Schema::hasColumn('users', 'language')) {
+            return;
+        }
+
+        Schema::table('users', function (Blueprint $table) {
+            $table->dropColumn('language');
+        });
+    }
+};

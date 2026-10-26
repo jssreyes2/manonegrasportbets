@@ -5,6 +5,7 @@ namespace App\Services\User;
 use App\Models\Payment;
 use App\Models\Rol;
 use App\Services\Register\CategoryServices;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Support\Facades\Auth;
 
 class PaymentServices
@@ -63,5 +64,25 @@ class PaymentServices
             ]);
 
         return view($view, compact('filter', 'payments', 'stats'));
+    }
+    
+    /**
+     * Recibo descargable. Un cliente solo puede descargar los suyos; el admin, cualquiera.
+     */
+    public function receipt(string $paymentId)
+    {
+        $user = Auth::user();
+        
+        $payment = $this->getPayments()
+            ->addSelect('payments.website_user_id', 'payments.created_at')
+            ->where('payments.payment_id', $paymentId)
+            ->when($user->rol_id == Rol::ROL_CUSTOMER, fn($q) => $q->where('payments.website_user_id', $user->id))
+            ->firstOrFail();
+        
+        // Solo se incrustan los caracteres usados de la fuente: el PDF pasa de ~1 MB a unos KB
+        $pdf = Pdf::setOption('isFontSubsettingEnabled', true)
+            ->loadView('dashboard.views.operations.payment-receipt', compact('payment'));
+        
+        return $pdf->download('recibo-' . $payment->payment_id . '.pdf');
     }
 }

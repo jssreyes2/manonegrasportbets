@@ -1,0 +1,615 @@
+/* ==========================================================================
+   Panel del cliente.
+   1) Componentes nuevos (Inicio, Mis picks, Mi cuenta): usan los tokens de admin-theme.css.
+   2) Tema oscuro solo para clientes (body.tbh-customer): mismo look que la web pública.
+   ========================================================================== */
+
+/* ---------- 1. Componentes ---------- */
+
+.tbh-hello h2 {
+    font-size: 1.4rem;
+    font-weight: 700;
+}
+
+.tbh-hello p {
+    color: var(--tbh-muted);
+}
+
+/* Aviso superior (planes por vencer) */
+.tbh-banner {
+    display: flex;
+    gap: 12px;
+    align-items: flex-start;
+    padding: 12px 16px;
+    border-radius: var(--tbh-radius);
+    color: var(--tbh-warning);
+    background: var(--tbh-warning-soft);
+    border: 1px solid var(--tbh-warning-line, #fde68a);
+    font-weight: 600;
+}
+
+.tbh-banner small {
+    display: block;
+    font-weight: 400;
+    opacity: .9;
+}
+
+.tbh-banner > i {
+    margin-top: 3px;
+}
+
+/* Estado vacío con acción */
+.tbh-empty-cta {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 16px;
+}
+
+.tbh-empty-cta-icon {
+    flex: 0 0 48px;
+    width: 48px;
+    height: 48px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 12px;
+    color: var(--tbh-brand);
+    background: var(--tbh-sidebar);
+    font-size: 1.15rem;
+}
+
+.tbh-empty .btn {
+    display: inline-block;
+}
+
+/* Plan vigente con barra de avance */
+.tbh-plan-status {
+    height: 100%;
+    padding: 16px;
+    background: var(--tbh-surface);
+    border: 1px solid var(--tbh-border);
+    border-radius: var(--tbh-radius);
+    box-shadow: var(--tbh-shadow);
+}
+
+.tbh-plan-status.is-expiring {
+    border-color: var(--tbh-warning-line, #fde68a);
+}
+
+.tbh-progress {
+    height: 8px;
+    border-radius: 999px;
+    background: var(--tbh-track, #f0f1f3);
+    overflow: hidden;
+}
+
+.tbh-progress > span {
+    display: block;
+    height: 100%;
+    border-radius: 999px;
+    background: var(--tbh-brand);
+}
+
+.tbh-plan-status.is-expiring .tbh-progress > span {
+    background: #f59e0b;
+}
+
+.tbh-progress-legend {
+    margin-top: 6px;
+    font-size: .75rem;
+    color: var(--tbh-muted);
+}
+
+/* Mini estadísticas del cliente */
+.tbh-mini-stats {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+}
+
+.tbh-mini-stats > div {
+    padding: 10px 12px;
+    border-radius: var(--tbh-radius-sm);
+    background: var(--tbh-surface-2);
+    border: 1px solid var(--tbh-border);
+}
+
+.tbh-mini-stats strong {
+    display: block;
+    font-family: 'Poppins', sans-serif;
+    font-size: 1.3rem;
+    line-height: 1.2;
+}
+
+.tbh-mini-stats span {
+    font-size: .75rem;
+    color: var(--tbh-muted);
+}
+
+.tbh-mini-stats .is-won strong {
+    color: var(--tbh-success);
+}
+
+.tbh-mini-stats .is-lost strong {
+    color: var(--tbh-danger);
+}
+
+/* Accesos rápidos */
+.tbh-quick {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+}
+
+.tbh-quick a {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    padding: 14px 8px;
+    text-align: center;
+    font-size: .8rem;
+    font-weight: 600;
+    color: var(--tbh-text) !important;
+    background: var(--tbh-surface);
+    border: 1px solid var(--tbh-border);
+    border-radius: var(--tbh-radius);
+    transition: border-color .15s ease, transform .15s ease;
+}
+
+.tbh-quick a:hover,
+.tbh-quick a:focus-visible {
+    border-color: var(--tbh-brand);
+    transform: translateY(-2px);
+    text-decoration: none;
+}
+
+.tbh-quick i {
+    font-size: 1.1rem;
+    color: var(--tbh-brand-ink);
+}
+
+/* Tarjeta de pick */
+.tbh-pick {
+    padding: 14px 16px;
+    border-radius: var(--tbh-radius);
+    border: 1px solid var(--tbh-border);
+    border-left: 4px solid var(--tbh-muted);
+    background: var(--tbh-surface-2);
+}
+
+.tbh-pick + .tbh-pick {
+    margin-top: 10px;
+}
+
+/* En la grilla de Mis picks las tarjetas de una fila igualan su alto */
+.tbh-pick-grid .tbh-pick {
+    height: 100%;
+}
+
+.tbh-pick.is-won {
+    border-left-color: var(--tbh-success);
+}
+
+.tbh-pick.is-lost {
+    border-left-color: var(--tbh-danger);
+}
+
+.tbh-pick.is-pending {
+    border-left-color: var(--tbh-brand);
+}
+
+.tbh-pick-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    margin-bottom: 8px;
+}
+
+.tbh-pick-plan {
+    font-size: .75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: .04em;
+    color: var(--tbh-muted);
+}
+
+.tbh-pick-main {
+    font-weight: 700;
+    line-height: 1.3;
+}
+
+.tbh-pick-line {
+    font-size: .85rem;
+    color: var(--tbh-muted);
+}
+
+.tbh-pick-meta {
+    margin-top: 8px;
+    font-size: .75rem;
+    color: var(--tbh-muted);
+}
+
+/* Pestañas de Mi cuenta */
+.tbh-tabs {
+    padding: 0 12px;
+    border-bottom: 1px solid var(--tbh-border);
+}
+
+.tbh-tabs .nav-link {
+    margin-bottom: -1px;
+    padding: 14px 16px;
+    border: 0;
+    border-bottom: 2px solid transparent;
+    color: var(--tbh-muted) !important;
+    font-weight: 600;
+    background: transparent !important;
+}
+
+.tbh-tabs .nav-link:hover {
+    color: var(--tbh-text) !important;
+}
+
+.tbh-tabs .nav-link.active {
+    color: var(--tbh-text) !important;
+    border-bottom-color: var(--tbh-brand);
+}
+
+/* Avatar editable */
+.tbh-avatar-edit {
+    display: flex;
+    align-items: center;
+    gap: 18px;
+}
+
+.tbh-avatar-xl {
+    width: 88px;
+    height: 88px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 3px solid var(--tbh-brand);
+    background: var(--tbh-surface-2);
+}
+
+.tbh-avatar-edit label.btn {
+    cursor: pointer;
+}
+
+/* Preferencias */
+.tbh-legend {
+    font-size: 1rem;
+    font-weight: 600;
+    margin-bottom: 4px;
+}
+
+.tbh-choice-group {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.tbh-choice {
+    margin: 0;
+    cursor: pointer;
+}
+
+.tbh-choice input {
+    position: absolute;
+    opacity: 0;
+}
+
+.tbh-choice span {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 16px;
+    border-radius: var(--tbh-radius-sm);
+    border: 1px solid var(--tbh-border);
+    background: var(--tbh-surface);
+    font-weight: 500;
+}
+
+.tbh-choice input:checked + span {
+    border-color: var(--tbh-brand);
+    box-shadow: 0 0 0 3px rgba(163, 230, 53, .2);
+}
+
+.tbh-choice input:focus-visible + span {
+    outline: 2px solid var(--tbh-brand);
+    outline-offset: 2px;
+}
+
+.tbh-info-row {
+    display: flex;
+    gap: 12px;
+    padding: 14px 16px;
+    border-radius: var(--tbh-radius-sm);
+    background: var(--tbh-surface-2);
+    border: 1px solid var(--tbh-border);
+}
+
+.tbh-info-row > i {
+    margin-top: 3px;
+    color: var(--tbh-brand-ink);
+}
+
+/* Placeholder animado mientras cargan las imágenes de los planes */
+.tbh-plan-card img {
+    min-height: 120px;
+    background: linear-gradient(90deg, var(--tbh-surface-2) 25%, var(--tbh-border) 50%, var(--tbh-surface-2) 75%);
+    background-size: 200% 100%;
+    animation: tbh-shimmer 1.4s ease-in-out infinite;
+}
+
+@keyframes tbh-shimmer {
+    from { background-position: 200% 0; }
+    to { background-position: -200% 0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .tbh-plan-card img { animation: none; }
+}
+
+/* Foco visible en todo el panel */
+.tbh-admin a:focus-visible,
+.tbh-admin .btn:focus-visible,
+.tbh-admin button:focus-visible {
+    outline: 2px solid var(--tbh-brand);
+    outline-offset: 2px;
+}
+
+@media (max-width: 575.98px) {
+    .tbh-quick {
+        grid-template-columns: 1fr;
+    }
+
+    .tbh-quick a {
+        flex-direction: row;
+        justify-content: flex-start;
+        padding: 12px 14px;
+    }
+}
+
+/* ---------- 2. Tema oscuro del cliente ---------- */
+
+body.tbh-customer {
+    --tbh-bg: #050505;
+    --tbh-surface: #0f0f10;
+    --tbh-surface-2: #161618;
+    --tbh-border: #27272a;
+    --tbh-text: #f4f4f5;
+    --tbh-muted: #a1a1aa;
+
+    --tbh-brand-ink: #a3e635;
+    --tbh-brand-soft: rgba(163, 230, 53, .1);
+
+    /* Botones principales: lima neón con texto negro, como en la web */
+    --tbh-action: #a3e635;
+    --tbh-action-hover: #bef264;
+    --tbh-action-ring: rgba(163, 230, 53, .25);
+
+    --tbh-success: #4ade80;
+    --tbh-success-soft: rgba(74, 222, 128, .12);
+    --tbh-danger: #f87171;
+    --tbh-danger-soft: rgba(248, 113, 113, .12);
+    --tbh-warning: #fbbf24;
+    --tbh-warning-soft: rgba(251, 191, 36, .1);
+    --tbh-warning-line: rgba(251, 191, 36, .35);
+    --tbh-info: #60a5fa;
+    --tbh-info-soft: rgba(96, 165, 250, .12);
+    --tbh-track: #27272a;
+
+    --tbh-shadow: none;
+    --tbh-shadow-lg: 0 10px 30px rgba(0, 0, 0, .5);
+
+    background:
+        radial-gradient(circle at 10% 10%, rgba(163, 230, 53, .06) 0%, transparent 40%),
+        #050505;
+    color-scheme: dark;
+}
+
+body.tbh-customer .content-wrapper {
+    background: transparent;
+}
+
+body.tbh-customer .main-header {
+    background: rgba(5, 5, 5, .85);
+    backdrop-filter: blur(8px);
+}
+
+body.tbh-customer .main-header .nav-link,
+body.tbh-customer .tbh-header-user .tbh-user-name {
+    color: var(--tbh-text);
+}
+
+body.tbh-customer .btn-brand,
+body.tbh-customer .btn-primary,
+body.tbh-customer .btn-info,
+body.tbh-customer .btn-outline-info,
+body.tbh-customer .btn-brand:hover,
+body.tbh-customer .btn-brand:focus,
+body.tbh-customer .btn-primary:hover,
+body.tbh-customer .btn-info:hover,
+body.tbh-customer .btn-outline-info:hover,
+body.tbh-customer .page-item.active .page-link {
+    color: #050505 !important;
+    font-weight: 600;
+}
+
+body.tbh-customer .btn-outline-dark,
+body.tbh-customer .btn-outline-secondary,
+body.tbh-customer .btn-default {
+    color: var(--tbh-text);
+    background: transparent;
+    border-color: var(--tbh-border);
+}
+
+body.tbh-customer .btn-outline-dark:hover,
+body.tbh-customer .btn-outline-secondary:hover,
+body.tbh-customer .btn-default:hover {
+    color: var(--tbh-brand);
+    background: var(--tbh-surface-2);
+    border-color: var(--tbh-brand);
+}
+
+/* Formularios */
+body.tbh-customer label:not(.form-check-label):not(.custom-control-label):not(.btn) {
+    color: #d4d4d8;
+}
+
+body.tbh-customer .form-control,
+body.tbh-customer .custom-select,
+body.tbh-customer .custom-file-label,
+body.tbh-customer .select2-container--default .select2-selection--single,
+body.tbh-customer .select2-container--default .select2-selection--multiple,
+body.tbh-customer .select2-dropdown,
+body.tbh-customer .select2-search__field {
+    color: var(--tbh-text);
+    background-color: #0a0a0b;
+    border-color: var(--tbh-border);
+}
+
+body.tbh-customer .form-control:focus,
+body.tbh-customer .select2-container--focus .select2-selection {
+    color: var(--tbh-text);
+    background-color: #0a0a0b;
+    border-color: var(--tbh-brand);
+    box-shadow: 0 0 0 3px rgba(163, 230, 53, .15);
+}
+
+body.tbh-customer .form-control::placeholder {
+    color: #52525b;
+}
+
+body.tbh-customer .form-control.is-invalid,
+body.tbh-customer .select2-selection.is-invalid {
+    border-color: var(--tbh-danger) !important;
+}
+
+body.tbh-customer .invalid-feedback {
+    color: #fca5a5;
+}
+
+body.tbh-customer .input-group-text {
+    color: var(--tbh-muted);
+    background: var(--tbh-surface-2);
+    border-color: var(--tbh-border);
+}
+
+body.tbh-customer .select2-container--default .select2-selection--single .select2-selection__rendered {
+    color: var(--tbh-text);
+}
+
+body.tbh-customer .select2-container--default .select2-results__option[aria-selected=true] {
+    background: var(--tbh-surface-2);
+}
+
+body.tbh-customer .select2-container--default .select2-results__option--highlighted[aria-selected] {
+    color: #050505;
+    background: var(--tbh-brand);
+}
+
+body.tbh-customer .text-muted,
+body.tbh-customer .form-text.text-muted {
+    color: var(--tbh-muted) !important;
+}
+
+/* Tablas */
+body.tbh-customer .table {
+    color: var(--tbh-text);
+}
+
+body.tbh-customer .table thead th {
+    color: var(--tbh-muted);
+    background: var(--tbh-surface-2);
+    border-bottom-color: var(--tbh-border);
+}
+
+body.tbh-customer .table td {
+    border-top-color: var(--tbh-border);
+}
+
+body.tbh-customer .table tbody tr:hover {
+    background: var(--tbh-surface-2);
+}
+
+body.tbh-customer .badge.bg-light {
+    color: #e4e4e7 !important;
+    background: #27272a !important;
+}
+
+body.tbh-customer .page-link {
+    color: var(--tbh-text);
+    background: var(--tbh-surface);
+}
+
+/* Alertas y avisos con bordes que en claro eran fijos */
+body.tbh-customer .alert-success { border-color: rgba(74, 222, 128, .35); }
+body.tbh-customer .alert-danger { border-color: rgba(248, 113, 113, .35); }
+body.tbh-customer .alert-warning { border-color: var(--tbh-warning-line); }
+body.tbh-customer .alert-info { border-color: rgba(96, 165, 250, .35); }
+
+body.tbh-customer .tbh-stat:hover,
+body.tbh-customer .tbh-my-plan,
+body.tbh-customer .tbh-plan-active {
+    border-color: rgba(163, 230, 53, .35);
+}
+
+body.tbh-customer .tbh-stat-icon,
+body.tbh-customer .tbh-my-plan-icon,
+body.tbh-customer .tbh-empty-cta-icon {
+    background: var(--tbh-brand-soft);
+}
+
+body.tbh-customer .tbh-empty i {
+    color: #3f3f46;
+}
+
+body.tbh-customer .tbh-list li,
+body.tbh-customer .tbh-how-step {
+    border-color: var(--tbh-border);
+}
+
+body.tbh-customer .tbh-hbar-track {
+    background: var(--tbh-track);
+}
+
+body.tbh-customer .dropdown-menu,
+body.tbh-customer .modal-content {
+    color: var(--tbh-text);
+    background: var(--tbh-surface);
+}
+
+body.tbh-customer .dropdown-item {
+    color: var(--tbh-text);
+}
+
+body.tbh-customer .dropdown-item:hover {
+    color: var(--tbh-brand);
+    background: var(--tbh-surface-2);
+}
+
+body.tbh-customer .close {
+    color: var(--tbh-text);
+    text-shadow: none;
+}
+
+body.tbh-customer .breadcrumb-item.active,
+body.tbh-customer .breadcrumb-item + .breadcrumb-item::before {
+    color: var(--tbh-muted);
+}
+
+body.tbh-customer .tbh-pay-overlay {
+    background: rgba(0, 0, 0, .8);
+}
+
+/* admin-theme.css colorea todos los <label>; los que son botón usan el color del botón */
+body.tbh-customer.tbh-admin label.btn-outline-dark {
+    color: var(--tbh-text);
+}
+
+body.tbh-customer.tbh-admin label.btn-outline-dark:hover {
+    color: var(--tbh-brand);
+}

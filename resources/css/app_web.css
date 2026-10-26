@@ -160,6 +160,163 @@ details > summary::-webkit-details-marker {
     display: none;
 }
 
+/* ===== Banner principal con video ===== */
+.tbh-hero-media {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+/* El video aparece con un fundido cuando empieza a reproducirse; antes se ve la imagen */
+.tbh-hero-video {
+    opacity: 0;
+    transition: opacity 0.8s ease;
+}
+.tbh-hero-video.is-playing {
+    opacity: 1;
+}
+
+.tbh-hero-scroll i,
+.tbh-hero-scroll svg {
+    animation: hero-bounce 2s ease-in-out infinite;
+}
+@keyframes hero-bounce {
+    0%, 100% { transform: translateY(0); }
+    50%      { transform: translateY(6px); }
+}
+
+/* ===== Formularios ===== */
+
+/* Etiquetas legibles: 12px y contraste suficiente sobre negro */
+.tbh-label {
+    display: block;
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: #d4d4d4;
+}
+
+.neon-border-focus:focus-within {
+    border-color: rgba(163, 230, 53, 0.7);
+    box-shadow: 0 0 0 3px rgba(163, 230, 53, 0.15);
+}
+
+.tbh-field-box.is-invalid {
+    border-color: #f87171;
+    box-shadow: 0 0 0 3px rgba(248, 113, 113, 0.15);
+}
+
+.tbh-field-error {
+    font-size: 0.75rem;
+    color: #fca5a5;
+}
+
+.tbh-field-hint {
+    font-size: 0.75rem;
+    color: #a3a3a3;
+}
+
+/* Spinner dentro de los botones mientras se envía el formulario */
+.tbh-btn-spinner {
+    width: 1rem;
+    height: 1rem;
+    border-radius: 9999px;
+    border: 2px solid currentColor;
+    border-right-color: transparent;
+    animation: spin 0.7s linear infinite;
+}
+
+button[aria-busy="true"] {
+    cursor: progress;
+    opacity: 0.85;
+}
+
+/* Medidor de seguridad de la contraseña */
+.tbh-strength {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 4px;
+}
+.tbh-strength span {
+    height: 4px;
+    border-radius: 9999px;
+    background: #262626;
+    transition: background-color 0.2s ease;
+}
+.tbh-strength[data-level="1"] span:nth-child(-n+1) { background: #f87171; }
+.tbh-strength[data-level="2"] span:nth-child(-n+2) { background: #fbbf24; }
+.tbh-strength[data-level="3"] span:nth-child(-n+3) { background: #a3e635; }
+.tbh-strength[data-level="4"] span { background: #4ade80; }
+
+/* Aviso destacado (reemplaza los textos amarillos en línea) */
+.tbh-notice {
+    display: flex;
+    gap: 0.75rem;
+    align-items: flex-start;
+    text-align: left;
+    padding: 0.85rem 1rem;
+    border-radius: 0.75rem;
+    border: 1px solid rgba(250, 204, 21, 0.3);
+    background: rgba(250, 204, 21, 0.06);
+    color: #fde68a;
+    font-size: 0.8rem;
+    line-height: 1.45;
+}
+
+/* Contenido de páginas estáticas mostrado en modal (términos) */
+.tbh-prose p { margin-bottom: 0.75rem; }
+.tbh-prose h1, .tbh-prose h2, .tbh-prose h3 { color: #fff; font-weight: 700; margin: 1rem 0 0.5rem; }
+.tbh-prose ul { list-style: disc; padding-left: 1.25rem; margin-bottom: 0.75rem; }
+.tbh-prose ol { list-style: decimal; padding-left: 1.25rem; margin-bottom: 0.75rem; }
+
+dialog.tbh-dialog::backdrop {
+    background: rgba(0, 0, 0, 0.8);
+    backdrop-filter: blur(4px);
+}
+
+/* ===== Encabezado ===== */
+.tbh-logo {
+    height: 56px;
+    width: auto;
+}
+@media (min-width: 768px) {
+    .tbh-logo { height: 80px; }
+}
+
+/* Selector de idioma compacto ES/EN */
+.tbh-lang-switch {
+    display: inline-flex;
+    border: 1px solid #262626;
+    border-radius: 9999px;
+    padding: 2px;
+    font-size: 0.7rem;
+    font-weight: 700;
+}
+.tbh-lang-switch a {
+    padding: 0.25rem 0.6rem;
+    border-radius: 9999px;
+    color: #a3a3a3;
+}
+.tbh-lang-switch a:hover { color: #fff; }
+.tbh-lang-switch a.active {
+    background: #a3e635;
+    color: #050505;
+}
+
+/* La barra CTA fija en móvil no debe tapar el final de la página */
+@media (max-width: 767px) {
+    body.has-mobile-cta { padding-bottom: 76px; }
+}
+
+/* Foco visible en enlaces y botones del sitio */
+a:focus-visible, button:focus-visible, summary:focus-visible {
+    outline: 2px solid #a3e635;
+    outline-offset: 2px;
+}
+
 @media (prefers-reduced-motion: reduce) {
     html.js [data-reveal] { opacity: 1; }
     html.js [data-reveal].is-visible,

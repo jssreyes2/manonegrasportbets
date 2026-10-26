@@ -45,19 +45,25 @@ function initAuthDropdown() {
 
     if (!dropdownBtn || !dropdownMenu) return;
 
+    const hiddenClasses = ['opacity-0', 'invisible', '-translate-y-2', 'pointer-events-none'];
+
+    const setOpen = (open) => {
+        dropdownMenu.classList[open ? 'remove' : 'add'](...hiddenClasses);
+        dropdownBtn.setAttribute('aria-expanded', open ? 'true' : 'false');
+    };
+
     dropdownBtn.addEventListener('click', (e) => {
         e.stopPropagation();
-        const isHidden = dropdownMenu.classList.contains('invisible');
-
-        if (isHidden) {
-            dropdownMenu.classList.remove('opacity-0', 'invisible', '-translate-y-2', 'pointer-events-none');
-        } else {
-            dropdownMenu.classList.add('opacity-0', 'invisible', '-translate-y-2', 'pointer-events-none');
-        }
+        setOpen(dropdownMenu.classList.contains('invisible'));
     });
 
-    document.addEventListener('click', () => {
-        dropdownMenu.classList.add('opacity-0', 'invisible', '-translate-y-2', 'pointer-events-none');
+    document.addEventListener('click', () => setOpen(false));
+
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && dropdownBtn.getAttribute('aria-expanded') === 'true') {
+            setOpen(false);
+            dropdownBtn.focus();
+        }
     });
 }
 // 5. Revelado de secciones al hacer scroll

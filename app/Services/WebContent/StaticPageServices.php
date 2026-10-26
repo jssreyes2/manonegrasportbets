@@ -2,6 +2,7 @@
 
 namespace App\Services\WebContent;
 
+use App\Models\Comment;
 
 use App\Models\StaticPage;
 use App\Repositories\WebContent\StaticPageRepository;
@@ -140,6 +141,19 @@ class StaticPageServices
         $contact = StaticPageRepository::getContact(['id' => $data['id']])->first();
         
         return view('admin.web_content.static_page.form-comment-response', ['contact' => $contact]);
+    }
+    
+    public function toggleTestimonial(int $id): JsonResponse
+    {
+        $comment = Comment::findOrFail($id);
+        
+        $comment->is_testimonial = !$comment->is_testimonial;
+        $comment->save();
+        
+        return response()->json([
+            'status'  => 'success',
+            'message' => $comment->is_testimonial ? 'El comentario se publicó como testimonio en la web.' : 'El comentario ya no se muestra en la web.',
+        ]);
     }
     
     public function sendResponse(array $data): JsonResponse

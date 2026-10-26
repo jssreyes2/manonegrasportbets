@@ -17,4 +17,12 @@ class PaymentController extends Controller
         return $this->payment->index($request->all());
     }
     
+    /**
+     * Recibo en PDF de un pago (por el ID de pago de Whop).
+     */
+    public function receipt(string $paymentId)
+    {
+        return $this->payment->receipt($paymentId);
+    }
+    
 }

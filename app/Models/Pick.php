@@ -8,6 +8,8 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Carbon\Carbon;
+use Illuminate\Support\Facades\DB;
 
 class Pick extends Model
 {
@@ -90,6 +92,91 @@ class Pick extends Model
         return $query;
     }
     
+    /**
+     * Líneas de texto del pick (el body es HTML con un <p> por dato: plan, selección, cuota).
+     */
+    public function lines(): array
+    {
+        $html  = preg_replace('#</p>|<br\s*/?>#i', "\n", (string)$this->body);
+        $text  = html_entity_decode(strip_tags($html), ENT_QUOTES | ENT_HTML5, 'UTF-8');
+        $lines = array_map(fn($line) => trim(preg_replace('/\s+/u', ' ', $line)), explode("\n", $text));
+
+        // El plan ya se muestra aparte, por eso se descarta la línea "Plan: ..."
+        return array_values(array_filter($lines, fn($line) => $line !== '' && !preg_match('/^plan\s*:/iu', $line)));
+    }
+
+    /**
+     * 'won', 'lost' o 'pending' según la calificación del pick.
+     */
+    public function resultKey(): string
+    {
+        return match (true) {
+            $this->right === null => 'pending',
+            (bool)$this->right    => 'won',
+            default               => 'lost',
+        };
+    }
+
+    /**
+     * Acierto de los picks calificados. $days limita a los últimos N días (null = histórico)
+     * y $since descarta los anteriores a esa fecha.
+     */
+    public static function resultsSummary(?int $days = null, ?int $userId = null, ?Carbon $since = null): array
+    {
+        $query = self::query()->whereNotNull('picks.right');
+
+        if ($days) {
+            $query->where('picks.created_at', '>=', now()->subDays($days)->startOfDay());
+        }
+
+        if ($since) {
+            $query->where('picks.created_at', '>=', $since);
+        }
+
+        // Solo los picks que se le enviaron a ese cliente
+        if ($userId) {
+            $query->whereIn('picks.id', DB::table('send_mail_picks')->where('user_id', $userId)->select('pick_id'));
+        }
+
+        $row   = $query->selectRaw('COUNT(*) AS total, COALESCE(SUM(`picks`.`right` = 1), 0) AS won')->first();
+        $total = (int)($row->total ?? 0);
+        $won   = (int)($row->won ?? 0);
+
+        return [
+            'total' => $total,
+            'won'   => $won,
+            'lost'  => $total - $won,
+            'rate'  => $total > 0 ? round($won * 100 / $total) : null,
+        ];
+    }
+
+    /**
+     * Últimos picks ya calificados, para mostrarlos como historial público.
+     */
+    public static function latestGraded(int $limit = 6, ?Carbon $since = null)
+    {
+        return self::with('plan:id,name')
+            ->whereNotNull('right')
+            ->when($since, fn($q) => $q->where('created_at', '>=', $since))
+            ->orderByDesc('created_at')
+            ->take($limit)
+            ->get();
+    }
+
+    /**
+     * Picks enviados por correo a un cliente; $date filtra un día concreto (Y-m-d).
+     */
+    public static function sentToUser(int $userId, ?string $date = null): Builder
+    {
+        return self::with('plan:id,name')
+            ->join('send_mail_picks', 'send_mail_picks.pick_id', '=', 'picks.id')
+            ->where('send_mail_picks.user_id', $userId)
+            ->when($date, fn($q) => $q->where('send_mail_picks.send_date', $date))
+            ->select('picks.*', 'send_mail_picks.send_date', 'send_mail_picks.sent_at')
+            ->orderByDesc('send_mail_picks.send_date')
+            ->orderByDesc('picks.id');
+    }
+
     static function getSourcePick()
     {
         $model      = new self();

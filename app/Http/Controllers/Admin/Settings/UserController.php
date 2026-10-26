@@ -89,6 +89,13 @@ class UserController extends Controller
     {
         return $this->user->verifyEmail($request->all());
     }
+    public function resendVerification(Request $request)
+    {
+        $data = $request->validate(['email' => 'required|email|max:191']);
+        
+        return $this->user->resendVerification($data['email']);
+    }
+    
     public function createUserSuscription(WebSuscriptionRequest $request)
     {
         return $this->user->createUserSuscription($request->all());

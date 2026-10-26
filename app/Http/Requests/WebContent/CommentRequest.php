@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests\WebContent;
 
+use App\Models\Comment;
 use Illuminate\Foundation\Http\FormRequest;
 
 class CommentRequest extends FormRequest
@@ -19,21 +20,25 @@ class CommentRequest extends FormRequest
     public function rules()
     {
         return [
-            'full_name' => 'required|regex:/^[\pL\s]+$/u',
-            'email'     => 'required|email',
-            'comment'   => 'required|string',
+            'full_name' => 'required|min:3|max:100|regex:/^[\pL\s]+$/u',
+            'email'     => 'required|email|max:191',
+            'subject'   => 'nullable|in:' . implode(',', Comment::SUBJECTS),
+            'comment'   => 'required|string|min:10|max:' . Comment::MAX_LENGTH,
         ];
     }
     
     public function messages()
     {
         return [
-            'full_name.required' => 'El campo Nombre Completo es obligatorio.',
-            'full_name.regex'    => 'El campo Nombre Completo solo debe contener letras y espacios.',
-            'email.required'     => 'El campo Correo Electrónico es obligatorio.',
-            'email.email'        => 'El formato del correo electrónico no es válido.',
-            'comment.required'   => 'El campo comentario es obligatorio.',
-            'comment.string'     => 'El campo comentario debe ser texto válido.',
+            'full_name.required' => __t('text.frontend.ux.v_required'),
+            'full_name.min'      => __t('text.frontend.ux.v_name'),
+            'full_name.regex'    => __t('text.frontend.ux.v_name'),
+            'email.required'     => __t('text.frontend.ux.v_required'),
+            'email.email'        => __t('text.frontend.ux.v_email'),
+            'subject.in'         => __t('text.frontend.ux.v_subject'),
+            'comment.required'   => __t('text.frontend.ux.v_required'),
+            'comment.min'        => __t('text.frontend.ux.v_comment_min'),
+            'comment.max'        => __t('text.frontend.ux.v_comment_max'),
         ];
     }
 }

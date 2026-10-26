@@ -33,19 +33,16 @@ class ProfileRequest extends FormRequest
     
     public function messages()
     {
-        $data = [
-            'first_name.required' => 'El campo Nombres es obligatorio.',
-            'last_name.required'  => 'El campo apellidos es obligatorio.',
-            'first_name.regex'    => 'El nombre solo puede contener letras y espacios.',
-            'last_name.regex'     => 'El apellido solo puede contener letras y espacios.',
-            'phone.required'      => 'El campo Teléfono es obligatorio.',
-            'phone.numeric'       => 'El campo Teléfono debe ser númerico.',
-            'country_id.required' => 'El campo país es obligatorio.',
-            'photo.image'         => 'El archivo debe ser una imagen',
-            'photo.mimes'         => 'La imagen debe ser de tipo: jpeg, png, jpg',
-            'photo.max'           => 'La imagen no debe pesar más de 10MB',
+        return [
+            'first_name.required' => __t('text.frontend.ux.v_required'),
+            'last_name.required'  => __t('text.frontend.ux.v_required'),
+            'first_name.regex'    => __t('text.frontend.ux.v_name'),
+            'last_name.regex'     => __t('text.frontend.ux.v_name'),
+            'phone.required'      => __t('text.frontend.ux.v_required'),
+            'phone.numeric'       => __t('text.backend.customer.v_phone'),
+            'country_id.required' => __t('text.frontend.ux.v_required'),
+            'photo.extensions'    => __t('text.backend.customer.photo_bad_type'),
+            'photo.max'           => __t('text.backend.customer.photo_too_big'),
         ];
-        
-        return $data;
     }
 }

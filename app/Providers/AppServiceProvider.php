@@ -3,6 +3,8 @@
 namespace App\Providers;
 
 use App\Models\Parameter;
+use App\Models\Rol;
+use App\Services\User\CustomerPanelServices;
 use App\Repositories\Settings\MenuRepository;
 use App\Services\InvoiceServices;
 use Illuminate\Support\Facades\Auth;
@@ -36,8 +38,17 @@ class AppServiceProvider extends ServiceProvider
     {
         view()->composer('layouts/app-backend', fn($v) => $v
             ->with('menus', MenuRepository::menus())
-            ->with('route', Auth::user()?->rol_id == 3 ? 'subscription' : 'admin.panel')
+            ->with('route', Auth::user()?->rol_id == 3 ? 'customer.home' : 'admin.panel')
         );
+
+        // Aviso en todas las páginas del cliente cuando un plan vence en los próximos días
+        view()->composer('layouts/app-backend', function ($view) {
+            $isCustomer = Auth::user()?->rol_id == Rol::ROL_CUSTOMER;
+
+            $view->with('expiringPlans', $isCustomer
+                ? rescue(fn() => app(CustomerPanelServices::class)->activePlans()->where('expiring', true), collect(), false)
+                : collect());
+        });
         
         view()->composer('layouts/app-backend', function ($view) {
             $view->with('parent', MenuRepository::getMenuParent(Auth::user()->rol_id));

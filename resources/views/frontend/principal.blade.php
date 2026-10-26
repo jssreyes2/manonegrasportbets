@@ -6,68 +6,87 @@
 
 @section('content')
     @php $L = fn($key) => __t('text.frontend.landing.' . $key); @endphp
-    <main class="pt-4">
-        {{-- ============ HERO ============ --}}
-        <section class="relative py-16 lg:py-28 overflow-hidden flex items-center min-h-[min(85vh,900px)]">
-            <div class="absolute -top-40 -left-40 w-[500px] h-[500px] rounded-full bg-lime-500/10 blur-3xl pointer-events-none"></div>
+    <main>
+        {{-- ============ HERO CON VIDEO (Contenido Web > Banner principal) ============ --}}
+        <section class="tbh-hero relative overflow-hidden flex items-center min-h-[calc(100svh-5rem)] md:min-h-[min(88vh,920px)] py-20">
+            {{-- Fondo: imagen inmediata y, encima, el video cuando ya puede reproducirse --}}
+            <div class="absolute inset-0" aria-hidden="true">
+                <picture>
+                    <source media="(max-width: 767px)" srcset="{{ $hero->url('poster_mobile') }}">
+                    <img src="{{ $hero->url('poster') }}" alt="" class="tbh-hero-media" fetchpriority="high">
+                </picture>
+                @if($hero->show_video)
+                    <video class="tbh-hero-media tbh-hero-video" muted loop playsinline preload="none" disablepictureinpicture
+                           data-sources-desktop="{{ json_encode($hero->sources('desktop')) }}"
+                           data-sources-mobile="{{ json_encode($hero->sources('mobile')) }}"></video>
+                @endif
+                <div class="absolute inset-0 bg-black" style="opacity: {{ $hero->overlay / 100 }}"></div>
+                <div class="absolute inset-0 bg-gradient-to-r from-black/70 via-black/20 to-transparent hidden lg:block"></div>
+                <div class="absolute inset-x-0 bottom-0 h-40 bg-gradient-to-t from-[#050505] to-transparent"></div>
+            </div>
 
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 w-full">
-                <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-8 items-center">
+                <div class="max-w-2xl mx-auto lg:mx-0 text-center lg:text-left space-y-6" data-reveal>
+                    <span class="inline-flex items-center gap-2 py-1 px-3 rounded-full text-xs font-semibold bg-black/50 backdrop-blur text-lime-300 border border-lime-800 uppercase tracking-widest">
+                        <span class="w-2 h-2 rounded-full bg-lime-400 animate-pulse"></span> {{ __t('text.frontend.winners', 'Winners need to be with winners') }}
+                    </span>
 
-                    <div class="text-center lg:text-left space-y-6 order-2 lg:order-1" data-reveal>
-                        <span class="inline-flex items-center gap-2 py-1 px-3 rounded-full text-xs font-semibold bg-lime-950 text-lime-300 border border-lime-800 uppercase tracking-widest">
-                            <span class="w-2 h-2 rounded-full bg-lime-400 animate-pulse"></span> {{ __t('text.frontend.winners', 'Winners need to be with winners') }}
-                        </span>
+                    <h1 class="text-4xl sm:text-6xl lg:text-7xl font-black tracking-tighter text-white uppercase leading-none drop-shadow-[0_4px_24px_rgba(0,0,0,0.6)]">
+                        {{__t('text.frontend.intelligence', 'Intelligence')}} <br class="hidden sm:block">
+                        <span class="text-transparent bg-clip-text bg-gradient-to-r from-lime-400 to-emerald-400">{{ __t('text.frontend.behind_game', 'Behind the Game') }}</span>
+                    </h1>
 
-                        <h1 class="text-4xl sm:text-6xl font-black tracking-tighter text-white uppercase leading-none">
-                            {{__t('text.frontend.intelligence', 'Intelligence')}} <br class="hidden sm:block">
-                            <span class="text-transparent bg-clip-text bg-gradient-to-r from-lime-400 to-emerald-400">{{ __t('text.frontend.behind_game', 'Behind the Game') }}</span>
-                        </h1>
+                    <p class="text-base sm:text-lg text-neutral-200 max-w-xl mx-auto lg:mx-0 leading-relaxed">
+                        {{__t('text.frontend.we_break_the_sports_matrix', 'We break the sports Matrix. At La Mano Negra, we don t guess; we process the chaos to deliver absolute mathematical precision.')}}
+                    </p>
 
-                        <p class="text-base sm:text-lg text-neutral-300 max-w-xl mx-auto lg:mx-0 leading-relaxed">
-                            {{__t('text.frontend.we_break_the_sports_matrix', 'We break the sports Matrix. At La Mano Negra, we don t guess; we process the chaos to deliver absolute mathematical precision.')}}
-                        </p>
-
-                        <div class="pt-2 flex flex-col sm:flex-row gap-3 justify-center lg:justify-start">
-                            <a href="{{route('show.plans')}}" class="btn-neon btn-shine inline-flex items-center justify-center gap-2 px-8 py-4 rounded-xl text-xs font-bold uppercase tracking-wider transition-all">
-                                <i data-lucide="zap" class="w-4 h-4"></i> {{ $L('hero_cta_plans') }}
-                            </a>
-                            @guest
-                                <button type="button" data-open-freepick class="inline-flex items-center justify-center gap-2 px-8 py-4 rounded-xl text-xs font-bold uppercase tracking-wider border border-neutral-700 text-white hover:border-lime-400 hover:text-lime-300 transition-all cursor-pointer">
-                                    <i data-lucide="gift" class="w-4 h-4"></i> {{ $L('hero_cta_free') }}
-                                </button>
-                            @endguest
-                        </div>
-
-                        <p class="text-xs font-mono text-lime-300/80">{{ $L('hero_from_price') }}</p>
-
-                        <ul class="flex flex-wrap justify-center lg:justify-start gap-x-6 gap-y-2 pt-2 text-xs text-neutral-400">
-                            <li class="flex items-center gap-1.5"><i data-lucide="lock" class="w-3.5 h-3.5 text-lime-400"></i>{{ $L('hero_trust_secure') }}</li>
-                            <li class="flex items-center gap-1.5"><i data-lucide="zap" class="w-3.5 h-3.5 text-lime-400"></i>{{ $L('hero_trust_instant') }}</li>
-                            <li class="flex items-center gap-1.5"><i data-lucide="headphones" class="w-3.5 h-3.5 text-lime-400"></i>{{ $L('hero_trust_support') }}</li>
-                        </ul>
+                    <div class="pt-2 flex flex-col sm:flex-row gap-3 justify-center lg:justify-start">
+                        <a href="{{route('show.plans')}}" class="btn-neon btn-shine inline-flex items-center justify-center gap-2 px-8 py-4 rounded-xl text-xs font-bold uppercase tracking-wider transition-all">
+                            <i data-lucide="zap" class="w-4 h-4"></i> {{ $L('hero_cta_plans') }}
+                        </a>
+                        @guest
+                            <button type="button" data-open-freepick class="inline-flex items-center justify-center gap-2 px-8 py-4 rounded-xl text-xs font-bold uppercase tracking-wider border border-white/30 bg-black/40 backdrop-blur text-white hover:border-lime-400 hover:text-lime-300 transition-all cursor-pointer">
+                                <i data-lucide="gift" class="w-4 h-4"></i> {{ $L('hero_cta_free') }}
+                            </button>
+                        @endguest
                     </div>
 
-                    <div class="flex justify-center items-center order-1 lg:order-2" data-reveal style="--reveal-delay: 150ms">
-                        <div class="relative w-full max-w-[480px] sm:max-w-[550px] lg:max-w-none group float-slow">
-                            <div class="absolute -inset-1 bg-gradient-to-r from-lime-500 to-emerald-500 rounded-3xl blur-2xl opacity-20 group-hover:opacity-30 transition duration-1000"></div>
+                    <p class="text-xs font-mono text-lime-300">{{ $L('hero_from_price') }}</p>
 
-                            <div class="relative rounded-3xl border border-neutral-800/80 bg-neutral-950 p-2 overflow-hidden shadow-[0_0_50px_rgba(163,230,53,0.05)]">
-                                <img src="{{ asset('img/logo-faro.jpg') }}" alt="La Mano Negra Spotlight"
-                                     class="w-full h-auto rounded-2xl object-cover grayscale-[10%] contrast-[110%] group-hover:scale-[102%] transition-all duration-700">
-                                <div class="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-black/10 pointer-events-none"></div>
-                            </div>
-
-                            <div class="absolute -bottom-5 left-4 sm:left-8 flex items-center gap-2 bg-black/90 border border-lime-400/40 rounded-full px-4 py-2 text-[11px] font-mono uppercase tracking-wider text-lime-300 shadow-[0_0_25px_rgba(163,230,53,0.25)]">
-                                <span class="w-2 h-2 rounded-full bg-lime-400 animate-ping"></span> {{ $L('hero_badge_live') }}
-                            </div>
-                        </div>
-                    </div>
-
+                    <ul class="flex flex-wrap justify-center lg:justify-start gap-x-6 gap-y-2 pt-2 text-xs text-neutral-300">
+                        {{-- Estado real: solo dice "publicados" si hoy ya salió un pick de suscripción --}}
+                        <li class="flex items-center gap-1.5 font-semibold {{ $picksPublishedToday ? 'text-lime-300' : 'text-neutral-200' }}">
+                            <span class="relative flex w-2 h-2">
+                                @if($picksPublishedToday)
+                                    <span class="absolute inline-flex h-full w-full rounded-full bg-lime-400 opacity-75 animate-ping"></span>
+                                @endif
+                                <span class="relative inline-flex w-2 h-2 rounded-full {{ $picksPublishedToday ? 'bg-lime-400' : 'bg-amber-400' }}"></span>
+                            </span>
+                            {{ $picksPublishedToday ? $L('hero_badge_live') : $L('hero_badge_soon') }}
+                        </li>
+                        <li class="flex items-center gap-1.5"><i data-lucide="lock" class="w-3.5 h-3.5 text-lime-400"></i>{{ $L('hero_trust_secure') }}</li>
+                        <li class="flex items-center gap-1.5"><i data-lucide="zap" class="w-3.5 h-3.5 text-lime-400"></i>{{ $L('hero_trust_instant') }}</li>
+                        <li class="flex items-center gap-1.5"><i data-lucide="headphones" class="w-3.5 h-3.5 text-lime-400"></i>{{ $L('hero_trust_support') }}</li>
+                    </ul>
                 </div>
             </div>
+
+            {{-- Indicador para seguir bajando --}}
+            <a href="#after-hero" class="tbh-hero-scroll absolute bottom-6 left-1/2 -translate-x-1/2 z-10 hidden md:flex flex-col items-center gap-1 text-[10px] uppercase tracking-widest text-neutral-400 hover:text-lime-300">
+                {{ $L('hero_scroll') }}
+                <i data-lucide="chevron-down" class="w-5 h-5"></i>
+            </a>
+
+            @if($hero->show_video)
+                <button type="button" class="tbh-hero-toggle absolute bottom-6 right-4 sm:right-6 z-10 hidden w-10 h-10 rounded-full border border-white/25 bg-black/50 backdrop-blur text-white hover:border-lime-400 hover:text-lime-300 items-center justify-center cursor-pointer"
+                        aria-pressed="false" aria-label="{{ $L('hero_pause') }}" data-label-pause="{{ $L('hero_pause') }}" data-label-play="{{ $L('hero_play') }}">
+                    <i data-lucide="pause" class="w-4 h-4" data-icon-pause></i>
+                    <i data-lucide="play" class="w-4 h-4 hidden" data-icon-play></i>
+                </button>
+            @endif
         </section>
 
+        <span id="after-hero"></span>
         {{-- ============ TICKER DE DEPORTES ============ --}}
         @php $sports = ['⚽ ' . $L('ticker_football'), '🏀 NBA', '🏈 NFL', '⚾ MLB', '🥊 UFC', '🎾 ' . $L('ticker_tennis'), '📊 ' . $L('ticker_asian'), '⚡ ' . $L('ticker_live')]; @endphp
         <section class="border-y border-neutral-900 bg-black/40 py-5 marquee overflow-hidden" aria-hidden="true">
@@ -230,6 +249,10 @@
             </div>
         </section>
 
+        {{-- ============ RESULTADOS VERIFICABLES Y TESTIMONIOS ============ --}}
+        @include('frontend.partials.results')
+        @include('frontend.partials.testimonials')
+
         {{-- ============ PICK GRATIS (LEAD MAGNET) ============ --}}
         @guest
             <section class="py-24">
@@ -308,4 +331,78 @@
             </div>
         </section>
     </main>
+@endsection
+
+@section('script')
+    <script>
+        // Video del banner: elige la versión móvil o de escritorio, respeta "reducir movimiento" y
+        // "ahorro de datos" (solo imagen) y se pausa cuando sale de la pantalla.
+        (function () {
+            var video = document.querySelector('.tbh-hero-video');
+            var toggle = document.querySelector('.tbh-hero-toggle');
+            if (!video) return;
+
+            var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+            var saveData = navigator.connection && navigator.connection.saveData;
+            if (reduceMotion || saveData) {
+                video.remove();
+                if (toggle) toggle.remove();
+                return;
+            }
+
+            var isMobile = window.matchMedia('(max-width: 767px)').matches;
+            var sources = JSON.parse(video.dataset[isMobile ? 'sourcesMobile' : 'sourcesDesktop']);
+            sources.forEach(function (item) {
+                var source = document.createElement('source');
+                source.src = item.src;
+                source.type = item.type;
+                video.appendChild(source);
+            });
+
+            var pausedByUser = false;
+
+            function setIcons(playing) {
+                if (!toggle) return;
+                toggle.setAttribute('aria-pressed', playing ? 'false' : 'true');
+                toggle.setAttribute('aria-label', playing ? toggle.dataset.labelPause : toggle.dataset.labelPlay);
+                toggle.querySelector('[data-icon-pause]').classList.toggle('hidden', !playing);
+                toggle.querySelector('[data-icon-play]').classList.toggle('hidden', playing);
+            }
+
+            video.addEventListener('playing', function () {
+                video.classList.add('is-playing');
+                if (toggle) toggle.classList.replace('hidden', 'flex');
+                setIcons(true);
+            });
+            video.addEventListener('pause', function () { setIcons(false); });
+
+            video.load();
+            video.play().catch(function () { /* autoplay bloqueado: queda la imagen */ });
+
+            if (toggle) {
+                toggle.addEventListener('click', function () {
+                    if (video.paused) {
+                        pausedByUser = false;
+                        video.play();
+                    } else {
+                        pausedByUser = true;
+                        video.pause();
+                    }
+                });
+            }
+
+            // Fuera de pantalla no se reproduce (ahorra batería y CPU)
+            if ('IntersectionObserver' in window) {
+                new IntersectionObserver(function (entries) {
+                    entries.forEach(function (entry) {
+                        if (entry.isIntersecting) {
+                            if (!pausedByUser) video.play().catch(function () {});
+                        } else {
+                            video.pause();
+                        }
+                    });
+                }, {threshold: 0.1}).observe(video);
+            }
+        })();
+    </script>
 @endsection

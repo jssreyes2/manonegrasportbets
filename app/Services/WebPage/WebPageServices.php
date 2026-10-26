@@ -100,7 +100,7 @@ class WebPageServices extends FileServices
             
             DB::commit();
             
-            return response()->json(['status' => 'success', 'message' => 'Datos guardados con éxito']);
+            return response()->json(['status' => 'success', 'message' => __t('text.frontend.ux.comment_thanks')]);
             
         } catch (\Throwable $e) {
             
@@ -120,7 +120,7 @@ class WebPageServices extends FileServices
         $legaldocument = StaticPageRepository::getStaticPage(['type' => $type, 'language' => session_language()])->first();
         
         if (!$legaldocument) {
-            return redirect()->route('/');
+            return redirect()->route('show.principal');
         }
         
         
@@ -129,7 +129,7 @@ class WebPageServices extends FileServices
         return match ($type) {
             StaticPage::TYPE_TERMS      => view('frontend.terms-and-conditions', compact('legaldocument')),
             StaticPage::TYPE_WHO_WE_ARE => view('frontend.who-we-are', compact('legaldocument', 'classWhoWeAre')),
-            default                     => redirect()->route('/')
+            default                     => redirect()->route('show.principal')
         };
     }
     
@@ -138,7 +138,7 @@ class WebPageServices extends FileServices
         $faqs = app(FrequentlyAskedQuestionServices::class)->getFaq(['is_active' => true, 'language'=>session_language()])->get();
         
         if (!$faqs) {
-            return redirect()->route('/');
+            return redirect()->route('show.principal');
         }
         
         return view('frontend.frequently-asked-questions', compact('faqs'));

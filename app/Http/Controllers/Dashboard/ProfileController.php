@@ -5,7 +5,9 @@ namespace App\Http\Controllers\Dashboard;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\User\changePasswordRequest;
 use App\Http\Requests\User\ProfileRequest;
+use App\Models\Country;
 use App\Services\User\ProfileServices;
+use Illuminate\Http\Request;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\JsonResponse;
 
@@ -51,7 +53,17 @@ class ProfileController extends Controller
      */
     public function saveNewPassword(changePasswordRequest $request)
     {
-        return $this->profile->saveNewPassword($request->all());
+        return $this->profile->saveNewPassword($request->validated());
+    }
+
+    /**
+     * Preferencias del cliente (idioma del panel).
+     */
+    public function savePreferences(Request $request): JsonResponse
+    {
+        $data = $request->validate(['language' => 'required|in:' . Country::LANGUAGE_ES . ',' . Country::LANGUAGE_EN]);
+
+        return $this->profile->savePreferences($data);
     }
     
 }

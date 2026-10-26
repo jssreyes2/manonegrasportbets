@@ -10,6 +10,7 @@ use App\Http\Controllers\TrackingController;
 //CONETNIDO WEB
 use App\Http\Controllers\Admin\WebContent\FrequentlyAskedQuestionController;
 use App\Http\Controllers\Admin\WebContent\StaticPageController;
+use App\Http\Controllers\Admin\WebContent\HeroBannerController;
 
 //MODULO DE AJUSTES
 use App\Http\Controllers\Admin\ReportInvociceController;
@@ -81,6 +82,14 @@ Route::group(['prefix' => '/admin/', 'middleware' => ['auth']], function () {
         Route::get('/contacts', 'comments')->name('staticpage.contacts');
         Route::post('/contacts-response', 'commentResponse')->name('comment.response');
         Route::post('/send-response', 'sendResponse')->name('send.response');
+        Route::post('/contacts-testimonial', 'toggleTestimonial')->name('comment.testimonial');
+    });
+    
+    // Banner principal (video) de la portada
+    Route::controller(HeroBannerController::class)->group(function () {
+        Route::get('/hero-banner', 'index')->name('hero.index')->middleware('check.rol.permissions:hero.index');
+        Route::post('/hero-banner-update', 'update')->name('hero.update')->middleware('check.rol.permissions:hero.index');
+        Route::post('/hero-banner-restore', 'restore')->name('hero.restore')->middleware('check.rol.permissions:hero.index');
     });
     
     

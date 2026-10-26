@@ -52,12 +52,19 @@
                 $price = $activePlans->firstWhere('source', $source)?->price;
                 return $price === null ? '' : '$' . (fmod((float) $price, 1) == 0 ? number_format($price, 0) : number_format($price, 2));
             };
+            // Precio por día: ayuda a comparar planes de distinta duración
+            $perDayOf = function ($source) use ($activePlans) {
+                $plan = $activePlans->firstWhere('source', $source);
+                return $plan && (int) $plan->duration_days > 0 ? '$' . number_format($plan->price / $plan->duration_days, 2) : '—';
+            };
             $rows = [
+                ['table_per_day',   $perDayOf('elite'),    $perDayOf(\App\Models\Plan::PLAN_SOURCE_SUSCRIPCION), $perDayOf(\App\Models\Plan::PLAN_SOURCE_VIP)],
                 ['table_picks',     '2 ' . $L('val_elite'), '2 ' . $L('val_standard'), '2 VIP'],
                 ['table_analysis',  $L('val_elite'),        $L('val_standard'),        $L('val_advanced')],
                 ['table_insurance', true,                   false,                     false],
                 ['table_support',   $L('val_priority24'),   $L('val_standard'),        $L('val_priority')],
                 ['table_billing',   $L('val_daily'),        $L('val_monthly'),         $L('val_weekly')],
+                ['table_payment',   $L('val_one_time'),     $L('val_one_time'),        $L('val_one_time')],
             ];
         @endphp
         <section class="mb-24" data-reveal>
@@ -93,6 +100,13 @@
                 </table>
             </div>
         </section>
+
+        {{-- ============ RESULTADOS ============ --}}
+        @if(config('app.show_pick_results'))
+            <div class="mb-24 -mx-4 sm:-mx-6 lg:-mx-8">
+                @include('frontend.partials.results')
+            </div>
+        @endif
 
         {{-- ============ GARANTÍAS ============ --}}
         <section class="mb-24">

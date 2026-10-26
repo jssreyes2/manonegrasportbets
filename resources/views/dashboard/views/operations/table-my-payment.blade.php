@@ -20,6 +20,7 @@
             <th>{{__t('text.backend.tables.status', 'Estatus')}}</th>
             <th>{{__t('text.backend.tables.method', 'Método')}}</th>
             <th>{{__t('text.backend.tables.payment_id', 'ID Pago')}}</th>
+            <th class="text-center">{{ __t('text.backend.customer.receipt') }}</th>
         </tr>
         </thead>
         <tbody>
@@ -30,9 +31,20 @@
                     <span class="tbh-cell-sub">{{ $payment->paid_at?->format('h:i A') }}</span>
                 </td>
                 @include('layouts.partials.payment-row-cells')
+                <td class="text-center">
+                    <a href="{{ route('my.payment.receipt', $payment->payment_id) }}" class="btn btn-sm btn-outline-dark"
+                       title="{{ __t('text.backend.customer.download_receipt') }}" aria-label="{{ __t('text.backend.customer.download_receipt') }}">
+                        <i class="fas fa-file-download"></i>
+                    </a>
+                </td>
             </tr>
         @empty
-            @include('layouts.partials.table-empty', ['colspan' => 6])
+            @include('layouts.partials.table-empty', [
+                'colspan'     => 7,
+                'emptyText'   => request()->has('filter') ? null : __t('text.backend.customer.empty_payments'),
+                'actionUrl'   => request()->has('filter') ? null : route('subscription'),
+                'actionLabel' => __t('text.backend.customer.view_plans'),
+            ])
         @endforelse
         </tbody>
 

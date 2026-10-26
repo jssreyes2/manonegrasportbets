@@ -25,12 +25,15 @@ class ProfileServices
         return UserRepository::getUserProfile(['id' => Auth::user()->id]);
     }
     
-    public function index(): view
+    public function index(string $tab = 'profile'): view
     {
         $user      = $this->getUserProfile()->first();
+        $account   = Auth::user();
         $countries = Country::getCountryList();
+        // Prefijo telefónico por país para mostrarlo junto al campo teléfono
+        $phoneCodes = Country::pluck('code_phone', 'id');
         
-        return view('dashboard.views.frm-customer-profile', compact('user', 'countries'));;
+        return view('dashboard.views.frm-customer-profile', compact('user', 'account', 'countries', 'phoneCodes', 'tab'));
     }
     
     public function updateProfile(array $data): jsonResponse
@@ -67,11 +70,23 @@ class ProfileServices
         return response()->json(['status' => 'success', 'message' => __t('text.backend.messages.saved', 'Datos guardados con éxito')]);
     }
     
+    /**
+     * "Actualizar acceso" ahora es la pestaña Seguridad de Mi cuenta.
+     */
     public function changePassword(): view
     {
-        $user = Auth::user();
+        return $this->index('security');
+    }
+    
+    public function savePreferences(array $data): jsonResponse
+    {
+        $user           = Auth::user();
+        $user->language = $data['language'];
+        $user->save();
         
-        return view('dashboard.views.frm-update-password', compact('user'));
+        session(['locale' => $data['language']]);
+        
+        return response()->json(['status' => 'success', 'message' => __t('text.backend.messages.saved', 'Datos guardados con éxito', [], $data['language'])]);
     }
     
     public function saveNewPassword($data)
@@ -85,20 +100,41 @@ class ProfileServices
                 return response()->json(['status' => 'fail', 'message' => __t('text.backend.messages.user_not_logged_in', 'Usuario no logueado')]);
             }
             
-            $data['user_name'] = capitalize_first($user->profile->first_name) . ' ' . capitalize_first($user->profile->last_name);
+            $data['user_name'] = capitalize_first($user->profile?->first_name) . ' ' . capitalize_first($user->profile?->last_name);
             $currentEmail      = $user->email;
+            $newEmail          = strtolower(trim($data['email']));
+            $emailChanged      = $newEmail !== strtolower($currentEmail);
             
-            $user->email    = strtolower($data['email']);
-            $user->password = Hash::make($data['password']);
+            // La contraseña es opcional: vacía significa que solo cambia el correo
+            if (!empty($data['password'])) {
+                $user->password = Hash::make($data['password']);
+            }
             
-            if ($data['email'] != $currentEmail) {
+            if (!$emailChanged && empty($data['password'])) {
+                DB::rollBack();
+                return response()->json(['status' => 'fail', 'message' => __t('text.backend.customer.nothing_to_update')]);
+            }
+            
+            $user->email = $newEmail;
+            
+            if ($emailChanged) {
                 $user->is_valid_email = false;
-                (new SendMailServices())->sendMailAccessSystem($data, $user);
-                app(AuthServices::class)->logout();
             }
             
             $user->save();
             DB::commit();
+            
+            // Al cambiar el correo se cierra la sesión hasta confirmar la nueva dirección
+            if ($emailChanged) {
+                (new SendMailServices())->sendMailAccessSystem($data, $user);
+                app(AuthServices::class)->logout();
+                
+                return response()->json([
+                    'status'   => 'success',
+                    'message'  => __t('text.backend.customer.email_changed'),
+                    'redirect' => route('show.login-customer'),
+                ]);
+            }
             
         } catch (\Throwable $e) {
             

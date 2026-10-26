@@ -88,6 +88,14 @@ class StaticPageController extends Controller
         return $this->staticPage->commentResponse($request->all());
     }
 
+    /**
+     * Publica o retira un comentario como testimonio en la web.
+     */
+    public function toggleTestimonial(Request $request)
+    {
+        return $this->staticPage->toggleTestimonial((int)$request->input('id'));
+    }
+
   /**
      * Remove the specified resource from storage.
      *

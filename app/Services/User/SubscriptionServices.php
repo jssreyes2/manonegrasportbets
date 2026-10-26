@@ -36,7 +36,8 @@ class SubscriptionServices
             return redirect()->route('profile');
         }
 
-        $plans = $this->plan->getPlans(['is_active' => true])->get();
+        // El scope filter ordena por precio; aquí el catálogo se muestra por ID
+        $plans = $this->plan->getPlans(['is_active' => true])->reorder('id')->get();
 
         // Planes vigentes indexados por source para cruzarlos con el catálogo
         $activePlans = collect($this->getSubscriptionApproved()['plans'] ?? [])

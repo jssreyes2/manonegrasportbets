@@ -120,6 +120,13 @@ return [
     
     'mailNotification' => env('MAIL_FROM_ADDRESS', 'hola@manonegrasportbets.com'),
     'mail_copy_ocult' => env('MAIL_FROM_NAME_CC', 'Manonegrasportbets@gmail.com'),
+
+    // Canales de soporte que se muestran en la web (si están vacíos no se muestran)
+    'support_whatsapp' => env('SUPPORT_WHATSAPP'),
+    'support_email'    => env('SUPPORT_EMAIL', 'Manonegrasportbets@gmail.com'),
+
+    // Sección "Nuestro historial, sin filtros" en la portada y en /plans (oculta por defecto)
+    'show_pick_results' => (bool)env('SHOW_PICK_RESULTS', false),
     // Recibe el aviso de los pagos duplicados que se reembolsan
     'mail_refund_notify' => env('MAIL_REFUND_NOTIFY', 'siunidad2@gmail.com'),
     

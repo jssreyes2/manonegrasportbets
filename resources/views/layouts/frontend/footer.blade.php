@@ -12,23 +12,22 @@
 
         <form id="frm-suscription" class="space-y-3" novalidate>
             @csrf
-            <input type="text" id="full_name" name="full_name" placeholder="{{__t('text.frontend.footer_full_name','Full Name')}}" required
-                   class="w-full px-4 py-2.5 bg-black/50 border border-neutral-700 rounded-lg text-white text-sm focus:border-lime-400 focus:outline-none">
-
-            <input type="email" id="email" name="email" placeholder="{{__t('text.frontend.footer_email','Email')}}" required
-                   class="w-full px-4 py-2.5 bg-black/50 border border-neutral-700 rounded-lg text-white text-sm focus:border-lime-400 focus:outline-none">
-
-            <div id="loading_form" class="loading-container" style="display: none;">
-                <div class="spinner"></div>
+            {{-- ids propios: login/registro/comentarios usan "email" y "full_name" en la misma página --}}
+            <div data-field class="space-y-1">
+                <label for="freepick_full_name" class="sr-only">{{__t('text.frontend.footer_full_name','Full Name')}}</label>
+                <input type="text" id="freepick_full_name" name="full_name" placeholder="{{__t('text.frontend.footer_full_name','Full Name')}}" required autocomplete="name"
+                       class="tbh-field-box w-full px-4 py-2.5 bg-black/50 border border-neutral-700 rounded-lg text-white text-sm focus:border-lime-400 focus:outline-none">
+                <p data-error class="tbh-field-error" aria-live="polite" hidden></p>
+            </div>
+            <div data-field class="space-y-1">
+                <label for="freepick_email" class="sr-only">{{__t('text.frontend.footer_email','Email')}}</label>
+                <input type="email" id="freepick_email" name="email" placeholder="{{__t('text.frontend.footer_email','Email')}}" required autocomplete="email" inputmode="email"
+                       class="tbh-field-box w-full px-4 py-2.5 bg-black/50 border border-neutral-700 rounded-lg text-white text-sm focus:border-lime-400 focus:outline-none">
+                <p data-error class="tbh-field-error" aria-live="polite" hidden></p>
             </div>
 
-            <button type="submit" id="btnSubmit" style="cursor: pointer" class="w-full py-3 font-bold text-sm uppercase tracking-wider btn-neon rounded-lg transition flex items-center justify-center gap-2">
-                <span id="btnText">{{__t('text.frontend.footer_subscribe', 'Subscribe')}}</span>
-                <!-- Spinner oculto por defecto con Tailwind -->
-                <svg id="loadingSpinner" class="animate-spin h-5 w-5 text-black hidden" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                </svg>
+            <button type="submit" id="btnSubmit" class="w-full py-3 font-bold text-sm uppercase tracking-wider btn-neon rounded-lg transition flex items-center justify-center gap-2 cursor-pointer">
+                {{__t('text.frontend.footer_subscribe', 'Subscribe')}}
             </button>
 
         </form>
@@ -107,8 +106,39 @@
 
         </div>
 
+        @php
+            $whatsapp     = preg_replace('/\D/', '', (string)config('app.support_whatsapp'));
+            $supportEmail = config('app.support_email');
+        @endphp
+
+        <!-- Soporte y pagos -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+            <div class="flex flex-wrap items-center gap-3 border border-neutral-900 rounded-xl p-4 text-xs">
+                <span class="font-bold uppercase tracking-widest text-white">{{ __t('text.frontend.ux.footer_support') }}</span>
+                @if($whatsapp)
+                    <a href="https://wa.me/{{ $whatsapp }}" target="_blank" rel="noopener" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-emerald-500/40 text-emerald-300 hover:bg-emerald-500/10">
+                        <i data-lucide="message-circle" class="w-4 h-4" aria-hidden="true"></i> WhatsApp
+                    </a>
+                @endif
+                @if($supportEmail)
+                    <a href="mailto:{{ $supportEmail }}" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-neutral-700 text-neutral-300 hover:text-lime-400 hover:border-lime-400/50">
+                        <i data-lucide="mail" class="w-4 h-4" aria-hidden="true"></i> {{ $supportEmail }}
+                    </a>
+                @endif
+                <a href="{{ route('show.comments') }}" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-neutral-700 text-neutral-300 hover:text-lime-400 hover:border-lime-400/50">
+                    <i data-lucide="message-square" class="w-4 h-4" aria-hidden="true"></i> {{ __t('text.frontend.footer_comments', 'Comments') }}
+                </a>
+            </div>
+            <div class="flex flex-wrap items-center gap-3 border border-neutral-900 rounded-xl p-4 text-xs">
+                <span class="font-bold uppercase tracking-widest text-white">{{ __t('text.frontend.ux.footer_payments') }}</span>
+                <span class="inline-flex items-center gap-1.5 text-neutral-300"><i data-lucide="credit-card" class="w-4 h-4 text-lime-400" aria-hidden="true"></i>{{ __t('text.frontend.ux.footer_cards') }}</span>
+                <span class="inline-flex items-center gap-1.5 text-neutral-300"><i data-lucide="lock" class="w-4 h-4 text-lime-400" aria-hidden="true"></i>{{ __t('text.frontend.ux.footer_whop') }}</span>
+                <span class="inline-flex items-center gap-1.5 text-neutral-300"><i data-lucide="repeat-2" class="w-4 h-4 text-lime-400" aria-hidden="true"></i>{{ __t('text.frontend.ux.footer_no_auto_renew') }}</span>
+            </div>
+        </div>
+
         <!-- Juego responsable -->
-        <div class="flex items-start gap-3 border border-neutral-900 rounded-xl p-4 text-[11px] leading-relaxed text-neutral-500">
+        <div class="flex items-start gap-3 border border-neutral-900 rounded-xl p-4 text-xs leading-relaxed text-neutral-400">
             <span class="shrink-0 w-8 h-8 rounded-full border border-red-500/40 text-red-400 font-black text-[10px] flex items-center justify-center">+18</span>
             <p>{{__t('text.frontend.landing.responsible')}}</p>
         </div>
@@ -128,33 +158,17 @@
                 event.preventDefault();
                 var form = this;
 
-                // --- Validación manual con toastr ---
-                var errors = [];
+                var button = document.getElementById('btnSubmit');
 
-                var fullName = form.full_name.value.trim();
-                if (!fullName) {
-                    errors.push('Full name is required');
-                } else if (fullName.length < 3) {
-                    errors.push('Full name is too short');
-                }
+                var valid = TBHForm.validate(form, [
+                    {name: 'full_name', test: TBHForm.rules.required, message: TBH_I18N.required},
+                    {name: 'full_name', test: function (i) { return /^[\p{L}\s]{3,}$/u.test(i.value.trim()); }, message: TBH_I18N.name},
+                    {name: 'email', test: TBHForm.rules.required, message: TBH_I18N.required},
+                    {name: 'email', test: TBHForm.rules.email, message: TBH_I18N.email},
+                ]);
+                if (!valid) return false;
 
-                var email = form.email.value.trim();
-                if (!email) {
-                    errors.push('Email is required');
-                } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-                    errors.push('Enter a valid email');
-                }
-
-                if (errors.length > 0) {
-                    toastr.error(errors[0]);
-                    return false;
-                }
-
-                // --- UI: mostrar loading y spinner del botón ---
-                $('#loading_form').css('display', 'flex');
-                $('#btnSubmit').prop('disabled', true);
-                $('#btnText').text('...');
-                $('#loadingSpinner').removeClass('hidden');
+                TBHForm.loading(button, true, @json(__t('text.frontend.ux.sending')));
 
                 $.ajax({
                     headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
@@ -166,41 +180,19 @@
                     dataType: 'json',
                     data: new FormData(form),
                     success: function (response) {
-                        // Restaurar UI
-                        $('#loading_form').hide();
-                        $('#btnSubmit').prop('disabled', false);
-                        $('#btnText').text("{{__t('text.frontend.footer_subscribe', 'Subscribe')}}");
-                        $('#loadingSpinner').addClass('hidden');
+                        TBHForm.loading(button, false);
 
                         if (response.status === 'success') {
                             toastr.success(response.message);
                             form.reset();
-                            setTimeout(function () {
-                                location.reload();
-                            }, 4000);
+                            setTimeout(cerrarModal, 1500);
                         } else {
                             toastr.error(response.message);
                         }
                     },
-                    error: function (xhr, status, error) {
-                        // Restaurar UI
-                        $('#loading_form').hide();
-                        $('#btnSubmit').prop('disabled', false);
-                        $('#btnText').text("{{__t('text.frontend.footer_subscribe', 'Subscribe')}}");
-                        $('#loadingSpinner').addClass('hidden');
-
-                        // Errores 422 de Laravel
-                        if (xhr.status === 422 && xhr.responseJSON && xhr.responseJSON.errors) {
-                            var firstError = Object.values(xhr.responseJSON.errors)[0];
-                            toastr.error(Array.isArray(firstError) ? firstError[0] : firstError);
-                            return;
-                        }
-
-                        if (typeof window.errorHandler === 'function') {
-                            window.errorHandler(xhr, status, error);
-                        } else {
-                            toastr.error('Connection error');
-                        }
+                    error: function (xhr) {
+                        TBHForm.loading(button, false);
+                        TBHForm.serverErrors(form, xhr);
                     }
                 });
             });

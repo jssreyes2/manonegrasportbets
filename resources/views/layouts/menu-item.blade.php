@@ -18,6 +18,7 @@
         'faq.index'             => 'fas fa-question-circle',
         'staticpage.index'      => 'fas fa-file-alt',
         'staticpage.contacts'   => 'fas fa-comments',
+        'hero.index'            => 'fas fa-film',
         'profile'               => 'fas fa-user',
         'change.password'       => 'fas fa-key',
         'subscription'          => 'fas fa-crown',

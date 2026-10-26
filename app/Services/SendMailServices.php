@@ -78,6 +78,50 @@ class SendMailServices
     }
     
     /**
+     * Reenvía el enlace de confirmación de correo (misma plantilla de bienvenida, sin credenciales)
+     */
+    public function sendMailVerifyEmail(User $user): bool
+    {
+        try {
+            $subject = __t('text.email.verify_again.subject');
+            $text    = __t('text.email.verify_again.body_text');
+
+            $notification = Notification::notificationCreate([
+                'user_id'   => $user->id,
+                'channel'   => Notification::CHANNEL_EMAIL,
+                'type'      => Notification::TYPE_WELCOME,
+                'addressee' => $user->email,
+                'subject'   => $subject,
+                'content'   => $text,
+            ]);
+
+            return $this->sendMail([
+                'name'           => $user->email,
+                'full_name'      => $user->email,
+                'email'          => $user->email,
+                'email_encrypt'  => encrypt($user->email),
+                'subject'        => $subject,
+                'message'        => $text,
+                'template_email' => 'emails.welcome',
+                'tracking_token' => $notification?->tracking_token,
+            ]);
+
+        } catch (\Exception $e) {
+
+            if (isset($notification) && $notification) {
+                $notification->update([
+                    'state'     => Notification::STATE_FAILED,
+                    'error_log' => substr($e->getMessage(), 0, 2000),
+                ]);
+            }
+
+            Log::error('Error en sendMailVerifyEmail', ['user_id' => $user->id, 'error' => $e->getMessage()]);
+
+            return false;
+        }
+    }
+
+    /**
      * Enviar email de registro de usuario
      */
     public function sendMailRegisterUser(array $data, User $user): bool

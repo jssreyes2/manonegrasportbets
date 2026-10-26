@@ -22,7 +22,7 @@
     $panelText  = __t('text.backend.messages.control_panel', 'Panel de Control');
 @endphp
 
-<body class="hold-transition sidebar-mini layout-fixed tbh-admin">
+<body class="hold-transition sidebar-mini layout-fixed tbh-admin {{ $isCustomer ? 'tbh-customer' : '' }}">
 <div class="wrapper">
     <nav class="main-header navbar navbar-expand navbar-white">
         <ul class="navbar-nav align-items-center">
@@ -97,6 +97,23 @@
                         <button type="button" class="close" data-dismiss="alert">&times;</button>
                     </div>
                 @endif
+                {{-- Planes del cliente que vencen pronto (no hay renovación anticipada: solo se avisa) --}}
+                @if($isCustomer && $expiringPlans->isNotEmpty())
+                    <div class="tbh-banner mb-3" role="status">
+                        <i class="fas fa-hourglass-half"></i>
+                        <div>
+                            @foreach($expiringPlans as $plan)
+                                <div>
+                                    {{ (int)$plan['remainingDays'] === 0
+                                        ? __t('text.backend.customer.expires_today', null, ['plan' => $plan['label']])
+                                        : __t('text.backend.customer.expires_soon', null, ['plan' => $plan['label'], 'n' => $plan['remainingDays'], 'date' => $plan['expiration_date']]) }}
+                                </div>
+                            @endforeach
+                            <small>{{ __t('text.backend.customer.expiring_note') }}</small>
+                        </div>
+                    </div>
+                @endif
+
                 @yield('content')
             </div>
         </section>

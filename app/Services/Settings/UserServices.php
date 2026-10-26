@@ -93,10 +93,16 @@ class UserServices
             throw $e;
         }
         
+        // El cliente pasa a la pantalla "Revisa tu correo" (con reenvío del enlace)
+        if ($data['rol_id'] == Rol::ROL_CUSTOMER) {
+            session()->flash('registered_email', $user->email);
+        }
+
         return response()->json([
-            'status'  => 'success',
-            'message' => __t('text.backend.messages.confirm_your_email', 'Datos guardados exitosamente. Debe confirmar su dirección de correo electrónico.'),
-            'edit'    => false
+            'status'   => 'success',
+            'message'  => __t('text.backend.messages.confirm_your_email', 'Datos guardados exitosamente. Debe confirmar su dirección de correo electrónico.'),
+            'edit'     => false,
+            'redirect' => $data['rol_id'] == Rol::ROL_CUSTOMER ? route('show.check-email') : null,
         ]);
     }
     
@@ -133,6 +139,23 @@ class UserServices
             
             return view('frontend.verify-email-error', compact('email'));
         }
+    }
+    
+    /**
+     * Reenvía el enlace de confirmación. Responde igual exista o no el correo, para no revelar cuentas registradas.
+     */
+    public function resendVerification(string $email)
+    {
+        $user = User::where('email', strtolower(trim($email)))->first();
+        
+        if ($user && !$user->is_valid_email) {
+            (new SendMailServices())->sendMailVerifyEmail($user);
+        }
+        
+        return response()->json([
+            'status'  => 'success',
+            'message' => __t('text.frontend.ux.resend_sent'),
+        ]);
     }
     
     public function createUserSuscription($data)

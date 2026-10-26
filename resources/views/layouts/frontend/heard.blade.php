@@ -26,9 +26,13 @@
 
 </head>
 
-<body class="bg-plasma text-neutral-100 font-sans antialiased" @yield('body_attrs')>
+@php
+    $panelRoute = auth()->check() && auth()->user()->rol_id == \App\Models\Rol::ROL_CUSTOMER ? 'customer.home' : 'admin.panel';
+@endphp
+<body class="bg-plasma text-neutral-100 font-sans antialiased @guest has-mobile-cta @endguest" @yield('body_attrs')>
+<a href="#main-content" class="sr-only focus:not-sr-only focus:fixed focus:top-2 focus:left-2 focus:z-[70] focus:bg-lime-400 focus:text-black focus:px-4 focus:py-2 focus:rounded-lg focus:font-bold">{{ __t('text.frontend.ux.skip_to_content') }}</a>
 <header class="border-b border-neutral-800/60 bg-black/50 backdrop-blur-lg sticky top-0 z-50">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between md:justify-start md:gap-16" style="height: 100px;">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 md:h-[100px] flex items-center justify-between md:justify-start md:gap-16">
 
         <div class="md:hidden flex items-center">
             <button id="menu-btn" type="button" aria-controls="mobile-menu" aria-expanded="false" aria-label="Menu" class="text-neutral-400 hover:text-lime-400 focus:outline-none p-2">
@@ -42,7 +46,7 @@
         </div>
 
         <a href="/" class="text-xl font-black tracking-widest text-white hover:opacity-90 transition-opacity flex items-center gap-2 shrink-0">
-            <img src="{{ asset('img/logo.png') }}" alt="La Mano Negra" style="height: 80px;">
+            <img src="{{ asset('img/logo.png') }}" alt="La Mano Negra" class="tbh-logo">
         </a>
 
         <nav class="hidden md:flex items-center gap-8 text-sm font-semibold tracking-wide text-neutral-400">
@@ -52,7 +56,7 @@
             <a href="{{route('show.who-we-are')}}" class="hover:text-lime-400 transition-colors  {{$classWhoWeAre ?? ''}}">{{__t('text.frontend.menu_about_us', 'About Us')}}</a>
 
             <div class="relative" id="auth-dropdown-container">
-                <button id="auth-dropdown-btn" class="flex items-center gap-2 text-neutral-400 hover:text-lime-400 transition-colors focus:outline-none" type="button">
+                <button id="auth-dropdown-btn" class="flex items-center gap-2 text-neutral-400 hover:text-lime-400 transition-colors rounded-md" type="button" aria-haspopup="true" aria-expanded="false" aria-controls="auth-dropdown">
                     <span class="text-sm font-semibold">{{__t('text.frontend.menu_my_account', 'My Account')}}</span>
                     <svg class="w-4 h-4 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
@@ -64,7 +68,7 @@
                     <div class="p-4 space-y-3">
                         <div class="text-xs text-neutral-500 uppercase tracking-wider font-semibold mb-2">{{__t('text.frontend.menu_access', 'Access')}}</div>
                         @auth
-                        <a href="{{ route('admin.panel') }}" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-neutral-300 hover:bg-lime-400/10 hover:text-lime-400 transition-all group">
+                        <a href="{{ route($panelRoute) }}" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-neutral-300 hover:bg-lime-400/10 hover:text-lime-400 transition-all group">
                             <i data-lucide="layout-dashboard" class="w-5 h-5 text-neutral-500 group-hover:text-lime-400 transition-colors"></i>
                             {{__t('text.frontend.landing.my_dashboard')}}
                         </a>
@@ -90,14 +94,9 @@
                 </div>
             </div>
 
-            <div class="language-selector">
-                <a href="{{ route('lang.switch', 'es') }}" class="{{ (app()->getLocale() ?? 'en') == 'es' ? 'active' : '' }}">
-                    {{__t('text.frontend.menu_es_spanish', '🇪🇸 Spanish')}}
-                </a>
-                |
-                <a href="{{ route('lang.switch', 'en') }}" class="{{ (app()->getLocale() ?? 'en') == 'en' ? 'active' : '' }}">
-                    {{__t('text.frontend.menu_en_english', '🇺🇸 English')}}
-                </a>
+            <div class="tbh-lang-switch" role="group" aria-label="{{ __t('text.frontend.ux.language') }}">
+                <a href="{{ route('lang.switch', 'es') }}" class="{{ app()->getLocale() == 'es' ? 'active' : '' }}" lang="es" title="Español" @if(app()->getLocale() == 'es') aria-current="true" @endif>ES</a>
+                <a href="{{ route('lang.switch', 'en') }}" class="{{ app()->getLocale() == 'en' ? 'active' : '' }}" lang="en" title="English" @if(app()->getLocale() == 'en') aria-current="true" @endif>EN</a>
             </div>
 
             <a href="{{route('show.plans')}}" class="btn-neon px-5 py-2.5 rounded-lg text-xs font-bold uppercase tracking-wider transition-all whitespace-nowrap">
@@ -117,9 +116,13 @@
 
         <div class="pt-4 border-t border-neutral-800/40 flex flex-col gap-3">
             @auth
-            <a href="{{ route('admin.panel') }}" class="flex items-center justify-center gap-2 text-neutral-300 hover:text-lime-400 font-semibold py-2 transition-colors">
+            <a href="{{ route($panelRoute) }}" class="flex items-center justify-center gap-2 text-neutral-300 hover:text-lime-400 font-semibold py-2 transition-colors">
                 <i data-lucide="layout-dashboard" class="w-5 h-5"></i>
                 {{__t('text.frontend.landing.my_dashboard')}}
+            </a>
+            <a href="{{ route('logout') }}" class="flex items-center justify-center gap-2 text-neutral-300 hover:text-lime-400 font-semibold py-2 transition-colors">
+                <i data-lucide="log-out" class="w-5 h-5"></i>
+                {{__t('text.frontend.landing.logout')}}
             </a>
             @else
             <a href="{{ route('show.login-customer') }}" class="flex items-center justify-center gap-2 text-neutral-300 hover:text-lime-400 font-semibold py-2 transition-colors">
@@ -136,14 +139,11 @@
             </a>
             @endauth
 
-            <div class="language-selector">
-                <a href="{{ route('lang.switch', 'es') }}" class="{{ app()->getLocale() == 'es' ? 'active' : '' }}">
-                    {{__t('text.frontend.menu_es_spanish', '🇪🇸 Spanish')}}
-                </a>
-                |
-                <a href="{{ route('lang.switch', 'en') }}" class="{{ app()->getLocale() == 'en' ? 'active' : '' }}">
-                    {{__t('text.frontend.menu_en_english', '🇺🇸 English')}}
-                </a>
+            <div class="flex justify-center">
+                <div class="tbh-lang-switch" role="group" aria-label="{{ __t('text.frontend.ux.language') }}">
+                    <a href="{{ route('lang.switch', 'es') }}" class="{{ app()->getLocale() == 'es' ? 'active' : '' }}" lang="es" title="Español" @if(app()->getLocale() == 'es') aria-current="true" @endif>ES</a>
+                    <a href="{{ route('lang.switch', 'en') }}" class="{{ app()->getLocale() == 'en' ? 'active' : '' }}" lang="en" title="English" @if(app()->getLocale() == 'en') aria-current="true" @endif>EN</a>
+                </div>
             </div>
 
             <a href="{{route('show.plans')}}" class="flex items-center justify-center gap-2 btn-neon px-5 py-3 rounded-lg text-xs font-bold uppercase tracking-wider">
@@ -175,7 +175,9 @@
     })();
 </script>
 
+<div id="main-content" tabindex="-1">
 @yield('content')
+</div>
 
 @guest
 <div id="mobile-cta" class="md:hidden fixed bottom-0 inset-x-0 z-40 bg-black/90 backdrop-blur-xl border-t border-neutral-800/80 px-4 py-3 flex gap-3">
@@ -189,6 +191,7 @@
 @endguest
 
 @include('layouts.frontend.footer')
+@include('layouts.frontend.form-kit')
 @yield('script')
 
 <script type="text/javascript">
@@ -202,13 +205,13 @@
         if (xhr.status === 422 && responseJson && responseJson.errors) {
             $.each(responseJson.errors, function (field, messages) {
                 $.each(messages, function (index, message) {
-                    toastr.error(message, 'Validación');
+                    toastr.error(message);
                 });
             });
         } else if (responseJson && responseJson.message) {
-            toastr.error(responseJson.message, 'Error');
+            toastr.error(responseJson.message);
         } else {
-            toastr.error('Ocurrió un error inesperado en el servidor.', 'Error Crítico');
+            toastr.error(xhr.status === 0 ? TBH_I18N.connection : TBH_I18N.unexpected);
         }
     };
 </script>

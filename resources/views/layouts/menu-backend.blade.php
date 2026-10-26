@@ -17,14 +17,27 @@
     <nav>
         <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
 
-            @unless($isCustomer)
+            @if($isCustomer)
+                {{-- Vistas del cliente que no dependen de los menús por rol de la BD --}}
+                @foreach([
+                    ['customer.home', 'fas fa-home', __t('text.backend.customer.home_title')],
+                    ['picks.index', 'fas fa-futbol', __t('text.backend.customer.my_picks')],
+                ] as [$customerRoute, $customerIcon, $customerText])
+                    <li class="nav-item">
+                        <a href="{{ route($customerRoute) }}" class="nav-link {{ Route::currentRouteName() == $customerRoute ? 'active' : '' }}">
+                            <i class="nav-icon {{ $customerIcon }}"></i>
+                            <p>{{ $customerText }}</p>
+                        </a>
+                    </li>
+                @endforeach
+            @else
                 <li class="nav-item">
                     <a href="{{ route($route) }}" class="nav-link {{ Route::currentRouteName() == $route ? 'active' : '' }}">
                         <i class="nav-icon fas fa-th-large"></i>
                         <p>{{ $panelText }}</p>
                     </a>
                 </li>
-            @endunless
+            @endif
 
             @foreach ($menus as $key => $item)
                 @if ($item['parent'] != 0)
