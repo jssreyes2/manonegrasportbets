@@ -16,7 +16,7 @@
                     <img src="{{ $hero->url('poster') }}" alt="" class="tbh-hero-media" fetchpriority="high">
                 </picture>
                 @if($hero->show_video)
-                    <video class="tbh-hero-media tbh-hero-video" muted loop playsinline preload="none" disablepictureinpicture
+                    <video class="tbh-hero-media tbh-hero-video" muted autoplay loop playsinline webkit-playsinline preload="none" disablepictureinpicture
                            data-sources-desktop="{{ json_encode($hero->sources('desktop')) }}"
                            data-sources-mobile="{{ json_encode($hero->sources('mobile')) }}"></video>
                 @endif
@@ -335,16 +335,16 @@
 
 @section('script')
     <script>
-        // Video del banner: elige la versión móvil o de escritorio, respeta "reducir movimiento" y
-        // "ahorro de datos" (solo imagen) y se pausa cuando sale de la pantalla.
+        // Video del banner: elige la versión móvil o de escritorio, respeta "ahorro de datos" (solo imagen)
+        // y se pausa cuando sale de la pantalla. Se reproduce aunque el dispositivo tenga "reducir movimiento";
+        // el botón de pausa queda disponible.
         (function () {
             var video = document.querySelector('.tbh-hero-video');
             var toggle = document.querySelector('.tbh-hero-toggle');
             if (!video) return;
 
-            var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
             var saveData = navigator.connection && navigator.connection.saveData;
-            if (reduceMotion || saveData) {
+            if (saveData) {
                 video.remove();
                 if (toggle) toggle.remove();
                 return;
@@ -376,8 +376,28 @@
             });
             video.addEventListener('pause', function () { setIcons(false); });
 
+            // Los móviles solo permiten autoplay si el video está silenciado como propiedad, no solo como atributo
+            video.muted = true;
+            video.defaultMuted = true;
+
+            // Autoplay bloqueado (p. ej. iPhone en modo de bajo consumo): se muestra el botón de play
+            // y el video arranca con el primer toque o desplazamiento del usuario
+            function onAutoplayBlocked() {
+                if (toggle) {
+                    toggle.classList.replace('hidden', 'flex');
+                    setIcons(false);
+                }
+                var events = ['touchstart', 'click', 'scroll'];
+                function startOnInteraction() {
+                    events.forEach(function (name) { window.removeEventListener(name, startOnInteraction); });
+                    if (!pausedByUser) video.play().catch(function () {});
+                }
+                events.forEach(function (name) { window.addEventListener(name, startOnInteraction, {once: true, passive: true}); });
+            }
+
             video.load();
-            video.play().catch(function () { /* autoplay bloqueado: queda la imagen */ });
+            var playing = video.play();
+            if (playing && playing.catch) playing.catch(onAutoplayBlocked);
 
             if (toggle) {
                 toggle.addEventListener('click', function () {
