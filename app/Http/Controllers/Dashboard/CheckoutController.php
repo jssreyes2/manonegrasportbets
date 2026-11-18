@@ -39,6 +39,15 @@ class CheckoutController extends Controller
     }
     
     /**
+     * Checkout directo desde el correo de renovación. Mismas validaciones que create():
+     * un plan vigente no se puede volver a pagar.
+     */
+    public function renew(string $plan, WhopApiClient $whop)
+    {
+        return $this->whopWebhook->createCheckout(['plan_slug' => $plan], $whop);
+    }
+
+    /**
      * Muestra la vista al usuario cuando regresa a la web.
      */
     public function complete(Request $request): View

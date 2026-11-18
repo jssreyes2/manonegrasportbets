@@ -34,6 +34,10 @@ Route::middleware('auth')->group(function () {
     )->name('checkout.whop');
     
 // 2. Ruta opcional para cuando el usuario redirige de vuelta a tu web (Frontend)
+    // Enlace de los correos de recuperación: lleva directo al checkout del plan vencido
+    Route::get('/renovar/{plan}', [CheckoutController::class, 'renew'])
+        ->name('renew');
+
     Route::get('/checkout/complete', [CheckoutController::class, 'complete'])
         ->name('checkout.complete');
     

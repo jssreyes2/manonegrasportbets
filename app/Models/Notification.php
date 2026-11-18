@@ -22,6 +22,7 @@ class Notification extends Model
     const TYPE_EXPIRED_SUBSCRIPTION = 'expired_subscription';
     const TYPE_SUBSCRIPTION         = 'subscription';
     const TYPE_RENEWAL_INVITATION   = 'renewal_invitation';
+    const TYPE_EXPIRING_SUBSCRIPTION = 'expiring_subscription';
     const CHANNEL_EMAIL             = 'email';
     
     protected $fillable = [

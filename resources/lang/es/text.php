@@ -445,10 +445,35 @@ a los mercados deportivos con mayor liquidez del mundo: NBA, NFL, MLB y fútbol 
             'body_text' => 'Muchas gracias por suscribirte a nuestra comunidad. Para nosotros es un placer darte la bienvenida.<br><br>Queremos informarte que tu suscripción ha sido procesada con éxito. Como gesto de agradecimiento, te haremos llegar un pick exclusivo y gratuito en las próximas horas.<br><br>Te recomendamos estar atento/a a tu bandeja de entrada.<br><br>Un cordial saludo,',
         ],
         'renewal_invitation' => [
-            'subject'     => 'Te extrañamos: renueva tu suscripción',
-            'body_text'   => 'Hola, notamos que tu plan',
-            'body_text_1' => 'ha vencido. Renueva ahora para seguir disfrutando de nuestros picks y servicios sin interrupciones.',
-            'button'      => 'Renovar mi suscripción',
+            'button'       => 'Renovar mi suscripción',
+            'button_panel' => 'Ir a mi panel',
+            // Aviso previo: el plan no se renueva mientras esté vigente
+            'expiring_3' => [
+                'subject' => 'Tu plan vence en :days días',
+                'body'    => 'Tu plan :plans vence en :days días. Cuando termine tu periodo podrás renovarlo desde tu panel con un solo clic para no perderte ningún pick.',
+            ],
+            'expiring_0' => [
+                'subject' => 'Hoy es tu último día de servicio',
+                'body'    => 'Hoy es el último día de tu plan :plans. Cuando venza podrás renovarlo desde tu panel con un solo clic y seguir recibiendo nuestros picks.',
+            ],
+            // Secuencia de recuperación tras el vencimiento
+            'expired_1' => [
+                'subject' => 'Tu plan ha vencido: renueva y sigue ganando',
+                'body'    => 'Hola, tu plan :plans ha vencido. Renuévalo ahora para seguir disfrutando de nuestros picks y servicios sin interrupciones.',
+            ],
+            'expired_3' => [
+                'subject' => 'Mira lo que te estás perdiendo',
+                'body'    => 'Tu plan :plans sigue vencido y los picks continúan saliendo.',
+                'stats'   => 'En los últimos 30 días acertamos :won de :total picks calificados (:rate% de acierto).',
+            ],
+            'expired_7' => [
+                'subject' => 'Lo que dicen nuestros clientes',
+                'body'    => 'Hace una semana venció tu plan :plans. Esto es lo que dicen quienes siguen con nosotros:',
+            ],
+            'expired_14' => [
+                'subject' => 'Último aviso: te esperamos de vuelta',
+                'body'    => 'Este es nuestro último recordatorio: tu plan :plans sigue vencido. Cuando quieras volver, tu lugar sigue aquí.',
+            ],
         ],
         'notification_expired_suscription' => [
             'body_text'   => 'Te escribimos para recordarte que tu plan',

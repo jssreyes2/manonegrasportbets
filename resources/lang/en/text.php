@@ -439,10 +439,35 @@ return [
             'body_text' => 'Thank you very much for subscribing to our community. It is a pleasure to welcome you.<br><br>We want to inform you that your subscription has been processed successfully. As a token of appreciation, we will send you an exclusive free pick in the next few hours.<br><br>Best regards,',
         ],
         'renewal_invitation' => [
-            'subject'     => 'We miss you: renew your subscription',
-            'body_text'   => 'Hi, we noticed your plan',
-            'body_text_1' => 'has expired. Renew now to keep enjoying our picks and services without interruption.',
-            'button'      => 'Renew my subscription',
+            'button'       => 'Renew my subscription',
+            'button_panel' => 'Go to my dashboard',
+            // Heads-up before expiry: a plan cannot be renewed while it is active
+            'expiring_3' => [
+                'subject' => 'Your plan expires in :days days',
+                'body'    => 'Your plan :plans expires in :days days. Once your period ends you can renew it from your dashboard in one click so you do not miss any pick.',
+            ],
+            'expiring_0' => [
+                'subject' => 'Today is your last day of service',
+                'body'    => 'Today is the last day of your plan :plans. Once it expires you can renew it from your dashboard in one click and keep receiving our picks.',
+            ],
+            // Win-back sequence after expiry
+            'expired_1' => [
+                'subject' => 'Your plan has expired: renew and keep winning',
+                'body'    => 'Hi, your plan :plans has expired. Renew now to keep enjoying our picks and services without interruption.',
+            ],
+            'expired_3' => [
+                'subject' => 'See what you are missing',
+                'body'    => 'Your plan :plans is still expired and the picks keep coming.',
+                'stats'   => 'In the last 30 days we hit :won of :total graded picks (:rate% win rate).',
+            ],
+            'expired_7' => [
+                'subject' => 'What our customers say',
+                'body'    => 'Your plan :plans expired a week ago. Here is what members who stayed with us say:',
+            ],
+            'expired_14' => [
+                'subject' => 'Last notice: we would love to have you back',
+                'body'    => 'This is our last reminder: your plan :plans is still expired. Whenever you want to come back, your spot is here.',
+            ],
         ],
         'notification_expired_suscription' => [
             'body_text'   => 'We are writing to remind you that your plan',
