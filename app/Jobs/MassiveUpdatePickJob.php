@@ -69,7 +69,8 @@ class MassiveUpdatePickJob implements ShouldQueue
                     ->whereDate('created_at', $day)
                     ->orderBy('id')
                     ->pluck('right')
-                    ->map(fn($right) => $right === null ? null : (bool)$right)
+                    // El empate ('draw') no es ganado ni perdido: no cuenta como acierto ni activa el seguro
+                    ->map(fn($right) => $right === null ? null : ((int)$right === Pick::RIGHT_DRAW ? 'draw' : (bool)$right))
                     ->values();
             } else {
                 // Se compara contra el día del pick, no contra hoy: si se califica tarde no debe tocar a quien compró después
@@ -89,7 +90,7 @@ class MassiveUpdatePickJob implements ShouldQueue
                         if ($isElite) {
                             $this->recalculateElite($subscription, $dayResults, $day);
                         } else {
-                            $subscription->winner = $this->pick->right;
+                            $subscription->winner = (int)$this->pick->right === Pick::RIGHT_DRAW ? false : $this->pick->right;
                         }
                         
                         $subscription->save();

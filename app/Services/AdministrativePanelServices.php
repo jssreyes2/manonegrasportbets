@@ -126,7 +126,7 @@ class AdministrativePanelServices
     private function pickAccuracy(Carbon $now): ?array
     {
         $graded = Pick::where('source', Pick::SOURCE_SUSCRIPTION)
-            ->whereNotNull('right')
+            ->whereIn('right', [0, 1])
             ->where('created_at', '>=', $now->copy()->subDays(self::ACCURACY_DAYS))
             ->selectRaw('COUNT(*) AS total, SUM(`right` = 1) AS won')
             ->first();

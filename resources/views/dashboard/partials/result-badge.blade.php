@@ -3,6 +3,7 @@
     [$class, $icon] = match ($result) {
         'won'   => ['bg-success', 'fa-check'],
         'lost'  => ['bg-danger', 'fa-times'],
+        'draw'  => ['bg-secondary', 'fa-equals'],
         default => ['bg-light', 'fa-clock'],
     };
 @endphp

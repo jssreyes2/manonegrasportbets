@@ -43,6 +43,7 @@ class CustomerPanelServices
         $picks = Pick::sentToUser($user->id)
             ->when($result === 'won', fn($q) => $q->where('picks.right', 1))
             ->when($result === 'lost', fn($q) => $q->where('picks.right', 0))
+            ->when($result === 'draw', fn($q) => $q->where('picks.right', Pick::RIGHT_DRAW))
             ->when($result === 'pending', fn($q) => $q->whereNull('picks.right'))
             ->paginate(config('app.npage'))
             ->withQueryString();
@@ -96,7 +97,7 @@ class CustomerPanelServices
 
         return $graded + [
             'received' => $received,
-            'pending'  => max(0, $received - $graded['total']),
+            'pending'  => max(0, $received - $graded['total'] - $graded['draw']),
         ];
     }
 }

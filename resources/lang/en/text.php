@@ -393,6 +393,7 @@ return [
             'results_note'         => 'Past results don\'t guarantee future results. Bet responsibly.',
             'result_won'           => 'Won',
             'result_lost'          => 'Lost',
+            'result_draw'          => 'Draw',
             'result_pending'       => 'Pending',
             'testimonials_kicker'  => 'COMMUNITY',
             'testimonials_title'   => 'What our members say',

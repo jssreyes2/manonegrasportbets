@@ -86,7 +86,7 @@
         var planId = $(this).val();
 
         if (planId && planId !== '' && planName !== 'Seleccione...') {
-            $('#summernote').summernote('code', '<p><strong>Plan: ' + planName + '</strong></p>');
+            $('#summernote').summernote('code', '<p><strong>Plan: ' + planName + '</strong></p><p>Vamos con los juegos de hoy, recuerden jugar el 1-3% de su bank</p><p>Juega responsable!</p>');
         }
 
         $.ajax({
@@ -109,9 +109,9 @@
                     }
 
                     if (!response.subscription) {
-                        $('.message_pick').html(' Opps!! No existe suscripciones activas para el plan seleccionado.');
+                        // Se puede crear el pick igual: sin suscripciones activas no se envía ningún correo
+                        $('.message_pick').html(' Aviso: no existen suscripciones activas para el plan seleccionado. El pick se guardará pero no se enviará ningún correo.');
                         $('.alert-pick').show();
-                        $('#send_form').prop('disabled', true);
                     } else {
                         $('.message_pick_success').html(' Genial!! Se encontraron ' + response.subscription + ' suscripciones activas.');
                         $('.alert-pick-success').show();

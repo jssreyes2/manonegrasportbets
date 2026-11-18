@@ -94,6 +94,9 @@
                     <option value='0' {{ (array_key_exists('input_status', $filterArray) && ($filterArray['input_status']!==null && (int)$filterArray['input_status'] ===0)) ? 'selected' : '' }}>
                         {{__t('text.backend.tables.failed', 'Fallido')}}
                     </option>
+                    <option value='2' {{ (array_key_exists('input_status', $filterArray) && (string)$filterArray['input_status'] === '2') ? 'selected' : '' }}>
+                        {{__t('text.backend.tables.draw', 'Empate')}}
+                    </option>
                 </select>
             </div>
         @endif

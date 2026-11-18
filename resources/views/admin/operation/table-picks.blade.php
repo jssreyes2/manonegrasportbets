@@ -37,6 +37,9 @@
                     if ($pick->right === 0) {
                         $right = '<span class="badge bg-danger"><i class="bi bi-x-circle-fill"></i> Fallido</span>';
                     }
+                    if ($pick->right === \App\Models\Pick::RIGHT_DRAW) {
+                        $right = '<span class="badge bg-secondary"><i class="bi bi-dash-circle-fill"></i> Empate</span>';
+                    }
 
                     $parts = extractPickParts($pick->body);
                     $totalParts = count($parts);

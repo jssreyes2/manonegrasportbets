@@ -31,7 +31,7 @@
 
             {{-- Filtro por resultado --}}
             <div class="btn-group btn-group-sm" role="group" aria-label="{{ $C('filter_result') }}">
-                @foreach([null => 'all', 'won' => 'won', 'lost' => 'lost', 'pending' => 'pending'] as $value => $key)
+                @foreach([null => 'all', 'won' => 'won', 'lost' => 'lost', 'draw' => 'draw', 'pending' => 'pending'] as $value => $key)
                     <a href="{{ route('picks.index', $value ? ['result' => $value] : []) }}"
                        class="btn {{ $result === ($value ?: null) ? 'btn-brand' : 'btn-outline-dark' }}"
                        @if($result === ($value ?: null)) aria-current="true" @endif>

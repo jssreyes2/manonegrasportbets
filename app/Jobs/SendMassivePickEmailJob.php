@@ -28,6 +28,25 @@ class SendMassivePickEmailJob implements ShouldQueue
         $this->onQueue('emails-picks');
     }
     
+    /**
+     * Destinatarios del pick según su fuente (null si la fuente no es válida).
+     * Se usa también al crear el pick para no encolar el envío cuando no hay a quién enviar.
+     */
+    public static function recipients(Pick $pick)
+    {
+        return match ($pick->source) {
+            Pick::SOURCE_SUSCRIPTION     => Subscription::getSubscription()->filter([
+                'subscription_expires_at' => true,
+                'subscription_status'     => Subscription::STATUS_ACTIVE,
+                'subscription_plan'       => $pick->plan->source,
+                'winner'                  => true,
+            ])->reorder(), // chunkById necesita ordenar solo por id, el filtro ordena por user_id
+
+            Pick::SOURCE_WEB_SUSCRIPTION => WebSuscription::query(),
+            default                      => null,
+        };
+    }
+    
     public function handle(): void
     {
         try {
@@ -39,18 +58,7 @@ class SendMassivePickEmailJob implements ShouldQueue
                 return;
             }
             
-            $suscriptionsUsers = match ($this->pick->source) {
-                Pick::SOURCE_SUSCRIPTION     => Subscription::getSubscription()->filter([
-                    'subscription_expires_at' => true,
-                    'subscription_status'     => Subscription::STATUS_ACTIVE,
-                    'subscription_plan'       => $this->pick->plan->source,
-                    'winner'                  => true,
-                ])->reorder(), // chunkById necesita ordenar solo por id, el filtro ordena por user_id
-
-                Pick::SOURCE_WEB_SUSCRIPTION => WebSuscription::query(),
-                //Pick::SOURCE_WEB_SUSCRIPTION => WebSuscription::whereNull('send_email'),
-                default                      => null,
-            };
+            $suscriptionsUsers = self::recipients($this->pick);
             
             if (!$suscriptionsUsers) {
                 Log::warning("Job detenido: Pick sin fuente", ['pick_id' => $this->pick->id ?? null]);

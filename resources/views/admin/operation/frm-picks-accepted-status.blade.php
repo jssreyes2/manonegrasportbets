@@ -10,6 +10,7 @@
                         <option value="">Seleccionar estatus...</option>
                         <option value="1">Exitoso</option>
                         <option value="0">Fallido</option>
+                        <option value="2">Empate</option>
                     </select>
                     <small class="form-text text-muted">Selecciona el estatus del pick realizado</small>
                 </div>

@@ -397,6 +397,7 @@ a los mercados deportivos con mayor liquidez del mundo: NBA, NFL, MLB y fútbol 
             'results_note'         => 'Resultados pasados no garantizan resultados futuros. Apuesta con responsabilidad.',
             'result_won'           => 'Ganado',
             'result_lost'          => 'Perdido',
+            'result_draw'          => 'Empate',
             'result_pending'       => 'Pendiente',
             'testimonials_kicker'  => 'COMUNIDAD',
             'testimonials_title'   => 'Lo que dicen nuestros miembros',

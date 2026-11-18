@@ -68,7 +68,12 @@ class PickServices
             
             DB::commit();
             
-            SendMassivePickEmailJob::dispatch($pick);
+            // Sin suscripciones activas el pick se crea igual, pero no se ejecuta el proceso de envío
+            $hasRecipients = (bool)SendMassivePickEmailJob::recipients($pick)?->exists();
+            
+            if ($hasRecipients) {
+                SendMassivePickEmailJob::dispatch($pick);
+            }
             
         } catch (Exception $e) {
             
@@ -77,7 +82,11 @@ class PickServices
             throw $e;
         }
         
-        return response()->json(['status' => 'success', 'message' => 'Datos guardados con éxito', 'edit' => false]);
+        $message = $hasRecipients
+            ? 'Datos guardados con éxito'
+            : 'El pick se guardó con éxito. No hay suscripciones activas para este plan, por lo que no se envió ningún correo.';
+        
+        return response()->json(['status' => 'success', 'message' => $message, 'edit' => false]);
     }
     
     public function update(array $data = [])

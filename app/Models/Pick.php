@@ -18,6 +18,9 @@ class Pick extends Model
     const SOURCE_SUSCRIPTION     = 'SUSCRIPTION';
     const SOURCE_WEB_SUSCRIPTION = 'JUGADAS FREE';
     
+    // Valores de picks.right: 1 = ganado, 0 = perdido, 2 = empate (no suma ni resta), null = pendiente
+    const RIGHT_DRAW = 2;
+    
     protected $table = 'picks';
     
     public function plan(): BelongsTo
@@ -106,12 +109,13 @@ class Pick extends Model
     }
 
     /**
-     * 'won', 'lost' o 'pending' según la calificación del pick.
+     * 'won', 'lost', 'draw' o 'pending' según la calificación del pick.
      */
     public function resultKey(): string
     {
         return match (true) {
             $this->right === null => 'pending',
+            (int)$this->right === self::RIGHT_DRAW => 'draw',
             (bool)$this->right    => 'won',
             default               => 'lost',
         };
@@ -138,11 +142,14 @@ class Pick extends Model
             $query->whereIn('picks.id', DB::table('send_mail_picks')->where('user_id', $userId)->select('pick_id'));
         }
 
-        $row   = $query->selectRaw('COUNT(*) AS total, COALESCE(SUM(`picks`.`right` = 1), 0) AS won')->first();
-        $total = (int)($row->total ?? 0);
+        $row   = $query->selectRaw('COUNT(*) AS graded, COALESCE(SUM(`picks`.`right` = 1), 0) AS won, COALESCE(SUM(`picks`.`right` = 2), 0) AS draw')->first();
+        $draw  = (int)($row->draw ?? 0);
+        // El empate no suma ni resta: queda fuera del total y del porcentaje
+        $total = (int)($row->graded ?? 0) - $draw;
         $won   = (int)($row->won ?? 0);
 
         return [
+            'draw'  => $draw,
             'total' => $total,
             'won'   => $won,
             'lost'  => $total - $won,
@@ -156,7 +163,7 @@ class Pick extends Model
     public static function latestGraded(int $limit = 6, ?Carbon $since = null)
     {
         return self::with('plan:id,name')
-            ->whereNotNull('right')
+            ->whereIn('right', [0, 1])
             ->when($since, fn($q) => $q->where('created_at', '>=', $since))
             ->orderByDesc('created_at')
             ->take($limit)

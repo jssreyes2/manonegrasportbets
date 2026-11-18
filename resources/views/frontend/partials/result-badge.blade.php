@@ -3,6 +3,7 @@
     [$classes, $icon] = match ($result) {
         'won'   => ['bg-lime-400/10 text-lime-300 border-lime-400/30', 'check'],
         'lost'  => ['bg-red-500/10 text-red-300 border-red-500/30', 'x'],
+        'draw'  => ['bg-sky-500/10 text-sky-300 border-sky-500/30', 'equal'],
         default => ['bg-neutral-800 text-neutral-300 border-neutral-700', 'clock'],
     };
 @endphp
