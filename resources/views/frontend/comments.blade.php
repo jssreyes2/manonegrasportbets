@@ -107,8 +107,9 @@
 
                         if (response.status === 'success') {
                             toastr.success(response.message);
-                            form.comment.value = '';
-                            counter.textContent = '0/' + max;
+                            // Deja ver el mensaje de éxito y recarga la página con el formulario limpio
+                            button.disabled = true;
+                            setTimeout(function () { window.location.replace(window.location.href); }, 1500);
                             return;
                         }
 
