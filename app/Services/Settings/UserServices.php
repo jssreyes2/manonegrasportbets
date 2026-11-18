@@ -166,7 +166,9 @@ class UserServices
             
             $data['full_name'] = mb_strtoupper($data['full_name']);
             $data['email']     = $data['email'];
-            
+            // Idioma de la web al suscribirse: se usa en los correos de invitación a un plan
+            $data['language']  = in_array(app()->getLocale(), ['es', 'en'], true) ? app()->getLocale() : null;
+
             $webSuscript = WebSuscription::create($data);
             
             if (!$webSuscript?->id) {

@@ -397,6 +397,9 @@ return [
             'testimonials_kicker'  => 'COMMUNITY',
             'testimonials_title'   => 'What our members say',
             'testimonials_cta'     => 'Share your opinion',
+            'unsubscribed_title'   => 'Unsubscribed',
+            'unsubscribed_text'    => 'You will no longer receive promotional emails from us.',
+            'back_home'            => 'Back to home',
             'footer_support'       => 'Support',
             'footer_payments'      => 'Payments',
             'footer_cards'         => 'Credit and debit cards',
@@ -437,6 +440,20 @@ return [
         'notification_web_suscription'     => [
             'subject'   => 'Subscription Confirmation',
             'body_text' => 'Thank you very much for subscribing to our community. It is a pleasure to welcome you.<br><br>We want to inform you that your subscription has been processed successfully. As a token of appreciation, we will send you an exclusive free pick in the next few hours.<br><br>Best regards,',
+        ],
+        // Invitation for free subscribers to buy a paid plan
+        'plan_invitation' => [
+            'button'      => 'See the plans',
+            'unsubscribe' => 'I do not want to receive more promotions',
+            'invitation_1' => [
+                'subject' => 'Take your picks to the next level',
+                'body'    => 'Thank you for being part of our community. You have tried our free pick; with a paid plan you get every pick continuously, with the full analysis and direct support.',
+                'stats'   => 'In the last 30 days we hit :won of :total graded picks (:rate% win rate).',
+            ],
+            'invitation_2' => [
+                'subject' => 'Ready to take the step?',
+                'body'    => 'A quick reminder that our full picks service is available to you. Choose the plan that fits you best and start today.',
+            ],
         ],
         'renewal_invitation' => [
             'button'       => 'Renew my subscription',

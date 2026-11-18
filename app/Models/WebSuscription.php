@@ -15,5 +15,9 @@ class WebSuscription extends Model
         'full_name',
         'email' ,
         'send_email',
+        'language',
+        'invitations_sent',
+        'last_invitation_at',
+        'unsubscribed_at',
     ];
 }

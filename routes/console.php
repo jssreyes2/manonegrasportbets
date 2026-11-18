@@ -37,6 +37,15 @@ Schedule::job(new SendRenewalInvitationJob())
         Log::error('SendRenewalInvitationJob falló');
     });
 
+// Invitar a los suscriptores gratis a comprar un plan - Todos los días a las 7 AM (cada persona recibe máximo 2 correos)
+Schedule::job(new \App\Jobs\SendPlanInvitationJob())
+    ->dailyAt('07:00')
+    ->name('send-plan-invitations')
+    ->withoutOverlapping()
+    ->onFailure(function () {
+        Log::error('SendPlanInvitationJob falló');
+    });
+
 // 2. Limpiar jobs fallidos antiguos - Diario a las 2 AM
 // MEJORA: Usa prune-failed en lugar de flush para no borrar errores recientes
 // El parámetro "48" significa que borra los que tengan más de 48 horas

@@ -172,6 +172,13 @@ Route::controller(StaticPageController::class)->group(function () {
     Route::post('/save-comment', 'saveComment')->name('save.comment');
 });
 
+// Baja de las promociones para suscriptores gratis (enlace firmado que va en el correo)
+Route::get('/baja/{webSuscription}', function (\App\Models\WebSuscription $webSuscription) {
+    $webSuscription->update(['unsubscribed_at' => now()]);
+
+    return view('frontend.web-suscription-unsubscribed');
+})->middleware('signed')->name('web-suscription.unsubscribe');
+
 Route::get('lang/{locale}', [LanguageController::class, 'switch'])->name('lang.switch');
 
 Route::get('/tracking/email-open', [TrackingController::class, 'emailOpen'])

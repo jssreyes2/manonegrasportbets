@@ -401,6 +401,9 @@ a los mercados deportivos con mayor liquidez del mundo: NBA, NFL, MLB y fútbol 
             'testimonials_kicker'  => 'COMUNIDAD',
             'testimonials_title'   => 'Lo que dicen nuestros miembros',
             'testimonials_cta'     => 'Deja tu opinión',
+            'unsubscribed_title'   => 'Baja confirmada',
+            'unsubscribed_text'    => 'Ya no recibirás correos promocionales de nuestra parte.',
+            'back_home'            => 'Volver al inicio',
             'footer_support'       => 'Soporte',
             'footer_payments'      => 'Pagos',
             'footer_cards'         => 'Tarjetas de crédito y débito',
@@ -443,6 +446,20 @@ a los mercados deportivos con mayor liquidez del mundo: NBA, NFL, MLB y fútbol 
         'notification_web_suscription'     => [
             'subject'   => 'Confirmación de suscripción',
             'body_text' => 'Muchas gracias por suscribirte a nuestra comunidad. Para nosotros es un placer darte la bienvenida.<br><br>Queremos informarte que tu suscripción ha sido procesada con éxito. Como gesto de agradecimiento, te haremos llegar un pick exclusivo y gratuito en las próximas horas.<br><br>Te recomendamos estar atento/a a tu bandeja de entrada.<br><br>Un cordial saludo,',
+        ],
+        // Invitación a suscriptores gratis para que compren un plan de pago
+        'plan_invitation' => [
+            'button'      => 'Ver los planes',
+            'unsubscribe' => 'No quiero recibir más promociones',
+            'invitation_1' => [
+                'subject' => 'Lleva tus picks al siguiente nivel',
+                'body'    => 'Gracias por ser parte de nuestra comunidad. Ya probaste nuestro pick gratis; con un plan de pago recibes todos los picks de forma continua, con el análisis completo y soporte directo.',
+                'stats'   => 'En los últimos 30 días acertamos :won de :total picks calificados (:rate% de acierto).',
+            ],
+            'invitation_2' => [
+                'subject' => '¿Te animas a dar el paso?',
+                'body'    => 'Te recordamos que tienes disponible nuestro servicio completo de picks. Elige el plan que mejor se ajuste a ti y empieza hoy mismo.',
+            ],
         ],
         'renewal_invitation' => [
             'button'       => 'Renovar mi suscripción',
