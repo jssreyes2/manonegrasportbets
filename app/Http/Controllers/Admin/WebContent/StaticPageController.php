@@ -89,11 +89,19 @@ class StaticPageController extends Controller
     }
 
     /**
+     * Elimina un comentario de contacto.
+     */
+    public function destroyComment(Request $request)
+    {
+        return $this->staticPage->destroyComment((int)$request->input('id'));
+    }
+
+    /**
      * Publica o retira un comentario como testimonio en la web.
      */
     public function toggleTestimonial(Request $request)
     {
-        return $this->staticPage->toggleTestimonial((int)$request->input('id'));
+        return $this->staticPage->toggleTestimonial((int)$request->input('id'), $request->input('testimonial_es'), $request->input('testimonial_en'));
     }
 
   /**

@@ -17,7 +17,7 @@
                     <figure class="flex flex-col rounded-2xl border border-neutral-800 bg-neutral-950/70 p-6" data-reveal>
                         <i data-lucide="quote" class="w-6 h-6 text-lime-400/70 mb-3"></i>
                         <blockquote class="flex-1 text-sm leading-relaxed text-neutral-200">
-                            “{{ \Illuminate\Support\Str::limit(trim((string)$testimonial->comment), 280) }}”
+                            “{{ \Illuminate\Support\Str::limit($testimonial->testimonialText(), 280) }}”
                         </blockquote>
                         <figcaption class="mt-5 flex items-center gap-3">
                             <span class="w-9 h-9 rounded-full bg-lime-400/10 border border-lime-400/30 text-lime-300 font-bold flex items-center justify-center">

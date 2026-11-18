@@ -30,6 +30,17 @@ class Comment extends Model
         return self::where('is_testimonial', true)->latest()->take($limit)->get();
     }
     
+    /**
+     * Texto del testimonio en el idioma pedido; si falta esa versión usa la otra y, en último caso, el comentario original.
+     */
+    public function testimonialText(?string $locale = null): string
+    {
+        $locale = $locale ?: app()->getLocale();
+        $other  = $locale === 'es' ? 'en' : 'es';
+
+        return trim((string)($this->{"testimonial_{$locale}"} ?: $this->{"testimonial_{$other}"} ?: $this->comment));
+    }
+
     protected function fullName(): Attribute
     {
         return Attribute::make(get: fn($value) => $value, set: fn($value) => strtolower($value));

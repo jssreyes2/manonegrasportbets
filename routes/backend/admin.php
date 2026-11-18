@@ -83,6 +83,7 @@ Route::group(['prefix' => '/admin/', 'middleware' => ['auth']], function () {
         Route::post('/contacts-response', 'commentResponse')->name('comment.response');
         Route::post('/send-response', 'sendResponse')->name('send.response');
         Route::post('/contacts-testimonial', 'toggleTestimonial')->name('comment.testimonial');
+        Route::post('/contacts-destroy', 'destroyComment')->name('comment.destroy');
     });
     
     // Banner principal (video) de la portada

@@ -143,10 +143,36 @@ class StaticPageServices
         return view('admin.web_content.static_page.form-comment-response', ['contact' => $contact]);
     }
     
-    public function toggleTestimonial(int $id): JsonResponse
+    public function destroyComment(int $id): JsonResponse
+    {
+        $comment = Comment::find($id);
+
+        if (!$comment) {
+            return response()->json(['status' => 'fail', 'message' => 'Este comentario ya fue eliminado.']);
+        }
+
+        $comment->delete();
+
+        return response()->json(['status' => 'success', 'message' => 'El comentario se eliminó correctamente.']);
+    }
+
+    public function toggleTestimonial(int $id, ?string $es = null, ?string $en = null): JsonResponse
     {
         $comment = Comment::findOrFail($id);
-        
+
+        // Al publicar se guardan las dos versiones (ES/EN) para mostrar la del idioma del visitante
+        if (!$comment->is_testimonial) {
+            $es = trim((string)$es);
+            $en = trim((string)$en);
+
+            if ($es === '' || $en === '') {
+                return response()->json(['status' => 'fail', 'message' => 'Escribe el testimonio en español y en inglés.']);
+            }
+
+            $comment->testimonial_es = mb_substr($es, 0, Comment::MAX_LENGTH);
+            $comment->testimonial_en = mb_substr($en, 0, Comment::MAX_LENGTH);
+        }
+
         $comment->is_testimonial = !$comment->is_testimonial;
         $comment->save();
         

@@ -201,7 +201,7 @@ class SendRenewalInvitationJob implements ShouldQueue
         // Día 7: testimonios publicados por el admin (si no hay, el correo sale sin ellos)
         if ($stage === 'expired_7') {
             $quotes = Comment::testimonials(2)->map(
-                fn($c) => '<em>"' . e($c->comment) . '"</em> — ' . e(capitalize_first($c->full_name))
+                fn($c) => '<em>"' . e($c->testimonialText($locale)) . '"</em> — ' . e(capitalize_first($c->full_name))
             );
 
             if ($quotes->isNotEmpty()) {

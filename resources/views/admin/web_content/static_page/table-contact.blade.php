@@ -4,6 +4,33 @@
 
     <div id="form-modal"></div>
 
+    {{-- Publicar como testimonio: se guarda la versión en español y en inglés --}}
+    <div class="modal fade" id="modal-testimonial" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Publicar como testimonio</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                </div>
+                <div class="modal-body">
+                    <p class="text-muted">Escribe el testimonio en ambos idiomas: la web y los correos mostrarán la versión del idioma del cliente. Deja el original en su idioma y traduce el otro.</p>
+                    <div class="form-group">
+                        <label for="testimonial_es">Español</label>
+                        <textarea id="testimonial_es" class="form-control" rows="4" maxlength="{{ \App\Models\Comment::MAX_LENGTH }}"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="testimonial_en">English</label>
+                        <textarea id="testimonial_en" class="form-control" rows="4" maxlength="{{ \App\Models\Comment::MAX_LENGTH }}"></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-outline-secondary" data-dismiss="modal">Cancelar</button>
+                    <button type="button" class="btn btn-success" id="btn-publish-testimonial"><i class="fas fa-star mr-1"></i>Publicar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <x-admin.table-default
             routeExport=""
             cancelRoute="{{route('staticpage.contacts')}}"
@@ -41,7 +68,7 @@
                                 route="comment"
                                 :comment="true"
                                 :edit="false"
-                                :delete="false"
+                                :delete="true"
                         />
 
                     </td>
@@ -61,7 +88,7 @@
                     {{-- Los marcados se muestran como testimonio en la página principal --}}
                     <td class="text-center">
                         <button type="button" class="btn btn-sm {{ $item->is_testimonial ? 'btn-success' : 'btn-outline-secondary' }} js-toggle-testimonial"
-                                data-id="{{ $item->id }}" title="{{ $item->is_testimonial ? 'Quitar de la web' : 'Publicar en la web' }}">
+                                data-id="{{ $item->id }}" data-published="{{ $item->is_testimonial ? 1 : 0 }}" data-comment="{{ $item->comment }}" title="{{ $item->is_testimonial ? 'Quitar de la web' : 'Publicar en la web' }}">
                             <i class="fas {{ $item->is_testimonial ? 'fa-star' : 'fa-star-half-alt' }} mr-1"></i>{{ $item->is_testimonial ? 'Publicado' : 'Publicar' }}
                         </button>
                     </td>
@@ -81,11 +108,20 @@
     @include('admin.global_script.function-form-modal', ['route' => route('comment.response')])
     @include('admin.web_content.static_page.function-comment-response')
     <script type="application/javascript">
-        $('body').on('click', '.js-toggle-testimonial', function () {
-            var button = $(this).prop('disabled', true);
+        var testimonialButton = null;
 
-            $.post("{{ route('comment.testimonial') }}", {id: button.data('id'), _token: $('meta[name="csrf-token"]').attr('content')})
+        function sendTestimonial(button, extra) {
+            button.prop('disabled', true);
+
+            $.post("{{ route('comment.testimonial') }}", $.extend({id: button.data('id'), _token: $('meta[name="csrf-token"]').attr('content')}, extra || {}))
                 .done(function (response) {
+                    if (response.status === 'fail') {
+                        button.prop('disabled', false);
+                        toastr.error(response.message);
+                        return;
+                    }
+
+                    $('#modal-testimonial').modal('hide');
                     toastr.success(response.message);
                     setTimeout(function () { location.reload(); }, 600);
                 })
@@ -93,6 +129,24 @@
                     button.prop('disabled', false);
                     toastr.error('No se pudo actualizar el comentario.');
                 });
+        }
+
+        $('body').on('click', '.js-toggle-testimonial', function () {
+            var button = $(this);
+
+            // Retirar de la web es directo; publicar pide las dos versiones (ES/EN)
+            if (button.data('published') == 1) {
+                sendTestimonial(button);
+                return;
+            }
+
+            testimonialButton = button;
+            $('#testimonial_es, #testimonial_en').val(button.data('comment'));
+            $('#modal-testimonial').modal('show');
+        });
+
+        $('body').on('click', '#btn-publish-testimonial', function () {
+            sendTestimonial(testimonialButton, {testimonial_es: $('#testimonial_es').val(), testimonial_en: $('#testimonial_en').val()});
         });
     </script>
 @endsection
