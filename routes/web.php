@@ -81,9 +81,9 @@ $activePlans = fn() => rescue(
     false,
 );
 
-// Historial real de picks calificados desde el 1 de enero del año en curso (acierto 30 días / del año y últimos resultados)
+// Historial real de picks calificados de los últimos 3 meses (acierto 30 días / 3 meses y últimos resultados)
 $pickResults = fn() => rescue(fn() => [
-    'since'  => $since = now()->startOfYear(),
+    'since'  => $since = now()->subMonths(3)->startOfDay(),
     'month'  => Pick::resultsSummary(30, null, $since),
     'all'    => Pick::resultsSummary(null, null, $since),
     'latest' => Pick::latestGraded(6, $since),
