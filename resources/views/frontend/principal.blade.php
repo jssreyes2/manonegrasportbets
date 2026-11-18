@@ -115,13 +115,18 @@
                     </div>
 
                     @php
-                        $stats = [
-                        ['icon' => 'cpu',          'count' => 10,  'prefix' => '+', 'suffix' => 'M', 'decimals' => 0, 'label' => __t('text.frontend.bets_evaluated_every', 'bets evaluated every 24 hours')],
-                        ['icon' => 'shield-check', 'count' => 100, 'prefix' => '',  'suffix' => '%', 'decimals' => 0, 'label' => __t('text.frontend.transparently_documented_results', 'transparently documented results')],
-                        ['icon' => 'zap',          'count' => 0.3, 'prefix' => '',  'suffix' => 's', 'decimals' => 1, 'label' => __t('text.frontend.your_edge_over_the_market', 'your edge over the market')],
-                        ['icon' => 'globe',        'count' => 12,  'prefix' => '',  'suffix' => '',  'decimals' => 0, 'label' => __t('text.frontend.proven_profit_engines', 'proven profit engines')],
-                    ];
+                        // Cifras reales: mismo historial calificado (últimos 3 meses) que la sección de resultados
+                        $stats = [];
+                        if (config('app.show_pick_results') && !empty($results) && $results['all']['total'] > 0) {
+                            $stats = array_values(array_filter([
+                                ['icon' => 'list-checks',  'count' => $results['all']['total'],   'prefix' => '', 'suffix' => '',  'decimals' => 0, 'label' => __t('text.frontend.stat_graded_picks', 'graded picks, last 3 months')],
+                                ['icon' => 'shield-check', 'count' => $results['all']['rate'],    'prefix' => '', 'suffix' => '%', 'decimals' => 0, 'label' => __t('text.frontend.stat_hit_rate_3m', 'hit rate, last 3 months')],
+                                ['icon' => 'trophy',       'count' => $results['all']['won'],     'prefix' => '', 'suffix' => '',  'decimals' => 0, 'label' => __t('text.frontend.stat_won_picks', 'winning picks, last 3 months')],
+                                ['icon' => 'calendar-days','count' => $results['month']['rate'],  'prefix' => '', 'suffix' => '%', 'decimals' => 0, 'label' => __t('text.frontend.stat_hit_rate_30d', 'hit rate, last 30 days')],
+                            ], fn($s) => $s['count'] !== null));
+                        }
                     @endphp
+                    @if($stats)
                     <div class="grid grid-cols-2 gap-4 sm:gap-6">
                         @foreach($stats as $i => $stat)
                             <div class="bg-neutral-900/50 p-5 sm:p-6 rounded-2xl neon-border neon-glow-hover transition-all" data-reveal style="--reveal-delay: {{ $i * 100 }}ms">
@@ -132,6 +137,7 @@
                             </div>
                         @endforeach
                     </div>
+                    @endif
 
                 </div>
             </div>
