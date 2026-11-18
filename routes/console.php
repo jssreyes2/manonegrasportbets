@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Foundation\Inspiring;
 use Illuminate\Support\Facades\Artisan;
 use App\Jobs\UpdateExpiredSubscriptionsJob;
+use App\Jobs\SendRenewalInvitationJob;
 
 // Comandos personalizados
 Artisan::command('inspire', function () {
@@ -25,6 +26,15 @@ Schedule::job(new UpdateExpiredSubscriptionsJob())
     })
     ->onFailure(function () {
         Log::error('UpdateExpiredSubscriptionsJob falló');
+    });
+
+// Invitar a renovar a clientes con suscripción vencida - Todos los días a las 7 AM
+Schedule::job(new SendRenewalInvitationJob())
+    ->dailyAt('07:00')
+    ->name('send-renewal-invitations')
+    ->withoutOverlapping()
+    ->onFailure(function () {
+        Log::error('SendRenewalInvitationJob falló');
     });
 
 // 2. Limpiar jobs fallidos antiguos - Diario a las 2 AM

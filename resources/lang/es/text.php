@@ -444,6 +444,12 @@ a los mercados deportivos con mayor liquidez del mundo: NBA, NFL, MLB y fútbol 
             'subject'   => 'Confirmación de suscripción',
             'body_text' => 'Muchas gracias por suscribirte a nuestra comunidad. Para nosotros es un placer darte la bienvenida.<br><br>Queremos informarte que tu suscripción ha sido procesada con éxito. Como gesto de agradecimiento, te haremos llegar un pick exclusivo y gratuito en las próximas horas.<br><br>Te recomendamos estar atento/a a tu bandeja de entrada.<br><br>Un cordial saludo,',
         ],
+        'renewal_invitation' => [
+            'subject'     => 'Te extrañamos: renueva tu suscripción',
+            'body_text'   => 'Hola, notamos que tu plan',
+            'body_text_1' => 'ha vencido. Renueva ahora para seguir disfrutando de nuestros picks y servicios sin interrupciones.',
+            'button'      => 'Renovar mi suscripción',
+        ],
         'notification_expired_suscription' => [
             'body_text'   => 'Te escribimos para recordarte que tu plan',
             'body_text_1' => 'se encuentra vencido. Para que sigas disfrutando de todos los beneficios y funcionalidades sin interrupciones, es importante que realices la renovación. Gracias',

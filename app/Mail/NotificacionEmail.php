@@ -25,7 +25,12 @@ class NotificacionEmail extends Mailable
     public function __construct(array $data)
     {
         $this->data = $data;
-        
+
+        // Idioma del destinatario: aplica a toda la plantilla (saludo, textos fijos)
+        if (!empty($data['locale'])) {
+            $this->locale($data['locale']);
+        }
+
         // Extraer adjuntos si vienen en los datos
         if (!empty($data['attachment_base64']) && !empty($data['attachment_name'])) {
             $this->attachmentData = $data['attachment_base64'];

@@ -263,8 +263,9 @@ class SendMailServices
                 'template_email' => 'emails.notification',
                 'bcc'            => $data['bcc'] ?? null,
                 'tracking_token' => $data['tracking_token'] ?? null,
+                'locale'         => $data['locale'] ?? null,
             ]);
-            
+
         } catch (\Exception $e) {
             Log::error('Error en sendMailNotification', [
                 'email' => $data['email'] ?? 'desconocido',

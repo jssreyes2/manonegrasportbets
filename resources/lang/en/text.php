@@ -438,6 +438,12 @@ return [
             'subject'   => 'Subscription Confirmation',
             'body_text' => 'Thank you very much for subscribing to our community. It is a pleasure to welcome you.<br><br>We want to inform you that your subscription has been processed successfully. As a token of appreciation, we will send you an exclusive free pick in the next few hours.<br><br>Best regards,',
         ],
+        'renewal_invitation' => [
+            'subject'     => 'We miss you: renew your subscription',
+            'body_text'   => 'Hi, we noticed your plan',
+            'body_text_1' => 'has expired. Renew now to keep enjoying our picks and services without interruption.',
+            'button'      => 'Renew my subscription',
+        ],
         'notification_expired_suscription' => [
             'body_text'   => 'We are writing to remind you that your plan',
             'body_text_1' => 'has expired. To continue enjoying all the benefits and features without interruption, it is important that you renew. Thank you.',
