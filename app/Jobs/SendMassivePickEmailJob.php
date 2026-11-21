@@ -135,7 +135,20 @@ class SendMassivePickEmailJob implements ShouldQueue
                             }
                             
                             SendEmailJob::dispatch($data)->onQueue('emails-picks');
-                            
+
+                            // Registra el pick para que el cliente también lo vea en su panel (/my-home)
+                            if ($this->pick->source === Pick::SOURCE_SUSCRIPTION) {
+                                DB::table('send_mail_picks')->updateOrInsert(
+                                    ['pick_id' => $this->pick->id, 'user_id' => $subscription->user_id],
+                                    [
+                                        'send_date'  => now()->toDateString(),
+                                        'sent_at'    => now(),
+                                        'updated_at' => now(),
+                                        'created_at' => now(),
+                                    ]
+                                );
+                            }
+
                             $processedIds[] = $subscription->id;
                             
                             $queuedCount++;
