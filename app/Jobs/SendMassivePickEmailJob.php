@@ -81,7 +81,8 @@ class SendMassivePickEmailJob implements ShouldQueue
                 function ($subscriptions) use (&$queuedCount, &$failedCount) {
                    
                     $processedIds = [];
-                    
+                    $pushUserIds  = [];
+
                     foreach ($subscriptions as $subscription) {
                         try {
                            
@@ -145,8 +146,10 @@ class SendMassivePickEmailJob implements ShouldQueue
                                         'sent_at'    => now(),
                                         'updated_at' => now(),
                                         'created_at' => now(),
+                                        'seen_at'    => null, // vuelve a contar en la campana
                                     ]
                                 );
+                                $pushUserIds[] = $subscription->user_id;
                             }
 
                             $processedIds[] = $subscription->id;
@@ -167,6 +170,11 @@ class SendMassivePickEmailJob implements ShouldQueue
                         }
                     }
                     
+                    // Aviso push (navegador) a los clientes de este grupo
+                    if (!empty($pushUserIds)) {
+                        SendPickPushJob::dispatch(array_values(array_unique($pushUserIds)));
+                    }
+
                     if (!empty($processedIds)) {
                         if ($this->pick->source === Pick::SOURCE_SUSCRIPTION) {
                             Subscription::whereIn('id', $processedIds)->update([

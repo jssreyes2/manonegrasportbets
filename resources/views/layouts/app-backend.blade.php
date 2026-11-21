@@ -33,6 +33,7 @@
 
         <ul class="navbar-nav ml-auto align-items-center">
             @if($isCustomer)
+                @include('layouts.partials.customer-bell')
                 <li class="nav-item">
                     <div class="tbh-lang">
                         <a href="{{ route('lang.switch', 'es') }}" class="{{ app()->getLocale() == 'es' ? 'active' : '' }}" title="Español">ES</a>

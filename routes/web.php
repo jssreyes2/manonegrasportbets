@@ -17,6 +17,7 @@ use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\Dashboard\PickController;
 use App\Http\Controllers\Dashboard\CheckoutController;
 use App\Http\Controllers\Dashboard\CustomerHomeController;
+use App\Http\Controllers\Dashboard\CustomerNotificationController;
 use App\Http\Controllers\Dashboard\ProfileController;
 use App\Http\Controllers\Dashboard\PaymentController;
 use App\Http\Controllers\LanguageController;
@@ -49,6 +50,14 @@ Route::middleware('auth')->group(function () {
     Route::get('/picks', [PickController::class, 'index'])
         ->middleware('check.completed.profile')
         ->name('picks.index');
+
+    // Campana del cliente y suscripción a notificaciones push
+    Route::prefix('my-notifications')->name('customer.notifications.')->group(function () {
+        Route::get('/', [CustomerNotificationController::class, 'index'])->name('index');
+        Route::post('/seen', [CustomerNotificationController::class, 'markSeen'])->name('seen');
+        Route::post('/push', [CustomerNotificationController::class, 'subscribe'])->name('push.subscribe');
+        Route::delete('/push', [CustomerNotificationController::class, 'unsubscribe'])->name('push.unsubscribe');
+    });
 
     Route::post('/profile-preferences', [ProfileController::class, 'savePreferences'])
         ->name('profile.preferences');
