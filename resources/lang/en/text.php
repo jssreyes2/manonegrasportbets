@@ -664,6 +664,7 @@ return [
             'today_picks'            => 'Today\'s picks',
             'no_picks_today'         => 'No picks for today yet.',
             'push_title'             => 'New pick available',
+            'push_title_plan'        => 'New :plan plan pick',
             'push_body'              => 'You can now see your pick in your panel.',
             'bell_title'             => 'New picks',
             'bell_empty'             => 'You have no new picks.',

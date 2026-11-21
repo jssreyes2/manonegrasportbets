@@ -172,7 +172,7 @@ class SendMassivePickEmailJob implements ShouldQueue
                     
                     // Aviso push (navegador) a los clientes de este grupo
                     if (!empty($pushUserIds)) {
-                        SendPickPushJob::dispatch(array_values(array_unique($pushUserIds)));
+                        SendPickPushJob::dispatch(array_values(array_unique($pushUserIds)), (string)$this->pick->plan->name);
                     }
 
                     if (!empty($processedIds)) {

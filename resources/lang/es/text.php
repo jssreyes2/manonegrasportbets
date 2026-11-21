@@ -674,6 +674,7 @@ a los mercados deportivos con mayor liquidez del mundo: NBA, NFL, MLB y fútbol 
             'no_picks_today'         => 'Todavía no hay picks para hoy.',
             'picks_by_email'         => 'Te llegarán a :email apenas se publiquen.',
             'push_title'             => 'Nuevo pick disponible',
+            'push_title_plan'        => 'Nuevo pick del plan :plan',
             'push_body'              => 'Ya puedes ver tu pick en tu panel.',
             'bell_title'             => 'Picks nuevos',
             'bell_empty'             => 'No tienes picks nuevos.',

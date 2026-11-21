@@ -17,7 +17,7 @@ class SendPickPushJob implements ShouldQueue
     public $timeout = 120;
     public $tries   = 1;
 
-    public function __construct(protected array $userIds)
+    public function __construct(protected array $userIds, protected string $planName = '')
     {
         $this->onQueue('emails-picks');
     }
@@ -25,7 +25,9 @@ class SendPickPushJob implements ShouldQueue
     public function handle(WebPushServices $push): void
     {
         $push->sendToUsers($this->userIds, [
-            'title' => __t('text.backend.customer.push_title'),
+            'title' => $this->planName !== ''
+                ? __t('text.backend.customer.push_title_plan', null, ['plan' => $this->planName])
+                : __t('text.backend.customer.push_title'),
             'body'  => __t('text.backend.customer.push_body'),
             'url'   => route('customer.home'),
             'tag'   => 'new-pick',
