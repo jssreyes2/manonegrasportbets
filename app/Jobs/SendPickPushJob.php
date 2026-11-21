@@ -19,7 +19,7 @@ class SendPickPushJob implements ShouldQueue
     public $timeout = 120;
     public $tries   = 1;
 
-    public function __construct(protected array $userIds, protected string $planName = '')
+    public function __construct(protected array $userIds, protected string $planName = '', protected string $summary = '')
     {
         $this->onQueue('emails-picks');
     }
@@ -38,7 +38,10 @@ class SendPickPushJob implements ShouldQueue
                 'title' => $this->planName !== ''
                     ? __t('text.backend.customer.push_title_plan', null, ['plan' => $this->planName], $locale)
                     : __t('text.backend.customer.push_title', null, [], $locale),
-                'body'  => __t('text.backend.customer.push_body', null, [], $locale),
+                // El contenido del pick; si no hay texto, un mensaje genérico
+                'body'  => $this->summary !== ''
+                    ? $this->summary
+                    : __t('text.backend.customer.push_body', null, [], $locale),
                 'url'   => route('customer.home'),
                 'tag'   => 'new-pick',
             ]);
