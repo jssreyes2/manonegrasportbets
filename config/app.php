@@ -121,6 +121,9 @@ return [
     'mailNotification' => env('MAIL_FROM_ADDRESS', 'hola@manonegrasportbets.com'),
     'mail_copy_ocult' => env('MAIL_FROM_NAME_CC', 'Manonegrasportbets@gmail.com'),
 
+    // Copia oculta adicional con el detalle de cada compra de plan
+    'mail_copy_purchase' => env('MAIL_COPY_PURCHASE', 'jss.reyes2@gmail.com'),
+
     // Canales de soporte que se muestran en la web (si están vacíos no se muestran)
     'support_whatsapp' => env('SUPPORT_WHATSAPP'),
     'support_email'    => env('SUPPORT_EMAIL', 'Manonegrasportbets@gmail.com'),

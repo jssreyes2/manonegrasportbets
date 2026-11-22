@@ -342,7 +342,7 @@ class WhopWebhookServices
             'membership_id' => $membershipId,
         ]);
 
-        return fn() => $this->sendActivationMail($user, $plan, $expirationDate);
+        return fn() => $this->sendActivationMail($user, $plan, $expirationDate, $payment);
     }
 
     private function refundDuplicatePayment(array $payment, User $user, Plan $plan, Carbon $expiresAt): void
@@ -447,7 +447,7 @@ class WhopWebhookServices
         return true;
     }
 
-    private function sendActivationMail(User $user, Plan $plan, Carbon $expirationDate): void
+    private function sendActivationMail(User $user, Plan $plan, Carbon $expirationDate, array $payment = []): void
     {
         try {
             $data['name']      = capitalize_first($user->profile?->first_name) . ' ' . capitalize_first($user->profile?->last_name);
@@ -470,8 +470,31 @@ class WhopWebhookServices
                 $messageText
             );
 
+            $locale = in_array($user->language, ['es', 'en'], true) ? $user->language : config('app.locale');
+            $es     = $locale === 'es';
+
+            $rows = [
+                ($es ? 'Plan' : 'Plan')                   => $plan->name,
+                ($es ? 'Importe' : 'Amount')              => number_format((float)($payment['total'] ?? $plan->price), 2) . ' ' . strtoupper($payment['currency'] ?? Plan::CURRENCY_USD),
+                ($es ? 'Fecha de pago' : 'Payment date')  => (isset($payment['paid_at']) ? Carbon::parse($payment['paid_at']) : now())->format('d/m/Y H:i'),
+                ($es ? 'Vence' : 'Expires')               => $expirationDate->format('d/m/Y'),
+                ($es ? 'Cliente' : 'Customer')            => $user->email,
+                ($es ? 'ID de pago' : 'Payment ID')       => $payment['id'] ?? 'N/A',
+            ];
+
+            $detail = '<br><br><strong>' . ($es ? 'Detalle de la compra' : 'Purchase details') . '</strong><br>';
+            foreach ($rows as $label => $value) {
+                $detail .= e($label) . ': ' . e($value) . '<br>';
+            }
+
+            $messageText .= $detail;
+
             $data['message'] = $messageText;
-            $data['bcc']     = config('app.mail_copy_ocult');
+            $data['locale']  = $locale;
+            $data['bcc']     = array_values(array_filter(array_unique([
+                config('app.mail_copy_ocult'),
+                config('app.mail_copy_purchase'),
+            ])));
 
             $notification = Notification::notificationCreate([
                 'user_id'   => $user->id,
